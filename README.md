@@ -121,3 +121,25 @@ public boolean dispatchTouchEvent(MotionEvent ev) {
 ## 协议
 
 本项目使用 [MIT License](LICENSE)。
+
+---
+
+## 如何通过 JitPack 引入（推荐）
+
+不需要下载源码，只需在项目的 `build.gradle` 中添加：
+
+```gradle
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+然后在 `app/build.gradle` 中引入（请将 `v1.1.0` 替换为你发布的 Release 版本）：
+
+```gradle
+dependencies {
+    implementation 'com.github.styisme:wear-uikit:v1.1.0'
+}
+```
