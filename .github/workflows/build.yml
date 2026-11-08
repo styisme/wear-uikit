@@ -17,48 +17,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 17 (for sdkmanager)
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: 'platforms;android-30 build-tools;30.0.3 platform-tools'
-
-      - name: Set up JDK 8 Zulu
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          java-version: '8'
-          java-package: jdk
-
-      - name: Point JAVA_HOME to JDK 8
+      - name: Setup Gradle 5.6.4 (Mirror)
         run: |
-          if [ -n "$JAVA_HOME_8_X64" ]; then
-            echo "JAVA_HOME=$JAVA_HOME_8_X64" >> $GITHUB_ENV
-          fi
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 5.6.4
+          echo "Downloading Gradle 5.6.4 from Tencent Mirror..."
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 15 -o gradle-5.6.4-bin.zip https://mirrors.cloud.tencent.com/gradle/gradle-5.6.4-bin.zip
+          echo "Verifying downloaded file..."
+          [ -s gradle-5.6.4-bin.zip ] || { echo "Download failed: file is empty"; exit 1; }
+          unzip -q gradle-5.6.4-bin.zip
+          echo "$PWD/gradle-5.6.4/bin" >> $GITHUB_PATH
 
 
 
-      - name: Build Library AAR (Release)
-        run: gradle :uikit:assembleRelease --no-daemon --stacktrace
 
-      - name: Build Demo APK (Debug)
-        run: gradle :app:assembleDebug --no-daemon --stacktrace
+      - name: Setup Gradle 5.6.4 (Mirror)
+        run: |
+          echo "Downloading Gradle 5.6.4 from Tencent Mirror..."
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 15 -o gradle-5.6.4-bin.zip https://mirrors.cloud.tencent.com/gradle/gradle-5.6.4-bin.zip
+          echo "Verifying downloaded file..."
+          [ -s gradle-5.6.4-bin.zip ] || { echo "Download failed: file is empty"; exit 1; }
+          unzip -q gradle-5.6.4-bin.zip
+          echo "$PWD/gradle-5.6.4/bin" >> $GITHUB_PATH
 
-      - name: Upload AAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: uikit-aar
-          path: uikit/build/outputs/aar/*.aar
 
       - name: Upload Demo APK
         uses: actions/upload-artifact@v4
