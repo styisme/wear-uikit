@@ -5,19 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.CompoundButton;
 
-import org.uikit.UikitColor;
-import org.uikit.UikitConfig;
-import org.uikit.UikitSwitch;
-import org.uikit.UikitTheme;
-import org.uikit.UikitUi;
-import org.uikit.WearHardwareUtils;
+import org.uikit.*;
 
 public class DemoActivity extends Activity {
 
@@ -45,76 +38,75 @@ public class DemoActivity extends Activity {
         root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
 
         TextView title = new TextView(this);
-        title.setText("Uikit Demo");
+        title.setText("Uikit Features");
         title.setTextSize(22);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(UikitColor.getAccentColor(this, dark));
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleLp.topMargin = dp(16);
-        titleLp.bottomMargin = dp(16);
+        titleLp.topMargin = UikitScreenUtils.dp2px(this, 16);
+        titleLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
         title.setLayoutParams(titleLp);
         root.addView(title);
 
-        addSwitch(root, "Dark Mode", dark, new OnChecked() {
-            public void onChecked(boolean v) {
-                UikitConfig.setThemeMode(DemoActivity.this, v ? UikitConfig.THEME_DARK : UikitConfig.THEME_LIGHT);
-                recreate();
-            }
-        });
+        // --- 1. 环形进度条 ---
+        final UikitProgressRing ring = new UikitProgressRing(this);
+        LinearLayout.LayoutParams ringLp = new LinearLayout.LayoutParams(
+                UikitScreenUtils.dp2px(this, 80), UikitScreenUtils.dp2px(this, 80));
+        ringLp.gravity = Gravity.CENTER_HORIZONTAL;
+        ringLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        ring.setLayoutParams(ringLp);
+        root.addView(ring);
         
-        addSwitch(root, "Dynamic Color (API31+)", UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
-            public void onChecked(boolean v) {
-                UikitConfig.setDynamicColorEnabled(DemoActivity.this, v);
-                recreate();
-            }
-        });
-        
-        addSwitch(root, "Low Performance", UikitConfig.isLowPerf(this), new OnChecked() {
-            public void onChecked(boolean v) {
-                UikitConfig.setLowPerf(DemoActivity.this, v);
+        ring.setProgress(0.65f);
+        ring.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ring.setProgress((float) Math.random());
             }
         });
 
+        // --- 2. 骨架屏 ---
+        UikitSkeleton skeleton = new UikitSkeleton(this);
+        LinearLayout.LayoutParams skLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 48));
+        skLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        skLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
+        skLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
+        skeleton.setLayoutParams(skLp);
+        root.addView(skeleton);
+
+        // --- 3. 工具按钮 ---
+        addBtn(root, "Show Toast", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitToast.show(DemoActivity.this, "Hello Watch!");
+            }
+        });
+
+        addBtn(root, "Show Bottom Sheet", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitEmptyView empty = new UikitEmptyView(DemoActivity.this);
+                new UikitBottomSheet(DemoActivity.this, "Options", empty).show();
+            }
+        });
+
+        addBtn(root, "Open Sub Menu", new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
+            }
+        });
+
+        // --- 4. 开关控制 ---
         addSwitch(root, "Force Round Screen", UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
                 recreate();
             }
         });
-
-        addButton(root, "Show List", new View.OnClickListener() {
-            public void onClick(View v) {
-                UikitUi.showList(DemoActivity.this, "Choose", new String[]{"One","Two","Three"},
-                    new UikitUi.OnItemSelectListener() {
-                        public void onItemSelect(int p) {
-                            UikitUi.showConfirm(DemoActivity.this, "Picked", "You chose #" + (p+1), null).show();
-                        }
-                    }).show();
-            }
-        });
         
-        addButton(root, "Show Input", new View.OnClickListener() {
-            public void onClick(View v) {
-                UikitUi.showInput(DemoActivity.this, "Input", "", new UikitUi.OnInputListener() {
-                    public void onInput(String s) {
-                        UikitUi.showConfirm(DemoActivity.this, "Echo", s, null).show();
-                    }
-                }).show();
-            }
-        });
-        
-        addButton(root, "Vibrate", new View.OnClickListener() {
-            public void onClick(View v) {
-                WearHardwareUtils.vibrate(DemoActivity.this, WearHardwareUtils.HAPTIC_SUCCESS);
-                Toast.makeText(DemoActivity.this, "Vibrate", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // 新增：跳转到二级菜单
-        addButton(root, "Open Sub Menu", new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
+        addSwitch(root, "Dark Mode", dark, new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setThemeMode(DemoActivity.this, v ? UikitConfig.THEME_DARK : UikitConfig.THEME_LIGHT);
+                recreate();
             }
         });
     }
@@ -125,13 +117,13 @@ public class DemoActivity extends Activity {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(16), dp(12), dp(16), dp(12));
+        row.setPadding(UikitScreenUtils.dp2px(this,16), UikitScreenUtils.dp2px(this,12), UikitScreenUtils.dp2px(this,16), UikitScreenUtils.dp2px(this,12));
         row.setBackground(UikitUi.getPillBackground(this));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.bottomMargin = dp(12);
-        lp.leftMargin = dp(16);
-        lp.rightMargin = dp(16);
+        lp.bottomMargin = UikitScreenUtils.dp2px(this,12);
+        lp.leftMargin = UikitScreenUtils.dp2px(this,16);
+        lp.rightMargin = UikitScreenUtils.dp2px(this,16);
         row.setLayoutParams(lp);
         
         TextView tv = new TextView(this);
@@ -142,7 +134,7 @@ public class DemoActivity extends Activity {
         row.addView(tv);
         
         UikitSwitch sw = new UikitSwitch(this);
-        sw.setLayoutParams(new LinearLayout.LayoutParams(dp(44), dp(26)));
+        sw.setLayoutParams(new LinearLayout.LayoutParams(UikitScreenUtils.dp2px(this,44), UikitScreenUtils.dp2px(this,26)));
         sw.setChecked(checked);
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton b, boolean c) { cb.onChecked(c); }
@@ -151,32 +143,18 @@ public class DemoActivity extends Activity {
         root.addView(row);
     }
 
-    private void addButton(LinearLayout root, String label, View.OnClickListener l) {
-        Button b = new Button(this);
+    private void addBtn(LinearLayout root, String label, View.OnClickListener l) {
+        UikitButton b = new UikitButton(this);
         b.setText(label);
-        b.setAllCaps(false);
-        b.setTextSize(16);
-        b.setMinHeight(0);
-        b.setPadding(0, 0, 0, 0);
-        b.setBackground(null);
-        
-        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
-        bg.setCornerRadius(dp(32));
-        bg.setColor(UikitColor.getPrimaryColor(this));
-        b.setBackground(bg);
-        b.setTextColor(UikitColor.getOnPrimaryColor(this));
-
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
-        lp.bottomMargin = dp(12);
-        lp.leftMargin = dp(16);
-        lp.rightMargin = dp(16);
+                LinearLayout.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this,48));
+        lp.bottomMargin = UikitScreenUtils.dp2px(this,12);
+        lp.leftMargin = UikitScreenUtils.dp2px(this,16);
+        lp.rightMargin = UikitScreenUtils.dp2px(this,16);
         b.setLayoutParams(lp);
         b.setOnClickListener(l);
         root.addView(b);
     }
-
-    private int dp(int v) { return (int)(v * getResources().getDisplayMetrics().density); }
 
     @Override
     public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
