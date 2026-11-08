@@ -1,4 +1,4 @@
-name: Build Uikit
+name: Build & Release Uikit
 
 on:
   push:
@@ -15,60 +15,78 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup Gradle 5.6.4 (Mirror)
+      # 1. 初始化 Android SDK (用 JDK 17 跑 sdkmanager)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-30 build-tools;30.0.3 platform-tools'
+
+      # 2. 切换回专属的 JDK 8
+      - name: Set up JDK 8 Zulu
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '8'
+          java-package: jdk
+
+      - name: Point JAVA_HOME to JDK 8
         run: |
-          echo "Downloading Gradle 5.6.4 from Tencent Mirror..."
+          if [ -n "$JAVA_HOME_8_X64" ]; then
+            echo "JAVA_HOME=$JAVA_HOME_8_X64" >> $GITHUB_ENV
+          fi
+
+      # 3. 极速下载 Gradle (国内镜像 + 防卡死 + 强制覆盖)
+      - name: Setup Gradle 5.6.4
+        run: |
+          echo "Downloading Gradle 5.6.4..."
           curl -fL --retry 3 --retry-delay 2 --connect-timeout 15 -o gradle-5.6.4-bin.zip https://mirrors.cloud.tencent.com/gradle/gradle-5.6.4-bin.zip
-          echo "Verifying downloaded file..."
-          [ -s gradle-5.6.4-bin.zip ] || { echo "Download failed: file is empty"; exit 1; }
+          [ -s gradle-5.6.4-bin.zip ] || { echo "Download failed"; exit 1; }
           unzip -qo gradle-5.6.4-bin.zip
           echo "$PWD/gradle-5.6.4/bin" >> $GITHUB_PATH
 
+      # 4. 一步到位编译出 AAR 和 APK
+      - name: Build Library & Demo
+        run: gradle :uikit:assembleRelease :app:assembleDebug --no-daemon --stacktrace
 
-
-
-      - name: Setup Gradle 5.6.4 (Mirror)
+      # 5. 暴力全盘抓取产物，绝对不漏
+      - name: Collect Artifacts
         run: |
-          echo "Downloading Gradle 5.6.4 from Tencent Mirror..."
-          curl -fL --retry 3 --retry-delay 2 --connect-timeout 15 -o gradle-5.6.4-bin.zip https://mirrors.cloud.tencent.com/gradle/gradle-5.6.4-bin.zip
-          echo "Verifying downloaded file..."
-          [ -s gradle-5.6.4-bin.zip ] || { echo "Download failed: file is empty"; exit 1; }
-          unzip -qo gradle-5.6.4-bin.zip
-          echo "$PWD/gradle-5.6.4/bin" >> $GITHUB_PATH
+          mkdir -p final_artifacts
+          find . -name "*.aar" -not -path "*/tmp/*" -exec cp {} final_artifacts/ \;
+          find . -name "*.apk" -not -path "*/tmp/*" -exec cp {} final_artifacts/ \;
+          echo "=== Found artifacts: ==="
+          ls -la final_artifacts/
 
-
-      - name: Upload Demo APK
+      # 6. 上传
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: uikit-demo-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: uikit-builds
+          path: final_artifacts/*
+          if-no-files-found: error
 
-      - name: Upload Build Log (on failure)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log
-          path: "**/build/outputs/logs/*.txt"
-
+  # 自动发版任务 (仅当推送 v* tag 时触发)
   release:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Download AAR
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: uikit-aar
-          path: ./release_files
-
-      - name: Download Demo APK
-        uses: actions/download-artifact@v4
-        with:
-          name: uikit-demo-apk
+          name: uikit-builds
           path: ./release_files
 
       - name: Create GitHub Release
