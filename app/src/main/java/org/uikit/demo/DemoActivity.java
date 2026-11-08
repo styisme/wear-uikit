@@ -14,6 +14,16 @@ import org.uikit.*;
 
 public class DemoActivity extends Activity {
 
+    // 预设几种好看的 MD3 风格颜色
+    private final String[] colorNames = {"Default Green", "Ocean Blue", "Sunset Red", "Deep Purple", "Cyber Yellow"};
+    private final int[] colorValues = {
+            0, // 0 表示清除自定义颜色
+            0xFF1976D2, 
+            0xFFD32F2F, 
+            0xFF7B1FA2, 
+            0xFFFBC02D  
+    };
+
     @Override
     protected void attachBaseContext(android.content.Context newBase) {
         super.attachBaseContext(UikitUi.wrapScale(newBase));
@@ -71,8 +81,26 @@ public class DemoActivity extends Activity {
         skeleton.setLayoutParams(skLp);
         root.addView(skeleton);
 
-        // ================= 2. 功能按钮区 =================
-        addBtn(root, "Show List", new View.OnClickListener() {
+        // ================= 2. 对话框与列表测试 =================
+        addBtn(root, "Change Theme Color", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitUi.showList(DemoActivity.this, "Pick Color", colorNames,
+                    new UikitUi.OnItemSelectListener() {
+                        public void onItemSelect(int p) {
+                            if (colorValues[p] == 0) {
+                                UikitConfig.clearCustomColors(DemoActivity.this);
+                            } else {
+                                UikitConfig.setCustomPrimaryColor(DemoActivity.this, colorValues[p]);
+                                UikitConfig.setCustomAccentColor(DemoActivity.this, 
+                                        UikitColorMixer.blend(colorValues[p], 0xFFFFFFFF, 0.3f));
+                            }
+                            recreate();
+                        }
+                    }).show();
+            }
+        });
+
+        addBtn(root, "Show List Dialog", new View.OnClickListener() {
             public void onClick(View v) {
                 UikitUi.showList(DemoActivity.this, "Choose", new String[]{"One","Two","Three"},
                     new UikitUi.OnItemSelectListener() {
@@ -83,6 +111,23 @@ public class DemoActivity extends Activity {
             }
         });
 
+        addBtn(root, "Show Input Dialog", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitUi.showInput(DemoActivity.this, "Input", "", new UikitUi.OnInputListener() {
+                    public void onInput(String s) {
+                        UikitUi.showConfirm(DemoActivity.this, "Echo", s, null).show();
+                    }
+                }).show();
+            }
+        });
+
+        // ================= 3. 弹窗与硬件测试 =================
+        addBtn(root, "Show Toast", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitToast.show(DemoActivity.this, "Hello Watch!");
+            }
+        });
+
         addBtn(root, "Show Bottom Sheet", new View.OnClickListener() {
             public void onClick(View v) {
                 UikitEmptyView empty = new UikitEmptyView(DemoActivity.this);
@@ -90,37 +135,21 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // --- 新增：颜色切换测试 ---
-        addBtn(root, "Set Custom Blue", new View.OnClickListener() {
+        addBtn(root, "Vibrate", new View.OnClickListener() {
             public void onClick(View v) {
-                UikitConfig.setCustomPrimaryColor(DemoActivity.this, 0xFF1976D2); // 蓝色
-                UikitConfig.setCustomAccentColor(DemoActivity.this, 0xFF64B5F6);
-                recreate();
-            }
-        });
-        
-        addBtn(root, "Set Custom Red", new View.OnClickListener() {
-            public void onClick(View v) {
-                UikitConfig.setCustomPrimaryColor(DemoActivity.this, 0xFFD32F2F); // 红色
-                UikitConfig.setCustomAccentColor(DemoActivity.this, 0xFFEF5350);
-                recreate();
+                WearHardwareUtils.vibrate(DemoActivity.this, WearHardwareUtils.HAPTIC_SUCCESS);
+                UikitToast.show(DemoActivity.this, "Vibrate");
             }
         });
 
-        addBtn(root, "Reset Default Color", new View.OnClickListener() {
-            public void onClick(View v) {
-                UikitConfig.clearCustomColors(DemoActivity.this);
-                recreate();
-            }
-        });
-
+        // ================= 4. 页面跳转 =================
         addBtn(root, "Open Sub Menu", new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
             }
         });
 
-        // ================= 3. 设置开关区 =================
+        // ================= 5. 设置开关区 =================
         addSwitch(root, "Dark Mode", dark, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setThemeMode(DemoActivity.this, v ? UikitConfig.THEME_DARK : UikitConfig.THEME_LIGHT);
@@ -132,6 +161,12 @@ public class DemoActivity extends Activity {
             public void onChecked(boolean v) {
                 UikitConfig.setDynamicColorEnabled(DemoActivity.this, v);
                 recreate();
+            }
+        });
+
+        addSwitch(root, "Low Performance", UikitConfig.isLowPerf(this), new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setLowPerf(DemoActivity.this, v);
             }
         });
 
