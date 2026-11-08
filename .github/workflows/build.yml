@@ -43,9 +43,12 @@ jobs:
 
       - name: Setup Gradle 5.6.4
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-5.6.4-bin.zip
+          echo "正在下载 Gradle 5.6.4..."
+          curl -L --retry 3 --retry-delay 2 --connect-timeout 15 -o gradle-5.6.4-bin.zip https://services.gradle.org/distributions/gradle-5.6.4-bin.zip
+          echo "下载完成，正在解压..."
           unzip -q gradle-5.6.4-bin.zip
           echo "$PWD/gradle-5.6.4/bin" >> $GITHUB_PATH
+
 
       - name: Build Library AAR (Release)
         run: gradle :uikit:assembleRelease --no-daemon --stacktrace

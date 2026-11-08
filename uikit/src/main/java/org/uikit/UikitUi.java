@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.Gravity;
@@ -109,6 +110,7 @@ public final class UikitUi {
         root.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(250)
             .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
     }
+    
     private static void setupWindow(Context ctx, Dialog d) {
         Window w = d.getWindow();
         if (w != null) {
@@ -120,18 +122,56 @@ public final class UikitUi {
             w.setAttributes(lp);
         }
     }
+
+    // ====== 修复核心：全局弹窗样式动态化 ======
     private static void applyDialogStyle(Context ctx, Dialog d) {
         boolean dark = UikitTheme.isDarkMode(ctx);
+        int density = (int) ctx.getResources().getDisplayMetrics().density;
+        
+        // 1. 背景
         View root = d.findViewById(R.id.dlg_root);
         if (root != null) {
             GradientDrawable bg = new GradientDrawable();
             bg.setColor(dark ? 0xFF1A1A1A : 0xFFFFFFFF);
-            bg.setCornerRadius(36 * ctx.getResources().getDisplayMetrics().density);
+            bg.setCornerRadius(36 * density);
             root.setBackground(bg);
         }
-        TextView t = (TextView) d.findViewById(R.id.dlg_title);
-        if (t != null) t.setTextColor(dark ? 0xFFFFFFFF : 0xFF1C1B1F);
+        
+        // 2. 标题
+        TextView title = (TextView) d.findViewById(R.id.dlg_title);
+        if (title != null) title.setTextColor(dark ? 0xFFFFFFFF : 0xFF1C1B1F);
+        
+        // 3. 输入框 (修复白底黑框问题)
+        EditText et = (EditText) d.findViewById(R.id.dlg_input);
+        if (et != null) {
+            GradientDrawable inputBg = new GradientDrawable();
+            inputBg.setCornerRadius(16 * density);
+            inputBg.setColor(dark ? 0xFF2C2C2E : 0xFFF0F0F0);
+            et.setBackground(inputBg);
+            et.setTextColor(dark ? 0xFFFFFFFF : 0xFF000000);
+        }
+        
+        // 4. 按钮 (跟随动态取色)
+        TextView btnPos = (TextView) d.findViewById(R.id.dlg_btn_positive);
+        TextView btnNeg = (TextView) d.findViewById(R.id.dlg_btn_negative);
+        
+        if (btnPos != null) {
+            GradientDrawable posBg = new GradientDrawable();
+            posBg.setShape(GradientDrawable.OVAL);
+            posBg.setColor(UikitColor.getPrimaryColor(ctx)); // 动态主色
+            btnPos.setBackground(posBg);
+            btnPos.setTextColor(UikitColor.getOnPrimaryColor(ctx)); // 自动黑白字
+        }
+        
+        if (btnNeg != null) {
+            GradientDrawable negBg = new GradientDrawable();
+            negBg.setShape(GradientDrawable.OVAL);
+            negBg.setColor(dark ? 0xFF2C2C2E : 0xFFE0E0E0);
+            btnNeg.setBackground(negBg);
+            btnNeg.setTextColor(dark ? 0xFFFFFFFF : 0xFF666666);
+        }
     }
+
     public static Dialog createBaseDialog(Context ctx, String title, View content,
                                           String positive, final DialogInterface.OnClickListener posL,
                                           String negative, final DialogInterface.OnClickListener negL) {
@@ -140,11 +180,14 @@ public final class UikitUi {
         d.setContentView(R.layout.dialog_uikit_base);
         setupWindow(ctx, d);
         applyDialogStyle(ctx, d);
+
         ((TextView) d.findViewById(R.id.dlg_title)).setText(title);
         LinearLayout c = (LinearLayout) d.findViewById(R.id.dlg_content_container);
         if (content != null) c.addView(content);
+        
         View bp = d.findViewById(R.id.dlg_btn_positive);
         View bn = d.findViewById(R.id.dlg_btn_negative);
+        
         if (positive != null) {
             bp.setVisibility(View.VISIBLE);
             bp.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +196,7 @@ public final class UikitUi {
                 }
             });
         } else bp.setVisibility(View.GONE);
+        
         if (negative != null) {
             bn.setVisibility(View.VISIBLE);
             bn.setOnClickListener(new View.OnClickListener() {
@@ -161,23 +205,27 @@ public final class UikitUi {
                 }
             });
         } else bn.setVisibility(View.GONE);
+        
         return d;
     }
+
     public static Dialog showList(Context ctx, String title, String[] items, final OnItemSelectListener l) {
         final Dialog d = new Dialog(ctx);
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
         d.setContentView(R.layout.dialog_uikit_list);
         setupWindow(ctx, d);
         applyDialogStyle(ctx, d);
+        
         boolean isDark = UikitTheme.isDarkMode(ctx);
         ((TextView) d.findViewById(R.id.dlg_title)).setText(title);
         LinearLayout c = (LinearLayout) d.findViewById(R.id.dlg_list_container);
         c.removeAllViews();
+        
         for (int i = 0; i < items.length; i++) {
             final int idx = i;
             TextView tv = new TextView(ctx);
             tv.setText(items[i]);
-            tv.setTextSize(15);
+            tv.setTextSize(16);
             tv.setPadding(16, 16, 16, 16);
             tv.setTextColor(isDark ? 0xFFE0E0E0 : 0xFF333333);
             tv.setGravity(Gravity.CENTER);
@@ -197,15 +245,18 @@ public final class UikitUi {
         });
         return d;
     }
+
     public static Dialog showInput(Context ctx, String title, String def, final OnInputListener l) {
         final Dialog d = new Dialog(ctx);
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
         d.setContentView(R.layout.dialog_uikit_input);
         setupWindow(ctx, d);
-        applyDialogStyle(ctx, d);
+        applyDialogStyle(ctx, d); // 应用动态样式
+        
         ((TextView) d.findViewById(R.id.dlg_title)).setText(title);
         final EditText et = (EditText) d.findViewById(R.id.dlg_input);
         et.setText(def);
+        
         d.findViewById(R.id.dlg_btn_negative).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { d.dismiss(); }
         });
@@ -225,10 +276,11 @@ public final class UikitUi {
         });
         return d;
     }
+
     public static Dialog showConfirm(Context ctx, String title, String msg, final DialogInterface.OnClickListener pos) {
         TextView tv = new TextView(ctx);
         tv.setText(msg);
-        tv.setTextSize(14);
+        tv.setTextSize(15);
         tv.setTextColor(UikitTheme.isDarkMode(ctx) ? 0xFFE0E0E0 : 0xFF49454F);
         tv.setGravity(Gravity.CENTER);
         tv.setPadding(16, 8, 16, 8);
@@ -236,6 +288,7 @@ public final class UikitUi {
                 ctx.getString(R.string.uikit_ok), pos,
                 ctx.getString(R.string.uikit_cancel), null);
     }
+
     private static float sStartX = 0, sStartY = 0;
     private static boolean sIsSwiping = false;
     public static boolean handleSwipeBack(final Activity a, android.view.MotionEvent ev) {
