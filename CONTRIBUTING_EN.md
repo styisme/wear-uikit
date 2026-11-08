@@ -20,11 +20,10 @@ gradle :app:assembleDebug
 ```
 <type>(<scope>): <subject>
 ```
-
 Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `ci`.
 Common scopes: `ui`, `color`, `theme`, `widget`, `wear`.
 
-**Important**: Versioning relies on `CHANGELOG.md`. Tag with the same version.
+**Important**: Versioning relies on `CHANGELOG.md`.
 
 ## Troubleshooting
 
@@ -32,7 +31,7 @@ Common scopes: `ui`, `color`, `theme`, `widget`, `wear`.
 A: The host `<application>` theme must be `Theme.DeviceDefault.NoActionBar`.
 
 **Q: Bottom sheet cannot be dismissed?**
-A: It supports clicking outside, tapping the `Close` button, dragging down, and the back button.
+A: Supports clicking outside, `Close` button, dragging down, and back button.
 
 **Q: CI release job returns 403?**
 A: Enable **Read and write permissions** under Settings → Actions → General.
