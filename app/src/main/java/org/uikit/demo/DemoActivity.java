@@ -34,13 +34,12 @@ public class DemoActivity extends Activity {
         ScrollView scroll = new ScrollView(this);
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        // 不再手动设置 padding，交由 applyRoundPadding 处理
         scroll.addView(root);
         setContentView(scroll);
 
-        // 1. 应用圆盘边距（如果开启了圆盘模式，左右会预留 24dp）
+        // 1. 应用圆盘边距
         UikitUi.applyRoundPadding(this, root);
-        // 2. 开启 3D 滚轮特效（仅圆盘模式生效，滑动时边缘卡片会缩放透明）
+        // 2. 开启 3D 滚轮特效
         UikitUi.setupWheelScroll(scroll, root);
 
         boolean dark = UikitTheme.isDarkMode(this);
@@ -51,6 +50,12 @@ public class DemoActivity extends Activity {
         title.setTextSize(22);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(UikitColor.getAccentColor(this, dark));
+        // 给标题加点上下边距
+        LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        titleLp.topMargin = dp(16);
+        titleLp.bottomMargin = dp(16);
+        title.setLayoutParams(titleLp);
         root.addView(title);
 
         addSwitch(root, "Dark Mode", dark, new OnChecked() {
@@ -73,7 +78,6 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // 新增：强制圆盘模式开关
         addSwitch(root, "Force Round Screen", UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
@@ -120,9 +124,9 @@ public class DemoActivity extends Activity {
         row.setBackground(UikitUi.getPillBackground(this));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.bottomMargin = dp(8);
-        lp.leftMargin = dp(8);
-        lp.rightMargin = dp(8);
+        lp.bottomMargin = dp(12);
+        lp.leftMargin = dp(16);
+        lp.rightMargin = dp(16);
         row.setLayoutParams(lp);
         
         TextView tv = new TextView(this);
@@ -146,11 +150,23 @@ public class DemoActivity extends Activity {
         Button b = new Button(this);
         b.setText(label);
         b.setAllCaps(false);
+        b.setTextSize(16);
+        b.setMinHeight(0);
+        b.setPadding(0, 0, 0, 0);
+
+        // 【修复】移除原生灰色方块背景，改为动态主题色胶囊按钮
+        b.setBackground(null);
+        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+        bg.setCornerRadius(dp(32));
+        bg.setColor(UikitColor.getPrimaryColor(this)); // 跟随动态取色或默认绿
+        b.setBackground(bg);
+        b.setTextColor(UikitColor.getOnPrimaryColor(this)); // 自动计算白字或黑字
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
-        lp.bottomMargin = dp(8);
-        lp.leftMargin = dp(8);
-        lp.rightMargin = dp(8);
+        lp.bottomMargin = dp(12);
+        lp.leftMargin = dp(16);
+        lp.rightMargin = dp(16);
         b.setLayoutParams(lp);
         b.setOnClickListener(l);
         root.addView(b);
