@@ -34,10 +34,14 @@ public class DemoActivity extends Activity {
         ScrollView scroll = new ScrollView(this);
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(16), dp(16), dp(16), dp(16));
+        // 不再手动设置 padding，交由 applyRoundPadding 处理
         scroll.addView(root);
         setContentView(scroll);
+
+        // 1. 应用圆盘边距（如果开启了圆盘模式，左右会预留 24dp）
         UikitUi.applyRoundPadding(this, root);
+        // 2. 开启 3D 滚轮特效（仅圆盘模式生效，滑动时边缘卡片会缩放透明）
+        UikitUi.setupWheelScroll(scroll, root);
 
         boolean dark = UikitTheme.isDarkMode(this);
         root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
@@ -55,17 +59,28 @@ public class DemoActivity extends Activity {
                 recreate();
             }
         });
+        
         addSwitch(root, "Dynamic Color (API31+)", UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setDynamicColorEnabled(DemoActivity.this, v);
                 recreate();
             }
         });
+        
         addSwitch(root, "Low Performance", UikitConfig.isLowPerf(this), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setLowPerf(DemoActivity.this, v);
             }
         });
+
+        // 新增：强制圆盘模式开关
+        addSwitch(root, "Force Round Screen", UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
+                recreate();
+            }
+        });
+
         addButton(root, "Show List", new View.OnClickListener() {
             public void onClick(View v) {
                 UikitUi.showList(DemoActivity.this, "Choose", new String[]{"One","Two","Three"},
@@ -76,6 +91,7 @@ public class DemoActivity extends Activity {
                     }).show();
             }
         });
+        
         addButton(root, "Show Input", new View.OnClickListener() {
             public void onClick(View v) {
                 UikitUi.showInput(DemoActivity.this, "Input", "", new UikitUi.OnInputListener() {
@@ -85,6 +101,7 @@ public class DemoActivity extends Activity {
                 }).show();
             }
         });
+        
         addButton(root, "Vibrate", new View.OnClickListener() {
             public void onClick(View v) {
                 WearHardwareUtils.vibrate(DemoActivity.this, WearHardwareUtils.HAPTIC_SUCCESS);
@@ -104,13 +121,17 @@ public class DemoActivity extends Activity {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.bottomMargin = dp(8);
+        lp.leftMargin = dp(8);
+        lp.rightMargin = dp(8);
         row.setLayoutParams(lp);
+        
         TextView tv = new TextView(this);
         tv.setText(label);
         tv.setTextSize(16);
         tv.setTextColor(UikitTheme.isDarkMode(this) ? 0xFFE0E0E0 : 0xFF1C1B1F);
         tv.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
         row.addView(tv);
+        
         UikitSwitch sw = new UikitSwitch(this);
         sw.setLayoutParams(new LinearLayout.LayoutParams(dp(44), dp(26)));
         sw.setChecked(checked);
@@ -128,6 +149,8 @@ public class DemoActivity extends Activity {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
         lp.bottomMargin = dp(8);
+        lp.leftMargin = dp(8);
+        lp.rightMargin = dp(8);
         b.setLayoutParams(lp);
         b.setOnClickListener(l);
         root.addView(b);
