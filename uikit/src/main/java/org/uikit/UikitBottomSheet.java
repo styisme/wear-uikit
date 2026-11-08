@@ -1,4 +1,5 @@
 package org.uikit;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.view.Gravity;
@@ -7,35 +8,53 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 public class UikitBottomSheet extends Dialog {
+
     public UikitBottomSheet(Context ctx, String title, View content) {
         super(ctx);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
+        // 1. 允许点击外部区域关闭
+        setCanceledOnTouchOutside(true);
+        
         boolean dark = UikitTheme.isDarkMode(ctx);
         
         LinearLayout root = new LinearLayout(ctx);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(24, 24, 24, 48);
         
+        // 2. 加大底部 padding (64dp) 防止在圆屏底部被切割
+        int padH = UikitScreenUtils.dp2px(ctx, 24);
+        int padTop = UikitScreenUtils.dp2px(ctx, 16);
+        int padBottom = UikitScreenUtils.dp2px(ctx, 64);
+        root.setPadding(padH, padTop, padH, padBottom);
+        
+        // 3. 圆角背景（只设顶部圆角）
         android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
         bg.setColor(dark ? 0xFF1E1E1E : 0xFFFFFFFF);
         bg.setCornerRadii(new float[]{48, 48, 48, 48, 0, 0, 0, 0});
         root.setBackground(bg);
         
-        // 顶部拖动把手
+        // 4. 顶部拖动把手（支持点击关闭）
         View handle = new View(ctx);
-        handle.setBackgroundColor(dark ? 0xFF3E3E3E : 0xFFE0E0E0);
-        LinearLayout.LayoutParams handleLp = new LinearLayout.LayoutParams(UikitScreenUtils.dp2px(ctx, 32), UikitScreenUtils.dp2px(ctx, 4));
+        LinearLayout.LayoutParams handleLp = new LinearLayout.LayoutParams(
+                UikitScreenUtils.dp2px(ctx, 32), UikitScreenUtils.dp2px(ctx, 4));
         handleLp.gravity = Gravity.CENTER_HORIZONTAL;
-        handleLp.bottomMargin = 16;
+        handleLp.bottomMargin = UikitScreenUtils.dp2px(ctx, 16);
         handle.setLayoutParams(handleLp);
-        handle.setBackgroundColor(dark ? 0xFF3E3E3E : 0xFFE0E0E0);
+        
         android.graphics.drawable.GradientDrawable hBg = new android.graphics.drawable.GradientDrawable();
-        hBg.setCornerRadius(4);
-        hBg.setColor(dark ? 0xFF3E3E3E : 0xFFE0E0E0);
+        hBg.setCornerRadius(UikitScreenUtils.dp2px(ctx, 2));
+        hBg.setColor(dark ? 0xFF555555 : 0xFFDDDDDD);
         handle.setBackground(hBg);
+        
+        // 点击把手直接关闭
+        handle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) { dismiss(); }
+        });
         root.addView(handle);
         
+        // 5. 标题
         if (title != null) {
             TextView tvTitle = new TextView(ctx);
             tvTitle.setText(title);
@@ -46,7 +65,11 @@ public class UikitBottomSheet extends Dialog {
             root.addView(tvTitle);
         }
         
-        if (content != null) root.addView(content);
+        // 6. 内容
+        if (content != null) {
+            root.addView(content);
+        }
+        
         setContentView(root);
         
         Window w = getWindow();
