@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -13,6 +14,15 @@ import android.widget.CompoundButton;
 import org.uikit.*;
 
 public class DemoActivity extends Activity {
+
+    private final String[] colorNames = {"Default Green", "Ocean Blue", "Sunset Red", "Deep Purple", "Cyber Yellow"};
+    private final int[] colorValues = {
+            0, // 0 表示清除自定义颜色
+            0xFF1976D2, 
+            0xFFD32F2F, 
+            0xFF7B1FA2, 
+            0xFFFBC02D  
+    };
 
     @Override
     protected void attachBaseContext(android.content.Context newBase) {
@@ -49,7 +59,7 @@ public class DemoActivity extends Activity {
         title.setLayoutParams(titleLp);
         root.addView(title);
 
-        // ================= 1. 新增组件测试 =================
+        // ================= 1. 视觉组件区 =================
         addCodeTip(root, "UikitListItem (带开关)");
         UikitListItem listItem1 = new UikitListItem(this, "Wi-Fi 传输", "允许局域网发现");
         listItem1.setSwitch(true, new CompoundButton.OnCheckedChangeListener() {
@@ -70,7 +80,7 @@ public class DemoActivity extends Activity {
         addCodeTip(root, "UikitProgressBar");
         UikitProgressBar progressBar = new UikitProgressBar(this);
         progressBar.setProgress(0.7f);
-        LinearLayout.LayoutParams pbLp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 12));
+        LinearLayout.LayoutParams pbLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 12));
         pbLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
         pbLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
         pbLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
@@ -109,7 +119,27 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // ================= 3. 硬件与跳转测试 =================
+        // ================= 3. 颜色与主题测试 =================
+        addCodeTip(root, "UikitConfig.setCustomPrimaryColor()");
+        addBtn(root, "Change Theme Color", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitUi.showList(DemoActivity.this, "Pick Color", colorNames,
+                    new UikitUi.OnItemSelectListener() {
+                        public void onItemSelect(int p) {
+                            if (colorValues[p] == 0) {
+                                UikitConfig.clearCustomColors(DemoActivity.this);
+                            } else {
+                                UikitConfig.setCustomPrimaryColor(DemoActivity.this, colorValues[p]);
+                                UikitConfig.setCustomAccentColor(DemoActivity.this, 
+                                        UikitColorMixer.blend(colorValues[p], 0xFFFFFFFF, 0.3f));
+                            }
+                            recreate();
+                        }
+                    }).show();
+            }
+        });
+
+        // ================= 4. 硬件与跳转测试 =================
         addCodeTip(root, "WearHardwareUtils.vibrate()");
         addBtn(root, "Vibrate", new View.OnClickListener() {
             public void onClick(View v) {
@@ -124,6 +154,67 @@ public class DemoActivity extends Activity {
                 startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
             }
         });
+
+        // ================= 5. 设置开关区 =================
+        addCodeTip(root, "UikitSwitch");
+        addSwitch(root, "Dark Mode", dark, new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setThemeMode(DemoActivity.this, v ? UikitConfig.THEME_DARK : UikitConfig.THEME_LIGHT);
+                recreate();
+            }
+        });
+
+        addSwitch(root, "Dynamic Color", UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setDynamicColorEnabled(DemoActivity.this, v);
+                recreate();
+            }
+        });
+
+        addSwitch(root, "Low Performance", UikitConfig.isLowPerf(this), new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setLowPerf(DemoActivity.this, v);
+            }
+        });
+
+        addSwitch(root, "Force Round Screen", UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
+                recreate();
+            }
+        });
+    }
+
+    private interface OnChecked { void onChecked(boolean v); }
+
+    private void addSwitch(LinearLayout root, String label, boolean checked, final OnChecked cb) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(UikitScreenUtils.dp2px(this,16), UikitScreenUtils.dp2px(this,12), UikitScreenUtils.dp2px(this,16), UikitScreenUtils.dp2px(this,12));
+        row.setBackground(UikitUi.getPillBackground(this));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.bottomMargin = UikitScreenUtils.dp2px(this,12);
+        lp.leftMargin = UikitScreenUtils.dp2px(this,16);
+        lp.rightMargin = UikitScreenUtils.dp2px(this,16);
+        row.setLayoutParams(lp);
+        
+        TextView tv = new TextView(this);
+        tv.setText(label);
+        tv.setTextSize(16);
+        tv.setTextColor(UikitTheme.isDarkMode(this) ? 0xFFE0E0E0 : 0xFF1C1B1F);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        row.addView(tv);
+        
+        UikitSwitch sw = new UikitSwitch(this);
+        sw.setLayoutParams(new LinearLayout.LayoutParams(UikitScreenUtils.dp2px(this,44), UikitScreenUtils.dp2px(this,26)));
+        sw.setChecked(checked);
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton b, boolean c) { cb.onChecked(c); }
+        });
+        row.addView(sw);
+        root.addView(row);
     }
 
     private void addCodeTip(LinearLayout root, String code) {
