@@ -1,0 +1,25 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+    defaultConfig {
+        applicationId "org.uikit.demo"
+        minSdkVersion 10
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+        encoding = "UTF-8"
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation project(':uikit')
+}
