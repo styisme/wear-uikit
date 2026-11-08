@@ -11,6 +11,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
@@ -117,8 +118,21 @@ public final class UikitUi {
             w.setBackgroundDrawableResource(android.R.color.transparent);
             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
             lp.copyFrom(w.getAttributes());
-            lp.width = (int)(ctx.getResources().getDisplayMetrics().widthPixels * 0.9);
-            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            
+            // 判断是否圆屏
+            android.util.DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
+            float ratio = (float) dm.widthPixels / dm.heightPixels;
+            boolean isRound = (ratio >= 0.95f && ratio <= 1.05f);
+            
+            if (isRound) {
+                // 圆屏：宽度缩窄到 75%，避免左右切边
+                lp.width = (int)(dm.widthPixels * 0.75);
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            } else {
+                // 方屏：保持 90%
+                lp.width = (int)(dm.widthPixels * 0.9);
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            }
             w.setAttributes(lp);
         }
     }
@@ -128,20 +142,40 @@ public final class UikitUi {
         boolean dark = UikitTheme.isDarkMode(ctx);
         int density = (int) ctx.getResources().getDisplayMetrics().density;
         
+        android.util.DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
+        float ratio = (float) dm.widthPixels / dm.heightPixels;
+        boolean isRound = (ratio >= 0.95f && ratio <= 1.05f);
+        
         // 1. 背景
         View root = d.findViewById(R.id.dlg_root);
         if (root != null) {
             GradientDrawable bg = new GradientDrawable();
             bg.setColor(dark ? 0xFF1A1A1A : 0xFFFFFFFF);
-            bg.setCornerRadius(36 * density);
+            // 圆屏缩小圆角，避免视觉上太圆
+            bg.setCornerRadius((isRound ? 24 : 36) * density);
             root.setBackground(bg);
+            
+            // 圆屏增加上下 padding 避让
+            if (isRound) {
+                root.setPadding(dp(16, ctx), dp(24, ctx), dp(16, ctx), dp(24, ctx));
+            }
         }
         
-        // 2. 标题
+        // 2. 限制 ScrollView 最大高度 (防止圆屏底部按钮被顶出屏幕)
+        try {
+            ScrollView scroll = (ScrollView) d.findViewById(R.id.dlg_root).findViewById(
+                    ctx.getResources().getIdentifier("dlg_scroll", "id", ctx.getPackageName()));
+            // 由于我们无法直接通过 ID 找到没有命名的 ScrollView，我们遍历 root
+            if (root instanceof ViewGroup) {
+                findAndLimitScrollView((ViewGroup) root, isRound ? 90 : 160, ctx);
+            }
+        } catch (Exception ignored) {}
+        
+        // 3. 标题
         TextView title = (TextView) d.findViewById(R.id.dlg_title);
         if (title != null) title.setTextColor(dark ? 0xFFFFFFFF : 0xFF1C1B1F);
         
-        // 3. 输入框 (修复白底黑框问题)
+        // 4. 输入框
         EditText et = (EditText) d.findViewById(R.id.dlg_input);
         if (et != null) {
             GradientDrawable inputBg = new GradientDrawable();
@@ -151,16 +185,38 @@ public final class UikitUi {
             et.setTextColor(dark ? 0xFFFFFFFF : 0xFF000000);
         }
         
-        // 4. 按钮 (跟随动态取色)
-        TextView btnPos = (TextView) d.findViewById(R.id.dlg_btn_positive);
-        TextView btnNeg = (TextView) d.findViewById(R.id.dlg_btn_negative);
+        // 5. 按钮排版 (圆屏改竖向)
+        View btnPos = d.findViewById(R.id.dlg_btn_positive);
+        View btnNeg = d.findViewById(R.id.dlg_btn_negative);
         
+        if (btnPos != null && btnNeg != null) {
+            View parent = (View) btnPos.getParent();
+            if (parent instanceof LinearLayout) {
+                LinearLayout btnRow = (LinearLayout) parent;
+                if (isRound) {
+                    // 圆屏：竖向排列，按钮居中
+                    btnRow.setOrientation(LinearLayout.VERTICAL);
+                    btnRow.setGravity(Gravity.CENTER);
+                    LinearLayout.LayoutParams lpPos = (LinearLayout.LayoutParams) btnPos.getLayoutParams();
+                    lpPos.topMargin = dp(16, ctx);
+                    btnPos.setLayoutParams(lpPos);
+                } else {
+                    // 方屏：横向排列
+                    btnRow.setOrientation(LinearLayout.HORIZONTAL);
+                    btnRow.setGravity(Gravity.CENTER);
+                    LinearLayout.LayoutParams lpPos = (LinearLayout.LayoutParams) btnPos.getLayoutParams();
+                    lpPos.topMargin = 0;
+                    btnPos.setLayoutParams(lpPos);
+                }
+            }
+        }
+
         if (btnPos != null) {
             GradientDrawable posBg = new GradientDrawable();
             posBg.setShape(GradientDrawable.OVAL);
-            posBg.setColor(UikitColor.getPrimaryColor(ctx)); // 动态主色
+            posBg.setColor(UikitColor.getPrimaryColor(ctx));
             btnPos.setBackground(posBg);
-            btnPos.setTextColor(UikitColor.getOnPrimaryColor(ctx)); // 自动黑白字
+            if (btnPos instanceof TextView) ((TextView) btnPos).setTextColor(UikitColor.getOnPrimaryColor(ctx));
         }
         
         if (btnNeg != null) {
@@ -168,7 +224,19 @@ public final class UikitUi {
             negBg.setShape(GradientDrawable.OVAL);
             negBg.setColor(dark ? 0xFF2C2C2E : 0xFFE0E0E0);
             btnNeg.setBackground(negBg);
-            btnNeg.setTextColor(dark ? 0xFFFFFFFF : 0xFF666666);
+            if (btnNeg instanceof TextView) ((TextView) btnNeg).setTextColor(dark ? 0xFFFFFFFF : 0xFF666666);
+        }
+    }
+    
+    private static void findAndLimitScrollView(ViewGroup group, int maxHeightDp, Context ctx) {
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View child = group.getChildAt(i);
+            if (child instanceof ScrollView) {
+                child.getLayoutParams().height = dp(maxHeightDp, ctx);
+                child.requestLayout();
+            } else if (child instanceof ViewGroup) {
+                findAndLimitScrollView((ViewGroup) child, maxHeightDp, ctx);
+            }
         }
     }
 
