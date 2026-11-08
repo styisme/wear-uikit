@@ -1,0 +1,99 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'CHANGELOG.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 1. 提取版本号并检查是否已存在
+      - name: Extract Version
+        id: get_version
+        run: |
+          # 正则提取类似 ## [1.2.0] 或 ## v1.2.0 的版本号
+          VERSION=$(grep -oP '##\s*\[?v?\K\d+\.\d+\.\d+' CHANGELOG.md | head -1)
+          if [ -z "$VERSION" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION 已存在，跳过发布。"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "发现新版本 v$VERSION，准备发版！"
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      # 2. 准备编译环境
+      - name: Set up JDK 17 (for sdkmanager)
+        if: steps.get_version.outputs.skip == 'false'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        if: steps.get_version.outputs.skip == 'false'
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-30 build-tools;30.0.3 platform-tools'
+
+      - name: Set up JDK 8 Zulu
+        if: steps.get_version.outputs.skip == 'false'
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '8'
+          java-package: jdk
+
+      - name: Point JAVA_HOME to JDK 8
+        if: steps.get_version.outputs.skip == 'false'
+        run: |
+          if [ -n "$JAVA_HOME_8_X64" ]; then
+            echo "JAVA_HOME=$JAVA_HOME_8_X64" >> $GITHUB_ENV
+          fi
+
+      - name: Setup Gradle 5.6.4
+        if: steps.get_version.outputs.skip == 'false'
+        run: |
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 15 -o gradle-5.6.4-bin.zip https://mirrors.cloud.tencent.com/gradle/gradle-5.6.4-bin.zip
+          unzip -qo gradle-5.6.4-bin.zip
+          echo "$PWD/gradle-5.6.4/bin" >> $GITHUB_PATH
+
+      # 3. 编译
+      - name: Build Release
+        if: steps.get_version.outputs.skip == 'false'
+        run: gradle :uikit:assembleRelease :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Collect Artifacts
+        if: steps.get_version.outputs.skip == 'false'
+        run: |
+          mkdir -p release_files
+          find . -name "*.aar" -not -path "*/tmp/*" -exec cp {} release_files/ \;
+          find . -name "*.apk" -not -path "*/tmp/*" -exec cp {} release_files/ \;
+
+      # 4. 创建 Release 并发版
+      - name: Create GitHub Release
+        if: steps.get_version.outputs.skip == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          files: release_files/*
+          generate_release_notes: true
+          overwrite_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
