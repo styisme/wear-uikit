@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Uikit Demo</string>
+    <string name="title_main">Uikit API Playground</string>
+    
+    <string name="api_list_switch">UikitListItem (Switch)</string>
+    <string name="api_list_arrow">UikitListItem (Arrow)</string>
+    <string name="api_progress_bar">UikitProgressBar</string>
+    <string name="api_show_input">UikitUi.showInput()</string>
+    <string name="api_show_list">UikitUi.showList()</string>
+    <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
+    <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
+    <string name="api_vibrate">WearHardwareUtils.vibrate()</string>
+    <string name="api_sub_menu">startActivity(Intent)</string>
+    <string name="api_switch">UikitSwitch</string>
+
+    <string name="label_wifi">Wi-Fi Transfer</string>
+    <string name="sub_wifi">Allow LAN discovery</string>
+    <string name="label_device">About Device</string>
+    <string name="sub_device">Version &amp; Storage</string>
+    
+    <string name="btn_input">Show Input</string>
+    <string name="btn_list">Show List</string>
+    <string name="btn_sheet">Show Bottom Sheet</string>
+    <string name="btn_color">Change Theme Color</string>
+    <string name="btn_vibrate">Vibrate</string>
+    <string name="btn_sub_menu">Open Sub Menu</string>
+    
+    <string name="sw_dark">Dark Mode</string>
+    <string name="sw_dynamic">Dynamic Color</string>
+    <string name="sw_low_perf">Low Performance</string>
+    <string name="sw_round">Force Round Screen</string>
+    <string name="sw_lang">Language (English)</string>
+</resources>

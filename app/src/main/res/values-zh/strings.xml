@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Uikit 测试</string>
+    <string name="title_main">Uikit API 测试大厅</string>
+    
+    <string name="api_list_switch">UikitListItem (带开关)</string>
+    <string name="api_list_arrow">UikitListItem (带箭头)</string>
+    <string name="api_progress_bar">UikitProgressBar</string>
+    <string name="api_show_input">UikitUi.showInput()</string>
+    <string name="api_show_list">UikitUi.showList()</string>
+    <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
+    <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
+    <string name="api_vibrate">WearHardwareUtils.vibrate()</string>
+    <string name="api_sub_menu">startActivity(Intent)</string>
+    <string name="api_switch">UikitSwitch</string>
+
+    <string name="label_wifi">Wi-Fi 传输</string>
+    <string name="sub_wifi">允许局域网发现设备</string>
+    <string name="label_device">关于设备</string>
+    <string name="sub_device">查看版本与存储信息</string>
+    
+    <string name="btn_input">显示输入框</string>
+    <string name="btn_list">显示列表</string>
+    <string name="btn_sheet">显示底部抽屉</string>
+    <string name="btn_color">切换主题颜色</string>
+    <string name="btn_vibrate">震动反馈</string>
+    <string name="btn_sub_menu">打开二级菜单</string>
+    
+    <string name="sw_dark">深色模式</string>
+    <string name="sw_dynamic">动态取色</string>
+    <string name="sw_low_perf">低性能模式</string>
+    <string name="sw_round">强制圆屏</string>
+    <string name="sw_lang">语言 (简体中文)</string>
+</resources>

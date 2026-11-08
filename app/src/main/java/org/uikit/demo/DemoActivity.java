@@ -1,7 +1,9 @@
 package org.uikit.demo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -13,19 +15,25 @@ import android.widget.CompoundButton;
 
 import org.uikit.*;
 
+import java.util.Locale;
+
 public class DemoActivity extends Activity {
 
     private final String[] colorNames = {"Default Green", "Ocean Blue", "Sunset Red", "Deep Purple", "Cyber Yellow"};
     private final int[] colorValues = {
-            0, // 0 表示清除自定义颜色
-            0xFF1976D2, 
-            0xFFD32F2F, 
-            0xFF7B1FA2, 
-            0xFFFBC02D  
+            0, 0xFF1976D2, 0xFFD32F2F, 0xFF7B1FA2, 0xFFFBC02D
     };
 
     @Override
-    protected void attachBaseContext(android.content.Context newBase) {
+    protected void attachBaseContext(Context newBase) {
+        String lang = UikitConfig.getAppLang(newBase);
+        if (!"system".equals(lang)) {
+            Locale locale = new Locale(lang);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.setLocale(locale);
+            newBase = newBase.createConfigurationContext(config);
+        }
         super.attachBaseContext(UikitUi.wrapScale(newBase));
     }
 
@@ -47,8 +55,9 @@ public class DemoActivity extends Activity {
         boolean dark = UikitTheme.isDarkMode(this);
         root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
 
+        // 标题
         TextView title = new TextView(this);
-        title.setText("Uikit API 测试大厅");
+        title.setText(R.string.title_main);
         title.setTextSize(20);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(UikitColor.getAccentColor(this, dark));
@@ -59,25 +68,25 @@ public class DemoActivity extends Activity {
         title.setLayoutParams(titleLp);
         root.addView(title);
 
-        // ================= 1. 视觉组件区 =================
-        addCodeTip(root, "UikitListItem (带开关)");
-        UikitListItem listItem1 = new UikitListItem(this, "Wi-Fi 传输", "允许局域网发现");
+        // ================= 1. 组件区 =================
+        addCodeTip(root, getString(R.string.api_list_switch));
+        UikitListItem listItem1 = new UikitListItem(this, getString(R.string.label_wifi), getString(R.string.sub_wifi));
         listItem1.setSwitch(true, new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton b, boolean c) {}
         });
         addViewWithMargin(root, listItem1);
 
-        addCodeTip(root, "UikitListItem (带箭头)");
-        UikitListItem listItem2 = new UikitListItem(this, "关于设备", "查看版本与存储");
+        addCodeTip(root, getString(R.string.api_list_arrow));
+        UikitListItem listItem2 = new UikitListItem(this, getString(R.string.label_device), getString(R.string.sub_device));
         listItem2.setArrow();
         listItem2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                UikitToast.show(DemoActivity.this, "点击了列表");
+                UikitToast.show(DemoActivity.this, "Clicked");
             }
         });
         addViewWithMargin(root, listItem2);
 
-        addCodeTip(root, "UikitProgressBar");
+        addCodeTip(root, getString(R.string.api_progress_bar));
         UikitProgressBar progressBar = new UikitProgressBar(this);
         progressBar.setProgress(0.7f);
         LinearLayout.LayoutParams pbLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 12));
@@ -87,9 +96,9 @@ public class DemoActivity extends Activity {
         progressBar.setLayoutParams(pbLp);
         root.addView(progressBar);
 
-        // ================= 2. 弹窗与对话框测试 =================
-        addCodeTip(root, "UikitUi.showInput()");
-        addBtn(root, "Show Input", new View.OnClickListener() {
+        // ================= 2. 弹窗与交互 =================
+        addCodeTip(root, getString(R.string.api_show_input));
+        addBtn(root, getString(R.string.btn_input), new View.OnClickListener() {
             public void onClick(View v) {
                 UikitUi.showInput(DemoActivity.this, "Input", "", new UikitUi.OnInputListener() {
                     public void onInput(String s) {
@@ -99,8 +108,8 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addCodeTip(root, "UikitUi.showList()");
-        addBtn(root, "Show List", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_show_list));
+        addBtn(root, getString(R.string.btn_list), new View.OnClickListener() {
             public void onClick(View v) {
                 UikitUi.showList(DemoActivity.this, "Choose", new String[]{"One","Two","Three"},
                     new UikitUi.OnItemSelectListener() {
@@ -111,17 +120,17 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addCodeTip(root, "new UikitBottomSheet().show()");
-        addBtn(root, "Show Bottom Sheet", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_bottom_sheet));
+        addBtn(root, getString(R.string.btn_sheet), new View.OnClickListener() {
             public void onClick(View v) {
                 UikitEmptyView empty = new UikitEmptyView(DemoActivity.this);
                 new UikitBottomSheet(DemoActivity.this, "Options", empty).show();
             }
         });
 
-        // ================= 3. 颜色与主题测试 =================
-        addCodeTip(root, "UikitConfig.setCustomPrimaryColor()");
-        addBtn(root, "Change Theme Color", new View.OnClickListener() {
+        // ================= 3. 颜色与跳转 =================
+        addCodeTip(root, getString(R.string.api_change_color));
+        addBtn(root, getString(R.string.btn_color), new View.OnClickListener() {
             public void onClick(View v) {
                 UikitUi.showList(DemoActivity.this, "Pick Color", colorNames,
                     new UikitUi.OnItemSelectListener() {
@@ -130,8 +139,7 @@ public class DemoActivity extends Activity {
                                 UikitConfig.clearCustomColors(DemoActivity.this);
                             } else {
                                 UikitConfig.setCustomPrimaryColor(DemoActivity.this, colorValues[p]);
-                                UikitConfig.setCustomAccentColor(DemoActivity.this, 
-                                        UikitColorMixer.blend(colorValues[p], 0xFFFFFFFF, 0.3f));
+                                UikitConfig.setCustomAccentColor(DemoActivity.this, UikitColorMixer.blend(colorValues[p], 0xFFFFFFFF, 0.3f));
                             }
                             recreate();
                         }
@@ -139,47 +147,54 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // ================= 4. 硬件与跳转测试 =================
-        addCodeTip(root, "WearHardwareUtils.vibrate()");
-        addBtn(root, "Vibrate", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_vibrate));
+        addBtn(root, getString(R.string.btn_vibrate), new View.OnClickListener() {
             public void onClick(View v) {
                 WearHardwareUtils.vibrate(DemoActivity.this, WearHardwareUtils.HAPTIC_SUCCESS);
                 UikitToast.show(DemoActivity.this, "Vibrate");
             }
         });
 
-        addCodeTip(root, "startActivity(Intent)");
-        addBtn(root, "Open Sub Menu", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_sub_menu));
+        addBtn(root, getString(R.string.btn_sub_menu), new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
             }
         });
 
-        // ================= 5. 设置开关区 =================
-        addCodeTip(root, "UikitSwitch");
-        addSwitch(root, "Dark Mode", dark, new OnChecked() {
+        // ================= 4. 设置开关 =================
+        addCodeTip(root, getString(R.string.api_switch));
+        addSwitch(root, getString(R.string.sw_dark), dark, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setThemeMode(DemoActivity.this, v ? UikitConfig.THEME_DARK : UikitConfig.THEME_LIGHT);
                 recreate();
             }
         });
 
-        addSwitch(root, "Dynamic Color", UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
+        addSwitch(root, getString(R.string.sw_dynamic), UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setDynamicColorEnabled(DemoActivity.this, v);
                 recreate();
             }
         });
 
-        addSwitch(root, "Low Performance", UikitConfig.isLowPerf(this), new OnChecked() {
+        addSwitch(root, getString(R.string.sw_low_perf), UikitConfig.isLowPerf(this), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setLowPerf(DemoActivity.this, v);
             }
         });
 
-        addSwitch(root, "Force Round Screen", UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
+        addSwitch(root, getString(R.string.sw_round), UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
+                recreate();
+            }
+        });
+
+        // 语言切换开关
+        addSwitch(root, getString(R.string.sw_lang), "zh".equals(UikitConfig.getAppLang(this)), new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setAppLang(DemoActivity.this, v ? "zh" : "en");
                 recreate();
             }
         });

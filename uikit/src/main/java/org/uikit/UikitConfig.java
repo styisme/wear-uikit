@@ -23,6 +23,15 @@ public final class UikitConfig {
     public static final int SHAPE_ROUND  = 1;
     public static final int SHAPE_SQUARE = 2;
 
+
+    public static final String KEY_APP_LANG = "uikit_app_lang";
+    public static String getAppLang(Context ctx) {
+        return prefs(ctx).getString(KEY_APP_LANG, "system");
+    }
+    public static void setAppLang(Context ctx, String lang) {
+        prefs(ctx).edit().putString(KEY_APP_LANG, lang).commit();
+    }
+
     private static String sPrefsName = "uikit_prefs";
     private UikitConfig() {}
 
