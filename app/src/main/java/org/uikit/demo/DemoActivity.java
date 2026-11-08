@@ -38,7 +38,7 @@ public class DemoActivity extends Activity {
         root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
 
         TextView title = new TextView(this);
-        title.setText("Uikit Features");
+        title.setText("Uikit Full Demo");
         title.setTextSize(22);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(UikitColor.getAccentColor(this, dark));
@@ -49,7 +49,8 @@ public class DemoActivity extends Activity {
         title.setLayoutParams(titleLp);
         root.addView(title);
 
-        // --- 1. 环形进度条 ---
+        // ================= 1. 视觉组件区 =================
+        // 环形进度条
         final UikitProgressRing ring = new UikitProgressRing(this);
         LinearLayout.LayoutParams ringLp = new LinearLayout.LayoutParams(
                 UikitScreenUtils.dp2px(this, 80), UikitScreenUtils.dp2px(this, 80));
@@ -57,25 +58,43 @@ public class DemoActivity extends Activity {
         ringLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
         ring.setLayoutParams(ringLp);
         root.addView(ring);
-        
         ring.setProgress(0.65f);
         ring.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ring.setProgress((float) Math.random());
-            }
+            public void onClick(View v) { ring.setProgress((float) Math.random()); }
         });
 
-        // --- 2. 骨架屏 ---
+        // 骨架屏
         UikitSkeleton skeleton = new UikitSkeleton(this);
         LinearLayout.LayoutParams skLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 48));
+                LinearLayout.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 40));
         skLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
         skLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
         skLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
         skeleton.setLayoutParams(skLp);
         root.addView(skeleton);
 
-        // --- 3. 工具按钮 ---
+        // ================= 2. 功能按钮区 =================
+        addBtn(root, "Show List", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitUi.showList(DemoActivity.this, "Choose", new String[]{"One","Two","Three"},
+                    new UikitUi.OnItemSelectListener() {
+                        public void onItemSelect(int p) {
+                            UikitUi.showConfirm(DemoActivity.this, "Picked", "You chose #" + (p+1), null).show();
+                        }
+                    }).show();
+            }
+        });
+
+        addBtn(root, "Show Input", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitUi.showInput(DemoActivity.this, "Input", "", new UikitUi.OnInputListener() {
+                    public void onInput(String s) {
+                        UikitUi.showConfirm(DemoActivity.this, "Echo", s, null).show();
+                    }
+                }).show();
+            }
+        });
+
         addBtn(root, "Show Toast", new View.OnClickListener() {
             public void onClick(View v) {
                 UikitToast.show(DemoActivity.this, "Hello Watch!");
@@ -89,23 +108,43 @@ public class DemoActivity extends Activity {
             }
         });
 
+        addBtn(root, "Vibrate", new View.OnClickListener() {
+            public void onClick(View v) {
+                WearHardwareUtils.vibrate(DemoActivity.this, WearHardwareUtils.HAPTIC_SUCCESS);
+                UikitToast.show(DemoActivity.this, "Vibrate");
+            }
+        });
+
         addBtn(root, "Open Sub Menu", new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
             }
         });
 
-        // --- 4. 开关控制 ---
-        addSwitch(root, "Force Round Screen", UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
-            public void onChecked(boolean v) {
-                UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
-                recreate();
-            }
-        });
-        
+        // ================= 3. 设置开关区 =================
         addSwitch(root, "Dark Mode", dark, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setThemeMode(DemoActivity.this, v ? UikitConfig.THEME_DARK : UikitConfig.THEME_LIGHT);
+                recreate();
+            }
+        });
+
+        addSwitch(root, "Dynamic Color (API31+)", UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setDynamicColorEnabled(DemoActivity.this, v);
+                recreate();
+            }
+        });
+
+        addSwitch(root, "Low Performance", UikitConfig.isLowPerf(this), new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setLowPerf(DemoActivity.this, v);
+            }
+        });
+
+        addSwitch(root, "Force Round Screen", UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
+            public void onChecked(boolean v) {
+                UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
                 recreate();
             }
         });
