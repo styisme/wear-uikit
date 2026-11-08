@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.CompoundButton;
 public class UikitListItem extends LinearLayout {
     private TextView tvTitle;
     private TextView tvSubtitle;
