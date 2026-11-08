@@ -1,6 +1,7 @@
 package org.uikit.demo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -37,9 +38,7 @@ public class DemoActivity extends Activity {
         scroll.addView(root);
         setContentView(scroll);
 
-        // 1. 应用圆盘边距
         UikitUi.applyRoundPadding(this, root);
-        // 2. 开启 3D 滚轮特效
         UikitUi.setupWheelScroll(scroll, root);
 
         boolean dark = UikitTheme.isDarkMode(this);
@@ -50,7 +49,6 @@ public class DemoActivity extends Activity {
         title.setTextSize(22);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(UikitColor.getAccentColor(this, dark));
-        // 给标题加点上下边距
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         titleLp.topMargin = dp(16);
@@ -112,6 +110,13 @@ public class DemoActivity extends Activity {
                 Toast.makeText(DemoActivity.this, "Vibrate", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // 新增：跳转到二级菜单
+        addButton(root, "Open Sub Menu", new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
+            }
+        });
     }
 
     private interface OnChecked { void onChecked(boolean v); }
@@ -153,14 +158,13 @@ public class DemoActivity extends Activity {
         b.setTextSize(16);
         b.setMinHeight(0);
         b.setPadding(0, 0, 0, 0);
-
-        // 【修复】移除原生灰色方块背景，改为动态主题色胶囊按钮
         b.setBackground(null);
+        
         android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
         bg.setCornerRadius(dp(32));
-        bg.setColor(UikitColor.getPrimaryColor(this)); // 跟随动态取色或默认绿
+        bg.setColor(UikitColor.getPrimaryColor(this));
         b.setBackground(bg);
-        b.setTextColor(UikitColor.getOnPrimaryColor(this)); // 自动计算白字或黑字
+        b.setTextColor(UikitColor.getOnPrimaryColor(this));
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
@@ -178,14 +182,5 @@ public class DemoActivity extends Activity {
     public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
         if (UikitUi.handleSwipeBack(this, ev)) return true;
         return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (UikitUi.isSystemBackBlocked(this)) {
-            Toast.makeText(this, "Swipe to go back", Toast.LENGTH_SHORT).show();
-        } else {
-            super.onBackPressed();
-        }
     }
 }
