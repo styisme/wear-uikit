@@ -10,6 +10,17 @@
 
 ---
 
+## [1.2.1] - 2026-11-09
+
+### Fixed
+- 修复 JitPack 使用默认 JDK 17 导致编译失败的问题，添加 `jitpack.yml` 指定 JDK 8。
+
+### Changed
+- 重构 CI/CD 流程，拆分日常编译（`build.yml`）与自动发版（`release.yml`）。
+- 自动发版支持从 `CHANGELOG.md` 提取版本号并自动打 Tag，防重复发布。
+
+---
+
 ## [1.2.0] - 2026-11-08
 
 本次更新大幅扩充了高频 UI 组件，加入了自定义颜色 API 与多语言支持，并彻底重写了 Demo 作为测试大厅。
@@ -55,6 +66,7 @@
 ## 版本对比链接
 
 [Unreleased]: https://github.com/styisme/wear-uikit/compare/v1.2.0...HEAD
+[1.2.1]: https://github.com/styisme/wear-uikit/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/styisme/wear-uikit/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/styisme/wear-uikit/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/styisme/wear-uikit/releases/tag/v1.0.0
