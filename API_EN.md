@@ -142,3 +142,24 @@ Binds the Wear OS rotary encoder (crown scroll) events.
 ```java
 WearHardwareUtils.bindRotaryEncoder(scrollView);
 ```
+
+---
+
+## 6. Custom MD3 Colors
+
+If you do not want to use system dynamic color (or if the device is below Android 12), you can force specific primary and accent colors via the API:
+
+### `UikitConfig.setCustomPrimaryColor(Context, int color)`
+Sets a custom primary color. Pass a standard `Color` int (e.g., `0xFF1976D2`). Once set, all `UikitButton`, `UikitSwitch`, and `UikitProgressRing` will immediately use this color.
+
+### `UikitConfig.setCustomAccentColor(Context, int color)`
+Sets a custom accent color (used for titles, highlighted text, etc.).
+
+### `UikitConfig.clearCustomColors(Context)`
+Clears custom colors and restores default dynamic color (or fallback green).
+
+```java
+// Set blue theme
+UikitConfig.setCustomPrimaryColor(this, 0xFF1976D2);
+recreate(); // Recommended to reload Activity to refresh UI
+```

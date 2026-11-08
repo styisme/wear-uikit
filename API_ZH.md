@@ -142,3 +142,24 @@ WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
 ```java
 WearHardwareUtils.bindRotaryEncoder(scrollView);
 ```
+
+---
+
+## 6. 自定义 MD3 颜色
+
+如果不想使用系统的动态取色（或设备低于 Android 12），可以通过 API 强制指定主色和强调色：
+
+### `UikitConfig.setCustomPrimaryColor(Context, int color)`
+设置自定义主色。传入标准的 `Color` int 值（如 `0xFF1976D2`）。设置后，所有 `UikitButton`、`UikitSwitch`、`UikitProgressRing` 将立即使用该颜色。
+
+### `UikitConfig.setCustomAccentColor(Context, int color)`
+设置自定义强调色（用于标题、高亮文字等）。
+
+### `UikitConfig.clearCustomColors(Context)`
+清除自定义颜色，恢复为默认动态取色（或默认极客绿）。
+
+```java
+// 设置为蓝色主题
+UikitConfig.setCustomPrimaryColor(this, 0xFF1976D2);
+recreate(); // 建议重新加载 Activity 以刷新 UI
+```

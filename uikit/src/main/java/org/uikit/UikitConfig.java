@@ -11,6 +11,9 @@ public final class UikitConfig {
     public static final String KEY_BLOCK_SYSTEM_BACK = "uikit_block_back";
     public static final String KEY_SCREEN_SHAPE      = "uikit_screen_shape";
     public static final String KEY_CHIN_PADDING      = "uikit_chin_padding";
+    // 新增：自定义颜色
+    public static final String KEY_CUSTOM_PRIMARY    = "uikit_custom_primary";
+    public static final String KEY_CUSTOM_ACCENT     = "uikit_custom_accent";
 
     public static final String THEME_AUTO  = "auto";
     public static final String THEME_LIGHT = "light";
@@ -72,5 +75,22 @@ public final class UikitConfig {
     }
     public static void setChinPaddingEnabled(Context ctx, boolean enabled) {
         prefs(ctx).edit().putBoolean(KEY_CHIN_PADDING, enabled).commit();
+    }
+
+    // ====== 新增：自定义颜色 API ======
+    public static int getCustomPrimaryColor(Context ctx) {
+        return prefs(ctx).getInt(KEY_CUSTOM_PRIMARY, 0);
+    }
+    public static void setCustomPrimaryColor(Context ctx, int color) {
+        prefs(ctx).edit().putInt(KEY_CUSTOM_PRIMARY, color).commit();
+    }
+    public static int getCustomAccentColor(Context ctx) {
+        return prefs(ctx).getInt(KEY_CUSTOM_ACCENT, 0);
+    }
+    public static void setCustomAccentColor(Context ctx, int color) {
+        prefs(ctx).edit().putInt(KEY_CUSTOM_ACCENT, color).commit();
+    }
+    public static void clearCustomColors(Context ctx) {
+        prefs(ctx).edit().remove(KEY_CUSTOM_PRIMARY).remove(KEY_CUSTOM_ACCENT).commit();
     }
 }

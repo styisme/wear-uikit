@@ -24,7 +24,13 @@ public final class UikitColor {
         } catch (Exception ignored) {}
         return fallback;
     }
+
     public static int getPrimaryColor(Context ctx) {
+        // 1. 优先使用宿主自定义的主色
+        int custom = UikitConfig.getCustomPrimaryColor(ctx);
+        if (custom != 0) return custom;
+
+        // 2. 其次使用 MD3 动态取色
         if (isDynamicColorEnabled(ctx)) {
             try {
                 TypedValue tv = new TypedValue();
@@ -39,16 +45,25 @@ public final class UikitColor {
             int c = getSystemColor(ctx, "system_accent1_600", 0);
             if (c != 0) return c;
         }
+        // 3. 兜底
         return FALLBACK_PRIMARY;
     }
+
     public static int getAccentColor(Context ctx, boolean isDark) {
+        // 1. 自定义强调色
+        int custom = UikitConfig.getCustomAccentColor(ctx);
+        if (custom != 0) return custom;
+
+        // 2. 动态强调色
         if (isDynamicColorEnabled(ctx)) {
             return getSystemColor(ctx,
                     isDark ? "system_accent1_200" : "system_accent1_800",
                     isDark ? FALLBACK_ACCENT_DARK : FALLBACK_ACCENT_LIGHT);
         }
+        // 3. 兜底
         return isDark ? FALLBACK_ACCENT_DARK : FALLBACK_ACCENT_LIGHT;
     }
+
     public static int getOnPrimaryColor(Context ctx) {
         int p = getPrimaryColor(ctx);
         int r = (p >> 16) & 0xFF, g = (p >> 8) & 0xFF, b = p & 0xFF;

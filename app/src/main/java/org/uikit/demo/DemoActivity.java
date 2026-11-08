@@ -50,7 +50,6 @@ public class DemoActivity extends Activity {
         root.addView(title);
 
         // ================= 1. 视觉组件区 =================
-        // 环形进度条
         final UikitProgressRing ring = new UikitProgressRing(this);
         LinearLayout.LayoutParams ringLp = new LinearLayout.LayoutParams(
                 UikitScreenUtils.dp2px(this, 80), UikitScreenUtils.dp2px(this, 80));
@@ -63,7 +62,6 @@ public class DemoActivity extends Activity {
             public void onClick(View v) { ring.setProgress((float) Math.random()); }
         });
 
-        // 骨架屏
         UikitSkeleton skeleton = new UikitSkeleton(this);
         LinearLayout.LayoutParams skLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 40));
@@ -85,22 +83,6 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addBtn(root, "Show Input", new View.OnClickListener() {
-            public void onClick(View v) {
-                UikitUi.showInput(DemoActivity.this, "Input", "", new UikitUi.OnInputListener() {
-                    public void onInput(String s) {
-                        UikitUi.showConfirm(DemoActivity.this, "Echo", s, null).show();
-                    }
-                }).show();
-            }
-        });
-
-        addBtn(root, "Show Toast", new View.OnClickListener() {
-            public void onClick(View v) {
-                UikitToast.show(DemoActivity.this, "Hello Watch!");
-            }
-        });
-
         addBtn(root, "Show Bottom Sheet", new View.OnClickListener() {
             public void onClick(View v) {
                 UikitEmptyView empty = new UikitEmptyView(DemoActivity.this);
@@ -108,10 +90,27 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addBtn(root, "Vibrate", new View.OnClickListener() {
+        // --- 新增：颜色切换测试 ---
+        addBtn(root, "Set Custom Blue", new View.OnClickListener() {
             public void onClick(View v) {
-                WearHardwareUtils.vibrate(DemoActivity.this, WearHardwareUtils.HAPTIC_SUCCESS);
-                UikitToast.show(DemoActivity.this, "Vibrate");
+                UikitConfig.setCustomPrimaryColor(DemoActivity.this, 0xFF1976D2); // 蓝色
+                UikitConfig.setCustomAccentColor(DemoActivity.this, 0xFF64B5F6);
+                recreate();
+            }
+        });
+        
+        addBtn(root, "Set Custom Red", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitConfig.setCustomPrimaryColor(DemoActivity.this, 0xFFD32F2F); // 红色
+                UikitConfig.setCustomAccentColor(DemoActivity.this, 0xFFEF5350);
+                recreate();
+            }
+        });
+
+        addBtn(root, "Reset Default Color", new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitConfig.clearCustomColors(DemoActivity.this);
+                recreate();
             }
         });
 
@@ -129,16 +128,10 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addSwitch(root, "Dynamic Color (API31+)", UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
+        addSwitch(root, "Dynamic Color", UikitConfig.isDynamicColorEnabled(this), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setDynamicColorEnabled(DemoActivity.this, v);
                 recreate();
-            }
-        });
-
-        addSwitch(root, "Low Performance", UikitConfig.isLowPerf(this), new OnChecked() {
-            public void onChecked(boolean v) {
-                UikitConfig.setLowPerf(DemoActivity.this, v);
             }
         });
 
