@@ -277,6 +277,12 @@ public final class UikitUi {
         return d;
     }
 
+    /**
+     * @deprecated This non-fullscreen dialog is deprecated and will be removed in future versions.
+     * Please migrate to {@link UikitFullListActivity#show(Activity, String, java.util.ArrayList, int)} for better
+     * round-screen adaptation and 3D wheel scrolling support.
+     */
+    @Deprecated
     public static Dialog showList(Context ctx, String title, String[] items, final OnItemSelectListener l) {
         final Dialog d = new Dialog(ctx);
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -314,6 +320,12 @@ public final class UikitUi {
         return d;
     }
 
+    /**
+     * @deprecated This non-fullscreen dialog is deprecated and will be removed in future versions.
+     * Please migrate to {@link UikitFullInputActivity#show(Activity, String, String, String, int)} for a better
+     * full-screen typing experience and keyboard adaptation.
+     */
+    @Deprecated
     public static Dialog showInput(Context ctx, String title, String def, final OnInputListener l) {
         final Dialog d = new Dialog(ctx);
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -345,6 +357,12 @@ public final class UikitUi {
         return d;
     }
 
+    /**
+     * @deprecated This non-fullscreen dialog is deprecated and will be removed in future versions.
+     * Please migrate to {@link UikitFullTextActivity#show(Activity, String, String, String, int)} for long texts
+     * with 3D wheel scrolling support.
+     */
+    @Deprecated
     public static Dialog showConfirm(Context ctx, String title, String msg, final DialogInterface.OnClickListener pos) {
         TextView tv = new TextView(ctx);
         tv.setText(msg);
