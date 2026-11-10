@@ -55,7 +55,6 @@ public class DemoActivity extends Activity {
         boolean dark = UikitTheme.isDarkMode(this);
         root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
 
-        // 标题
         TextView title = new TextView(this);
         title.setText(R.string.title_main);
         title.setTextSize(20);
@@ -97,6 +96,14 @@ public class DemoActivity extends Activity {
         root.addView(progressBar);
 
         // ================= 2. 弹窗与交互 =================
+        addCodeTip(root, "UikitFullListActivity.show()");
+        addBtn(root, "Open Full List", new View.OnClickListener() {
+            public void onClick(View v) {
+                String[] items = {"Option 1", "Option 2", "Option 3", "Option 4", "Option 5", "Option 6"};
+                UikitFullListActivity.show(DemoActivity.this, "Full List", items, 1001);
+            }
+        });
+
         addCodeTip(root, getString(R.string.api_show_input));
         addBtn(root, getString(R.string.btn_input), new View.OnClickListener() {
             public void onClick(View v) {
@@ -105,18 +112,6 @@ public class DemoActivity extends Activity {
                         UikitUi.showConfirm(DemoActivity.this, "Echo", s, null).show();
                     }
                 }).show();
-            }
-        });
-
-        addCodeTip(root, getString(R.string.api_show_list));
-        addBtn(root, getString(R.string.btn_list), new View.OnClickListener() {
-            public void onClick(View v) {
-                UikitUi.showList(DemoActivity.this, "Choose", new String[]{"One","Two","Three"},
-                    new UikitUi.OnItemSelectListener() {
-                        public void onItemSelect(int p) {
-                            UikitUi.showConfirm(DemoActivity.this, "Picked", "You chose #" + (p+1), null).show();
-                        }
-                    }).show();
             }
         });
 
@@ -155,13 +150,6 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addCodeTip(root, getString(R.string.api_sub_menu));
-        addBtn(root, getString(R.string.btn_sub_menu), new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivity(new Intent(DemoActivity.this, SubMenuActivity.class));
-            }
-        });
-
         // ================= 4. 设置开关 =================
         addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_dark), dark, new OnChecked() {
@@ -178,12 +166,6 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addSwitch(root, getString(R.string.sw_low_perf), UikitConfig.isLowPerf(this), new OnChecked() {
-            public void onChecked(boolean v) {
-                UikitConfig.setLowPerf(DemoActivity.this, v);
-            }
-        });
-
         addSwitch(root, getString(R.string.sw_round), UikitConfig.getScreenShape(this) == UikitConfig.SHAPE_ROUND, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setScreenShape(DemoActivity.this, v ? UikitConfig.SHAPE_ROUND : UikitConfig.SHAPE_AUTO);
@@ -191,13 +173,21 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // 语言切换开关
         addSwitch(root, getString(R.string.sw_lang), "zh".equals(UikitConfig.getAppLang(this)), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setAppLang(DemoActivity.this, v ? "zh" : "en");
                 recreate();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
+            String result = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
+            UikitToast.show(this, "Selected: " + result);
+        }
     }
 
     private interface OnChecked { void onChecked(boolean v); }

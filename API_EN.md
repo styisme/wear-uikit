@@ -88,3 +88,19 @@ new UikitBottomSheet(this, "Title", new UikitEmptyView(this)).show();
 ```java
 WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
 ```
+
+### `UikitFullListActivity.show()`
+Full-screen selection list, ideal for scenarios with many options or a complete scrolling experience.
+```java
+String[] items = {"Option 1", "Option 2", "Option 3"};
+UikitFullListActivity.show(this, "Select Item", items, 1001);
+
+// Receive result (Override in Activity)
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == 1001 && resultCode == RESULT_OK) {
+        int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
+        String text = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
+    }
+}
+```

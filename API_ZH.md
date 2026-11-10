@@ -88,3 +88,19 @@ new UikitBottomSheet(this, "标题", new UikitEmptyView(this)).show();
 ```java
 WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
 ```
+
+### `UikitFullListActivity.show()`
+全屏选择列表，适合选项较多且需要完整滚动体验的场景。
+```java
+String[] items = {"Option 1", "Option 2", "Option 3"};
+UikitFullListActivity.show(this, "选择选项", items, 1001);
+
+// 接收结果 (在 Activity 中重写)
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == 1001 && resultCode == RESULT_OK) {
+        int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
+        String text = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
+    }
+}
+```
