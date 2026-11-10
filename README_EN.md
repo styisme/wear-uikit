@@ -5,9 +5,9 @@
 > A reusable Android/Wear OS UI library extracted from [WatchSend](https://github.com/styisme/watchsend). Pure Java dynamic rendering + XML resources. No AndroidX, no third-party dependencies.
 
 [![Build Uikit](https://github.com/styisme/wear-uikit/actions/workflows/build.yml/badge.svg)](https://github.com/styisme/wear-uikit/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-1.2.0-512BD4)]()
+[![Version](https://img.shields.io/badge/version-1.3.0-512BD4)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Android%202.3%2B-brightgreen)]()
+[![JitPack](https://jitpack.io/v/styisme/wear-uikit.svg)](https://jitpack.io/#styisme/wear-uikit)
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## Version & Origin
 
-Current version: **v1.2.0**.
+Current version: **v1.3.0**.
 
 Extracted from [WatchSend](https://github.com/styisme/watchsend), removing business coupling and turning it into a reusable library.
 
@@ -30,53 +30,46 @@ Extracted from [WatchSend](https://github.com/styisme/watchsend), removing busin
 | Component | File | Purpose |
 |---|---|---|
 | **Core** | | |
-| `UikitConfig` | `UikitConfig.java` | Config layer, theme/language/color management |
+| `UikitConfig` | `UikitConfig.java` | Config layer, injectable SharedPreferences |
 | `UikitColor` | `UikitColor.java` | MD3 dynamic color & custom color override |
 | `UikitTheme` | `UikitTheme.java` | Tri-state dark mode + recursive tinting |
-| `UikitScreenUtils` | `UikitScreenUtils.java` | Screen size, dp2px, square/round detection |
-| `WearHardwareUtils` | `WearHardwareUtils.java` | Haptics, rotary, screen-on, chin padding |
-| `UikitUi` | `UikitUi.java` | Physical scaling, dialogs (round-screen adapted), swipe-back |
+| `UikitUi` | `UikitUi.java` | Physical scaling, pill cards, legacy dialogs |
 | **Widgets** | | |
 | `UikitSwitch` | `UikitSwitch.java` | MD3 custom switch |
 | `UikitButton` | `UikitButton.java` | Standard MD3 pill button |
 | `UikitListItem` | `UikitListItem.java` | Settings list item with switch/arrow |
-| `UikitProgressRing` | `UikitProgressRing.java` | Circular progress bar |
 | `UikitProgressBar` | `UikitProgressBar.java` | Horizontal progress bar |
+| `UikitProgressRing` | `UikitProgressRing.java` | Circular progress bar |
 | `UikitSkeleton` | `UikitSkeleton.java` | Shimmer loading placeholder |
-| `UikitEmptyView` | `UikitEmptyView.java` | Unified empty state |
+| **Fullscreen** | | |
+| `UikitFullListActivity` | `UikitFullListActivity.java` | **Full list** (2-line & custom card color) |
+| `UikitFullInputActivity` | `UikitFullInputActivity.java` | **Full input** (Wear OS keyboard optimized) |
+| `UikitFullTextActivity` | `UikitFullTextActivity.java` | **Full text** (3D wheel subtitle effect) |
 | **Popups** | | |
 | `UikitToast` | `UikitToast.java` | Edge-safe rounded toast |
 | `UikitBottomSheet` | `UikitBottomSheet.java` | Bottom sheet with drag-to-dismiss |
+
+> **⚠️ Deprecated**: `UikitUi.showList()`, `UikitUi.showInput()`, and `UikitUi.showConfirm()` are deprecated. Please migrate to `UikitFullListActivity`, `UikitFullInputActivity`, and `UikitFullTextActivity`.
 
 ---
 
 ## Usage
 
-### JitPack (Recommended)
-
 ```gradle
+// settings.gradle
 allprojects {
     repositories {
         maven { url 'https://jitpack.io' }
     }
 }
+// app/build.gradle
 dependencies {
-    implementation 'com.github.styisme:wear-uikit:v1.2.0'
+    implementation 'com.github.styisme:wear-uikit:v1.3.0'
 }
 ```
 
-### Local Module
-
-```gradle
-include ':uikit'
-implementation project(':uikit')
-```
-
----
-
-## Quick Start
-
 ```java
+// Initialization
 UikitConfig.init("myapp_prefs");
 
 @Override
@@ -94,20 +87,10 @@ protected void onCreate(Bundle b) {
 
 ---
 
-## Custom MD3 Colors
-
-```java
-UikitConfig.setCustomPrimaryColor(this, 0xFF1976D2);
-UikitConfig.setCustomAccentColor(this, 0xFF64B5F6);
-UikitConfig.clearCustomColors(this);
-```
-
----
-
 ## Related Docs
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [API_ZH.md](API_ZH.md) / [API_EN.md](API_EN.md)
+- [API_EN.md](API_EN.md)
 - [CONTRIBUTING_EN.md](CONTRIBUTING_EN.md)
 
 ## License

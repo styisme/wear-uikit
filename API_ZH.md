@@ -25,16 +25,6 @@ protected void attachBaseContext(Context newBase) {
 UikitTheme.applyTheme(this);
 ```
 
-### `UikitUi.handleSwipeBack(Activity activity, MotionEvent ev)`
-处理滑动返回手势。在 `dispatchTouchEvent` 中调用。
-```java
-@Override
-public boolean dispatchTouchEvent(MotionEvent ev) {
-    if (UikitUi.handleSwipeBack(this, ev)) return true;
-    return super.dispatchTouchEvent(ev);
-}
-```
-
 ---
 
 ## 2. 颜色与自定义
@@ -68,61 +58,50 @@ UikitProgressBar pb = new UikitProgressBar(this);
 pb.setProgress(0.75f);
 ```
 
-### `UikitUi.showList()`
-```java
-UikitUi.showList(this, "选择", new String[]{"A", "B"}, new OnItemSelectListener() {
-    public void onItemSelect(int pos) { }
-}).show();
-```
-
-### `UikitBottomSheet`
-```java
-new UikitBottomSheet(this, "标题", new UikitEmptyView(this)).show();
-```
-
 ---
 
-## 4. 硬件交互
+## 4. 全屏交互组件 (推荐)
 
-### `WearHardwareUtils.vibrate(Context, int type)`
+> 以下组件替代了旧版的弹窗 API，完美适配手表的圆屏和滚动特效。
+
+### `UikitFullTextActivity.show()` - 全屏长文本
+按句子拆分长文本，应用 3D 滚轮特效，中间字大，上下字小。
 ```java
-WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
+UikitFullTextActivity.show(this, "用户协议", "这是一段很长的文本...", "我知道了", 1001);
 ```
 
-### `UikitFullListActivity.show()`
-全屏选择列表，适合选项较多且需要完整滚动体验的场景。
+### `UikitFullInputActivity.show()` - 全屏输入
+完美适配手表键盘，支持自定义按钮文字。
 ```java
-String[] items = {"Option 1", "Option 2", "Option 3"};
-UikitFullListActivity.show(this, "选择选项", items, 1001);
-
-// 接收结果 (在 Activity 中重写)
-@Override
-protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == 1001 && resultCode == RESULT_OK) {
-        int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
-        String text = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
-    }
-}
+UikitFullInputActivity.show(this, "输入名称", "", "请输入...", "提交", "取消", 1002);
 ```
 
-### `UikitFullListActivity.show() (高级版)`
-支持双行显示（标题 + 副标题）以及每个选项单独的自定义颜色。
+### `UikitFullListActivity.show()` - 全屏列表
+支持双行显示和自定义卡片颜色。
 ```java
 ArrayList<UikitListItemModel> items = new ArrayList<>();
 items.add(new UikitListItemModel("普通选项", "这是副标题"));
 items.add(new UikitListItemModel("成功状态", "绿色强调", 0xFF4CAF50));
-items.add(new UikitListItemModel("错误状态", "红色强调", 0xFFF44336));
+items.add(new UikitListItemModel("红色卡片", null, 0, 0xFFF44336));
 
-UikitFullListActivity.show(this, "请选择", items, 1001);
+UikitFullListActivity.show(this, "请选择", items, 1003);
 ```
 
-### `UikitFullListActivity.show() (自定义卡片颜色)`
-通过 `UikitListItemModel` 的第四个参数，可以为每个卡片单独设置背景色。库会自动计算亮度，保证文字清晰可见。
-```java
-ArrayList<UikitListItemModel> items = new ArrayList<>();
-// 参数顺序：Title, Subtitle, AccentColor(0为默认), CardColor(0为默认)
-items.add(new UikitListItemModel("红色卡片", "纯色背景", 0, 0xFFF44336));
-items.add(new UikitListItemModel("自定义文字与背景", "高对比度", 0xFF388E3C, 0xFFFFEB3B));
+---
 
-UikitFullListActivity.show(this, "请选择", items, 1001);
+## 5. 旧版弹窗 API (已废弃)
+
+> **⚠️ 警告**：以下 API 已标记 `@Deprecated`，将在未来的版本中移除，请尽快迁移至全屏版本。
+
+- `UikitUi.showList()` -> 请用 `UikitFullListActivity`
+- `UikitUi.showInput()` -> 请用 `UikitFullInputActivity`
+- `UikitUi.showConfirm()` -> 请用 `UikitFullTextActivity`
+
+---
+
+## 6. 硬件交互
+
+### `WearHardwareUtils.vibrate(Context, int type)`
+```java
+WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
 ```

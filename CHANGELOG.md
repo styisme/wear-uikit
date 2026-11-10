@@ -10,35 +10,39 @@
 
 ---
 
-## [1.2.1] - 2026-11-09
+## [1.3.0] - 2026-11-10
+
+本次更新全面重构了弹窗交互，推出了全新的全屏交互体系，并彻底废弃了旧版弹窗。
+
+### Added
+- **`UikitFullTextActivity`**：全屏长文本展示。通过句子拆分与 3D 滚轮特效，实现如科幻电影字幕般的沉浸式阅读体验。
+- **`UikitFullInputActivity`**：全屏文本输入。完美适配 Wear OS 键盘弹起，支持自定义“确定/取消”按钮文案。
+- **`UikitFullListActivity`**：全屏列表选择。支持双行显示（标题+副标题）、每个卡片独立自定义背景色，并自动计算文字对比度。
+- **GitHub 社区模板**：加入了标准的 Issue 模板（Bug 与 Feature）以及 PR 模板。
+
+### Deprecated
+- 标记 `UikitUi.showList()`、`UikitUi.showInput()`、`UikitUi.showConfirm()` 为废弃状态（`@Deprecated`）。在 Demo 与 IDE 中会显示废弃警告，引导开发者迁移至全屏组件。
 
 ### Fixed
-- 修复 JitPack 使用默认 JDK 17 导致编译失败的问题，添加 `jitpack.yml` 指定 JDK 8。
-
-### Changed
-- 重构 CI/CD 流程，拆分日常编译（`build.yml`）与自动发版（`release.yml`）。
-- 自动发版支持从 `CHANGELOG.md` 提取版本号并自动打 Tag，防重复发布。
+- 彻底修复了底部抽屉在圆屏上因全屏遮挡导致无法点击关闭的致命 Bug。
+- 修复了英文长文本中撇号（`'`）导致 AAPT 编译崩溃的问题。
+- 修复了全屏输入页面底部漏出黑色背景的问题。
 
 ---
 
-## [1.2.0] - 2026-11-08
+## [1.2.0] - 2026-11-10
 
-本次更新大幅扩充了高频 UI 组件，加入了自定义颜色 API 与多语言支持，并彻底重写了 Demo 作为测试大厅。
+本次更新大幅扩充了高频 UI 组件，加入了自定义颜色 API 与多语言支持。
 
 ### Added
-- **`UikitListItem`**：标准设置页列表项，支持副标题，右侧可挂载 `UikitSwitch` 或箭头图标。
-- **`UikitProgressBar`**：横向进度条，自动跟随动态取色，适配小屏幕。
-- **自定义 MD3 颜色**：新增 `UikitConfig.setCustomPrimaryColor()` 与 `setCustomAccentColor()`，允许宿主覆盖动态取色。
-- **多语言支持**：Demo 现已支持中英双语动态切换（基于 Android 原生资源）。
+- `UikitListItem`、`UikitProgressBar`。
+- 自定义 MD3 颜色 API：`UikitConfig.setCustomPrimaryColor()` 与 `setCustomAccentColor()`。
+- Demo 支持中英双语动态切换。
 
 ### Fixed
 - 弹窗输入框背景与确认/取消按钮全面适配深色模式与自定义主题色。
-- 增加圆屏专属弹窗排版（缩窄宽度，按钮改为竖向排列），彻底解决圆屏被切割卡死的问题。
+- 增加圆屏专属弹窗排版（缩窄宽度，按钮改为竖向排列）。
 - 修复了 `UikitListItem` 缺失 `CompoundButton` 导入导致的编译失败。
-
-### Changed
-- `DemoActivity` 重构为 API 测试大厅，所有组件均附带对应的 API 名称提示。
-- README 新增 JitPack 引入方式，支持一行依赖引入。
 
 ---
 
@@ -65,8 +69,8 @@
 
 ## 版本对比链接
 
-[Unreleased]: https://github.com/styisme/wear-uikit/compare/v1.2.0...HEAD
-[1.2.1]: https://github.com/styisme/wear-uikit/compare/v1.2.0...v1.2.1
+[Unreleased]: https://github.com/styisme/wear-uikit/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/styisme/wear-uikit/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/styisme/wear-uikit/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/styisme/wear-uikit/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/styisme/wear-uikit/releases/tag/v1.0.0
