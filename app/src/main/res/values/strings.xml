@@ -75,3 +75,6 @@
     <string name="item_all_custom">All Custom</string>
     <string name="item_all_custom_sub">Green text on yellow bg</string>
 </resources>
+
+    <string name="api_slider">UikitSlider</string>
+    <string name="api_loading_bar">UikitLoadingBar</string>

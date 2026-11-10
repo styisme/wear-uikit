@@ -105,3 +105,27 @@ UikitFullListActivity.show(this, "请选择", items, 1003);
 ```java
 WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
 ```
+
+### `UikitSlider`
+可拖动的进度条。常用于音量调节、亮度调节或进度控制。
+```java
+UikitSlider slider = new UikitSlider(this);
+slider.setMaxProgress(100);
+slider.setProgress(50);
+slider.setOnProgressChangedListener(new UikitSlider.OnProgressChangedListener() {
+    @Override
+    public void onProgressChanged(float progress) {
+        // 处理拖动事件
+    }
+});
+```
+
+### `UikitLoadingBar`
+不确定进度的加载条（自带无限循环的动画）。
+```java
+UikitLoadingBar loadingBar = new UikitLoadingBar(this);
+// 添加到布局后会自动开始动画
+// 如果想手动控制，可以调用：
+loadingBar.startLoading();
+loadingBar.stopLoading();
+```

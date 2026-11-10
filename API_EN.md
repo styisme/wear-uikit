@@ -94,3 +94,27 @@ UikitFullListActivity.show(this, "Choose", items, 1003);
 ```java
 WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
 ```
+
+### `UikitSlider`
+A draggable progress bar. Often used for volume, brightness, or progress control.
+```java
+UikitSlider slider = new UikitSlider(this);
+slider.setMaxProgress(100);
+slider.setProgress(50);
+slider.setOnProgressChangedListener(new UikitSlider.OnProgressChangedListener() {
+    @Override
+    public void onProgressChanged(float progress) {
+        // Handle drag event
+    }
+});
+```
+
+### `UikitLoadingBar`
+An indeterminate loading bar with a built-in infinite animation.
+```java
+UikitLoadingBar loadingBar = new UikitLoadingBar(this);
+// Animation starts automatically when attached to window
+// To control manually:
+loadingBar.startLoading();
+loadingBar.stopLoading();
+```

@@ -105,6 +105,25 @@ public class DemoActivity extends Activity {
         ring.setProgress(0.45f);
         root.addView(ring);
 
+        addCodeTip(root, getString(R.string.api_slider));
+        UikitSlider slider = new UikitSlider(this);
+        slider.setMaxProgress(100);
+        slider.setProgress(30);
+        LinearLayout.LayoutParams sliderLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 48));
+        sliderLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
+        sliderLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
+        slider.setLayoutParams(sliderLp);
+        root.addView(slider);
+
+        addCodeTip(root, getString(R.string.api_loading_bar));
+        UikitLoadingBar loadingBar = new UikitLoadingBar(this);
+        LinearLayout.LayoutParams loadingLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 12));
+        loadingLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
+        loadingLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
+        loadingLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        loadingBar.setLayoutParams(loadingLp);
+        root.addView(loadingBar);
+
         addCodeTip(root, getString(R.string.api_skeleton));
         UikitSkeleton skeleton = new UikitSkeleton(this);
         LinearLayout.LayoutParams skLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 40));
