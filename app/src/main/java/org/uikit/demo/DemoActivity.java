@@ -101,12 +101,11 @@ public class DemoActivity extends Activity {
         addBtn(root, "Open Full List", new View.OnClickListener() {
             public void onClick(View v) {
                 ArrayList<UikitListItemModel> items = new ArrayList<>();
-                items.add(new UikitListItemModel("Normal Item", "Default text color"));
-                items.add(new UikitListItemModel("Success", "Green accent", 0xFF4CAF50));
-                items.add(new UikitListItemModel("Warning", "Orange accent", 0xFFFF9800));
-                items.add(new UikitListItemModel("Error", "Red accent", 0xFFF44336));
-                items.add(new UikitListItemModel("Only Title", null));
-                items.add(new UikitListItemModel("Another Title", "With subtitle"));
+                items.add(new UikitListItemModel("Normal Item", "Default style"));
+                items.add(new UikitListItemModel("Success", "Green accent text", 0xFF4CAF50));
+                items.add(new UikitListItemModel("Custom Card 1", "Red background", 0, 0xFFF44336));
+                items.add(new UikitListItemModel("Custom Card 2", "Blue background", 0, 0xFF2196F3));
+                items.add(new UikitListItemModel("All Custom", "Green text on yellow bg", 0xFF388E3C, 0xFFFFEB3B));
                 
                 UikitFullListActivity.show(DemoActivity.this, "Advanced List", items, 1001);
             }

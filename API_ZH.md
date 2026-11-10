@@ -115,3 +115,14 @@ items.add(new UikitListItemModel("错误状态", "红色强调", 0xFFF44336));
 
 UikitFullListActivity.show(this, "请选择", items, 1001);
 ```
+
+### `UikitFullListActivity.show() (自定义卡片颜色)`
+通过 `UikitListItemModel` 的第四个参数，可以为每个卡片单独设置背景色。库会自动计算亮度，保证文字清晰可见。
+```java
+ArrayList<UikitListItemModel> items = new ArrayList<>();
+// 参数顺序：Title, Subtitle, AccentColor(0为默认), CardColor(0为默认)
+items.add(new UikitListItemModel("红色卡片", "纯色背景", 0, 0xFFF44336));
+items.add(new UikitListItemModel("自定义文字与背景", "高对比度", 0xFF388E3C, 0xFFFFEB3B));
+
+UikitFullListActivity.show(this, "请选择", items, 1001);
+```

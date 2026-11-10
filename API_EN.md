@@ -115,3 +115,14 @@ items.add(new UikitListItemModel("Error", "Red accent", 0xFFF44336));
 
 UikitFullListActivity.show(this, "Choose", items, 1001);
 ```
+
+### `UikitFullListActivity.show() (Custom Card Colors)`
+Pass the 4th parameter in `UikitListItemModel` to set a background color for each card. The library automatically calculates luminance to ensure text remains readable.
+```java
+ArrayList<UikitListItemModel> items = new ArrayList<>();
+// Parameters: Title, Subtitle, AccentColor(0 for default), CardColor(0 for default)
+items.add(new UikitListItemModel("Red Card", "Solid background", 0, 0xFFF44336));
+items.add(new UikitListItemModel("Custom All", "High contrast", 0xFF388E3C, 0xFFFFEB3B));
+
+UikitFullListActivity.show(this, "Choose", items, 1001);
+```

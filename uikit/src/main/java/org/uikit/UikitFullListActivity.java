@@ -3,6 +3,8 @@ package org.uikit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -18,14 +20,12 @@ public class UikitFullListActivity extends Activity {
     public static final String EXTRA_RESULT_INDEX = "uikit_result_index";
     public static final String EXTRA_RESULT_TEXT = "uikit_result_text";
 
-    // 兼容旧版：仅传入 String[]
     public static void show(Activity activity, String title, String[] items, int requestCode) {
         ArrayList<UikitListItemModel> models = new ArrayList<UikitListItemModel>();
         for (String s : items) models.add(new UikitListItemModel(s));
         show(activity, title, models, requestCode);
     }
 
-    // 新版：支持 List<UikitListItemModel>
     public static void show(Activity activity, String title, ArrayList<UikitListItemModel> items, int requestCode) {
         Intent intent = new Intent(activity, UikitFullListActivity.class);
         intent.putExtra(EXTRA_TITLE, title);
@@ -83,7 +83,16 @@ public class UikitFullListActivity extends Activity {
             itemCard.setOrientation(LinearLayout.VERTICAL);
             itemCard.setPadding(UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 12),
                     UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 12));
-            itemCard.setBackground(UikitUi.getPillBackground(this));
+
+            // 【核心修复】处理自定义卡片颜色
+            if (model.cardColor != 0) {
+                GradientDrawable bg = new GradientDrawable();
+                bg.setCornerRadius(32 * getResources().getDisplayMetrics().density);
+                bg.setColor(model.cardColor);
+                itemCard.setBackground(bg);
+            } else {
+                itemCard.setBackground(UikitUi.getPillBackground(this));
+            }
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -96,21 +105,39 @@ public class UikitFullListActivity extends Activity {
             TextView tvMain = new TextView(this);
             tvMain.setText(model.title);
             tvMain.setTextSize(16);
-            // 如果传了强调色且不是0，就用强调色；否则用默认主题色或主文字色
+            
+            // 如果传了强调色且不是0，就用强调色
             if (model.accentColor != 0) {
                 tvMain.setTextColor(model.accentColor);
+            } else if (model.cardColor != 0) {
+                // 如果设置了卡片背景色，根据背景亮度自动计算文字颜色（黑或白）
+                int r = (model.cardColor >> 16) & 0xFF;
+                int g = (model.cardColor >> 8) & 0xFF;
+                int b = model.cardColor & 0xFF;
+                int y = (r * 299 + g * 587 + b * 114) / 1000;
+                tvMain.setTextColor(y > 160 ? 0xFF1C1B1F : 0xFFFFFFFF);
             } else {
                 tvMain.setTextColor(dark ? 0xFFE0E0E0 : 0xFF1C1B1F);
             }
             tvMain.setGravity(model.subtitle != null ? Gravity.START : Gravity.CENTER);
             itemCard.addView(tvMain);
 
-            // 副标题 (如果有)
+            // 副标题
             if (model.subtitle != null) {
                 TextView tvSub = new TextView(this);
                 tvSub.setText(model.subtitle);
                 tvSub.setTextSize(12);
-                tvSub.setTextColor(dark ? 0xFFAAAAAA : 0xFF666666);
+                
+                if (model.accentColor == 0 && model.cardColor != 0) {
+                    int r = (model.cardColor >> 16) & 0xFF;
+                    int g = (model.cardColor >> 8) & 0xFF;
+                    int b = model.cardColor & 0xFF;
+                    int y = (r * 299 + g * 587 + b * 114) / 1000;
+                    tvSub.setTextColor(y > 160 ? 0x99000000 : 0x99FFFFFF);
+                } else {
+                    tvSub.setTextColor(dark ? 0xFFAAAAAA : 0xFF666666);
+                }
+                
                 tvSub.setPadding(0, UikitScreenUtils.dp2px(this, 4), 0, 0);
                 itemCard.addView(tvSub);
             }
