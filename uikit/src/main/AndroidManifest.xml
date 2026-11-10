@@ -4,5 +4,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <application>
         <activity android:name=".UikitFullListActivity" android:exported="false" />
+        <activity android:name=".UikitFullInputActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
     </application>
 </manifest>

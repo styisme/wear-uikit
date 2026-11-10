@@ -3,13 +3,13 @@
     <string name="app_name">Uikit Demo</string>
     <string name="title_main">Uikit API Playground</string>
     
-    <!-- Code Tips -->
     <string name="api_list_switch">UikitListItem (Switch)</string>
     <string name="api_list_arrow">UikitListItem (Arrow)</string>
     <string name="api_progress_bar">UikitProgressBar</string>
     <string name="api_progress_ring">UikitProgressRing</string>
     <string name="api_skeleton">UikitSkeleton</string>
     <string name="api_full_list">UikitFullListActivity.show()</string>
+    <string name="api_full_input">UikitFullInputActivity.show()</string>
     <string name="api_show_input">UikitUi.showInput()</string>
     <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
     <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
@@ -17,27 +17,24 @@
     <string name="api_toast">UikitToast.show()</string>
     <string name="api_switch">UikitSwitch</string>
 
-    <!-- List Items -->
     <string name="label_wifi">Wi-Fi Transfer</string>
     <string name="sub_wifi">Allow LAN discovery</string>
     <string name="label_device">About Device</string>
     <string name="sub_device">Version &amp; Storage</string>
     
-    <!-- Buttons -->
     <string name="btn_full_list">Open Full List</string>
-    <string name="btn_input">Show Input</string>
+    <string name="btn_full_input">Open Full Input</string>
+    <string name="btn_input">Show Dialog Input</string>
     <string name="btn_sheet">Show Bottom Sheet</string>
     <string name="btn_color">Change Theme Color</string>
     <string name="btn_vibrate">Vibrate</string>
     <string name="btn_toast">Show Toast</string>
     
-    <!-- Switches -->
     <string name="sw_dark">Dark Mode</string>
     <string name="sw_dynamic">Dynamic Color</string>
     <string name="sw_round">Force Round Screen</string>
     <string name="sw_lang">Language (English)</string>
 
-    <!-- Toasts & Dialogs -->
     <string name="toast_clicked">Clicked</string>
     <string name="toast_vibrate">Vibrate triggered</string>
     <string name="toast_selected">Selected: %s</string>
@@ -46,8 +43,10 @@
     <string name="sheet_options_title">Options</string>
     <string name="dlg_pick_color">Pick Color</string>
     <string name="list_advanced_title">Advanced List</string>
+    
+    <string name="full_input_title">Full Screen Input</string>
+    <string name="full_input_hint">Type something...</string>
 
-    <!-- Advanced List Data -->
     <string name="item_normal">Normal Item</string>
     <string name="item_normal_sub">Default style</string>
     <string name="item_success">Success</string>

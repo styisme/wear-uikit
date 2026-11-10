@@ -129,6 +129,17 @@ public class DemoActivity extends Activity {
             }
         });
 
+        addCodeTip(root, getString(R.string.api_full_input));
+        addBtn(root, getString(R.string.btn_full_input), new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitFullInputActivity.show(DemoActivity.this, 
+                        getString(R.string.full_input_title), 
+                        "", 
+                        getString(R.string.full_input_hint), 
+                        1002);
+            }
+        });
+
         addCodeTip(root, getString(R.string.api_show_input));
         addBtn(root, getString(R.string.btn_input), new View.OnClickListener() {
             public void onClick(View v) {
@@ -216,9 +227,14 @@ public class DemoActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
-            String result = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
-            UikitToast.show(this, getString(R.string.toast_selected, result));
+        if (resultCode == RESULT_OK && data != null) {
+            if (requestCode == 1001) {
+                String result = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
+                UikitToast.show(this, getString(R.string.toast_selected, result));
+            } else if (requestCode == 1002) {
+                String result = data.getStringExtra(UikitFullInputActivity.EXTRA_RESULT_TEXT);
+                UikitToast.show(this, getString(R.string.toast_selected, result));
+            }
         }
     }
 
