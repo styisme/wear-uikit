@@ -37,8 +37,10 @@ public class UikitFullListActivity extends Activity {
         UikitUi.applyEntryAnimation(this);
 
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        String[] items = getIntent().getStringArrayExtra(EXTRA_ITEMS);
-        if (items == null) items = new String[0];
+        String[] itemsExtra = getIntent().getStringArrayExtra(EXTRA_ITEMS);
+        
+        // 【关键修复】定义一个全新的 final 变量，确保内部类可以正常访问
+        final String[] items = itemsExtra == null ? new String[0] : itemsExtra;
 
         ScrollView scroll = new ScrollView(this);
         LinearLayout root = new LinearLayout(this);
