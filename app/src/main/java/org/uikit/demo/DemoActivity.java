@@ -203,18 +203,14 @@ public class DemoActivity extends Activity {
         addCodeTip(root, getString(R.string.api_change_color));
         addBtn(root, getString(R.string.btn_color), new View.OnClickListener() {
             public void onClick(View v) {
-                UikitUi.showList(DemoActivity.this, getString(R.string.dlg_pick_color), colorNames,
-                    new UikitUi.OnItemSelectListener() {
-                        public void onItemSelect(int p) {
-                            if (colorValues[p] == 0) {
-                                UikitConfig.clearCustomColors(DemoActivity.this);
-                            } else {
-                                UikitConfig.setCustomPrimaryColor(DemoActivity.this, colorValues[p]);
-                                UikitConfig.setCustomAccentColor(DemoActivity.this, UikitColorMixer.blend(colorValues[p], 0xFFFFFFFF, 0.3f));
-                            }
-                            recreate();
-                        }
-                    }).show();
+                ArrayList<UikitListItemModel> colorItems = new ArrayList<>();
+                colorItems.add(new UikitListItemModel("Default Green"));
+                colorItems.add(new UikitListItemModel("Ocean Blue"));
+                colorItems.add(new UikitListItemModel("Sunset Red"));
+                colorItems.add(new UikitListItemModel("Deep Purple"));
+                colorItems.add(new UikitListItemModel("Cyber Yellow"));
+                
+                UikitFullListActivity.show(DemoActivity.this, getString(R.string.dlg_pick_color), colorItems, 1004);
             }
         });
 
@@ -267,6 +263,17 @@ public class DemoActivity extends Activity {
             } else if (requestCode == 1002) {
                 String result = data.getStringExtra(UikitFullInputActivity.EXTRA_RESULT_TEXT);
                 UikitToast.show(this, getString(R.string.toast_selected, result));
+            } else if (requestCode == 1004) {
+                int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
+                if (index >= 0 && index < colorValues.length) {
+                    if (colorValues[index] == 0) {
+                        UikitConfig.clearCustomColors(this);
+                    } else {
+                        UikitConfig.setCustomPrimaryColor(this, colorValues[index]);
+                        UikitConfig.setCustomAccentColor(this, UikitColorMixer.blend(colorValues[index], 0xFFFFFFFF, 0.3f));
+                    }
+                    recreate();
+                }
             }
         }
     }
