@@ -11,7 +11,12 @@
     <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_full_input">UikitFullInputActivity.show()</string>
     <string name="api_full_text">UikitFullTextActivity.show()</string>
-    <string name="api_show_input">UikitUi.showInput()</string>
+    
+    <!-- Deprecated APIs -->
+    <string name="api_show_input">[Deprecated] UikitUi.showInput()</string>
+    <string name="api_show_list">[Deprecated] UikitUi.showList()</string>
+    <string name="api_show_confirm">[Deprecated] UikitUi.showConfirm()</string>
+    
     <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
     <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
     <string name="api_vibrate">WearHardwareUtils.vibrate()</string>
@@ -26,7 +31,12 @@
     <string name="btn_full_list">Open Full List</string>
     <string name="btn_full_input">Open Full Input</string>
     <string name="btn_full_text">Open Full Text</string>
-    <string name="btn_input">Show Dialog Input</string>
+    
+    <!-- Deprecated Buttons -->
+    <string name="btn_input">Show Input (Deprecated)</string>
+    <string name="btn_list">Show List (Deprecated)</string>
+    <string name="btn_confirm">Show Confirm (Deprecated)</string>
+    
     <string name="btn_sheet">Show Bottom Sheet</string>
     <string name="btn_color">Change Theme Color</string>
     <string name="btn_vibrate">Vibrate</string>
@@ -40,6 +50,8 @@
     <string name="toast_clicked">Clicked</string>
     <string name="toast_vibrate">Vibrate triggered</string>
     <string name="toast_selected">Selected: %s</string>
+    <string name="toast_deprecated">This API is deprecated, use FullScreenActivity!</string>
+    
     <string name="dlg_input_title">Input</string>
     <string name="dlg_echo_title">Echo</string>
     <string name="sheet_options_title">Options</string>
@@ -49,7 +61,7 @@
     <string name="full_input_title">Full Screen Input</string>
     <string name="full_input_hint">Type something...</string>
 
-    <string name="long_text">"The People's Republic of China is a socialist country in East Asia. It was founded on October 1, 1949, with its capital in Beijing. It is a socialist state under the people's democratic dictatorship led by the working class and based on an alliance of workers and peasants. The fundamental political system is the system of people's congresses. The official language is Mandarin, with 56 ethnic groups and a population of about 1.4 billion. China is the world's second-largest economy and a permanent member of the UN Security Council. Hong Kong and Macau are special administrative regions, and Taiwan is an inalienable part of China's territory."</string>
+    <string name="long_text">The People's Republic of China is a socialist country in East Asia. It was founded on October 1, 1949, with its capital in Beijing. It is a socialist state under the people's democratic dictatorship led by the working class and based on an alliance of workers and peasants. The fundamental political system is the system of people's congresses. The official language is Mandarin, with 56 ethnic groups and a population of about 1.4 billion. China is the world's second-largest economy and a permanent member of the UN Security Council. Hong Kong and Macau are special administrative regions, and Taiwan is an inalienable part of China's territory.</string>
 
     <string name="item_normal">Normal Item</string>
     <string name="item_normal_sub">Default style</string>

@@ -114,7 +114,7 @@ public class DemoActivity extends Activity {
         skeleton.setLayoutParams(skLp);
         root.addView(skeleton);
 
-        // ================= 2. 弹窗与交互 =================
+        // ================= 2. 全屏组件 (推荐) =================
         addCodeTip(root, getString(R.string.api_full_list));
         addBtn(root, getString(R.string.btn_full_list), new View.OnClickListener() {
             public void onClick(View v) {
@@ -143,7 +143,6 @@ public class DemoActivity extends Activity {
         addCodeTip(root, getString(R.string.api_full_text));
         addBtn(root, getString(R.string.btn_full_text), new View.OnClickListener() {
             public void onClick(View v) {
-                // 展示全屏长文本（完美圆屏适配，内部可滚动）
                 UikitFullTextActivity.show(DemoActivity.this, 
                         getString(R.string.full_text_title), 
                         getString(R.string.long_text), 
@@ -151,9 +150,11 @@ public class DemoActivity extends Activity {
             }
         });
 
+        // ================= 3. 旧版组件 (即将废弃) =================
         addCodeTip(root, getString(R.string.api_show_input));
         addBtn(root, getString(R.string.btn_input), new View.OnClickListener() {
             public void onClick(View v) {
+                UikitToast.show(DemoActivity.this, getString(R.string.toast_deprecated));
                 UikitUi.showInput(DemoActivity.this, getString(R.string.dlg_input_title), "", new UikitUi.OnInputListener() {
                     public void onInput(String s) {
                         UikitUi.showConfirm(DemoActivity.this, getString(R.string.dlg_echo_title), s, null).show();
@@ -162,6 +163,28 @@ public class DemoActivity extends Activity {
             }
         });
 
+        addCodeTip(root, getString(R.string.api_show_list));
+        addBtn(root, getString(R.string.btn_list), new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitToast.show(DemoActivity.this, getString(R.string.toast_deprecated));
+                UikitUi.showList(DemoActivity.this, "Legacy List", new String[]{"One", "Two", "Three"},
+                    new UikitUi.OnItemSelectListener() {
+                        public void onItemSelect(int p) {
+                            UikitToast.show(DemoActivity.this, "Picked: " + p);
+                        }
+                    }).show();
+            }
+        });
+
+        addCodeTip(root, getString(R.string.api_show_confirm));
+        addBtn(root, getString(R.string.btn_confirm), new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitToast.show(DemoActivity.this, getString(R.string.toast_deprecated));
+                UikitUi.showConfirm(DemoActivity.this, "Legacy Confirm", "This is a legacy dialog.", null).show();
+            }
+        });
+
+        // ================= 4. 其他交互与设置 =================
         addCodeTip(root, getString(R.string.api_bottom_sheet));
         addBtn(root, getString(R.string.btn_sheet), new View.OnClickListener() {
             public void onClick(View v) {
@@ -177,7 +200,6 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // ================= 3. 颜色与跳转 =================
         addCodeTip(root, getString(R.string.api_change_color));
         addBtn(root, getString(R.string.btn_color), new View.OnClickListener() {
             public void onClick(View v) {
@@ -204,7 +226,7 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // ================= 4. 设置开关 =================
+        // ================= 5. 设置开关 =================
         addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_dark), dark, new OnChecked() {
             public void onChecked(boolean v) {
@@ -285,7 +307,7 @@ public class DemoActivity extends Activity {
         TextView tv = new TextView(this);
         tv.setText(code);
         tv.setTextSize(11);
-        tv.setTextColor(0xFF888888);
+        tv.setTextColor(code.contains("Deprecated") || code.contains("废弃") ? 0xFFFF5252 : 0xFF888888); // 废弃 API 显示为红色
         tv.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

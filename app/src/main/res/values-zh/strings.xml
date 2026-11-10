@@ -11,7 +11,12 @@
     <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_full_input">UikitFullInputActivity.show()</string>
     <string name="api_full_text">UikitFullTextActivity.show()</string>
-    <string name="api_show_input">UikitUi.showInput()</string>
+    
+    <!-- Deprecated APIs -->
+    <string name="api_show_input">[已废弃] UikitUi.showInput()</string>
+    <string name="api_show_list">[已废弃] UikitUi.showList()</string>
+    <string name="api_show_confirm">[已废弃] UikitUi.showConfirm()</string>
+    
     <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
     <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
     <string name="api_vibrate">WearHardwareUtils.vibrate()</string>
@@ -26,7 +31,12 @@
     <string name="btn_full_list">打开全屏列表</string>
     <string name="btn_full_input">打开全屏输入</string>
     <string name="btn_full_text">显示全屏长文本</string>
-    <string name="btn_input">显示弹窗输入</string>
+    
+    <!-- Deprecated Buttons -->
+    <string name="btn_input">显示输入弹窗 (即将废弃)</string>
+    <string name="btn_list">显示列表弹窗 (即将废弃)</string>
+    <string name="btn_confirm">显示确认弹窗 (即将废弃)</string>
+    
     <string name="btn_sheet">显示底部抽屉</string>
     <string name="btn_color">切换主题颜色</string>
     <string name="btn_vibrate">触发震动</string>
@@ -40,6 +50,8 @@
     <string name="toast_clicked">已点击</string>
     <string name="toast_vibrate">已触发震动</string>
     <string name="toast_selected">已选择: %s</string>
+    <string name="toast_deprecated">该 API 已废弃，请迁移到全屏版本！</string>
+    
     <string name="dlg_input_title">输入</string>
     <string name="dlg_echo_title">回显</string>
     <string name="sheet_options_title">选项</string>
