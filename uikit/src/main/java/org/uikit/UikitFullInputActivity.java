@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class UikitFullInputActivity extends Activity {
@@ -21,12 +22,10 @@ public class UikitFullInputActivity extends Activity {
     public static final String EXTRA_NEGATIVE_TEXT = "uikit_negative_text";
     public static final String EXTRA_RESULT_TEXT = "uikit_result_text";
 
-    // 默认调用（使用系统自带的 OK 和 Cancel）
     public static void show(Activity activity, String title, String defaultText, String hint, int requestCode) {
         show(activity, title, defaultText, hint, null, null, requestCode);
     }
 
-    // 高级调用（自定义按钮文字）
     public static void show(Activity activity, String title, String defaultText, String hint,
                             String positiveText, String negativeText, int requestCode) {
         Intent intent = new Intent(activity, UikitFullInputActivity.class);
@@ -63,13 +62,19 @@ public class UikitFullInputActivity extends Activity {
         boolean dark = UikitTheme.isDarkMode(this);
         int density = (int) getResources().getDisplayMetrics().density;
 
+        // 【修复】重新引入 ScrollView 以支持 3D 滚轮
+        ScrollView scroll = new ScrollView(this);
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(16 * density, 16 * density, 16 * density, 16 * density);
-        root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
-        setContentView(root);
+        scroll.addView(root);
+        setContentView(scroll);
 
+        root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
+        
+        // 【修复】应用圆屏边距与 3D 滚轮特效
         UikitUi.applyRoundPadding(this, root);
+        UikitUi.setupWheelScroll(scroll, root);
 
         // 1. 标题
         TextView tvTitle = new TextView(this);
@@ -89,8 +94,9 @@ public class UikitFullInputActivity extends Activity {
         etInput.setHint(hint);
         etInput.setTextSize(16);
         etInput.setSingleLine(false);
-        etInput.setGravity(Gravity.TOP | Gravity.START); // 修复：左上角对齐
+        etInput.setGravity(Gravity.TOP | Gravity.START);
         etInput.setPadding(16 * density, 12 * density, 16 * density, 12 * density);
+        etInput.setMinHeight(100 * density); // 【修复】避免输入框太薄或太长
         
         GradientDrawable inputBg = new GradientDrawable();
         inputBg.setColor(dark ? 0xFF1E1E1E : 0xFFFFFFFF);
@@ -100,8 +106,9 @@ public class UikitFullInputActivity extends Activity {
         etInput.setTextColor(dark ? 0xFFFFFFFF : 0xFF1C1B1F);
         etInput.setHintTextColor(dark ? 0xFF888888 : 0xFF999999);
         
+        // 【修复】改为 WRAP_CONTENT，不再强行占满剩余空间
         LinearLayout.LayoutParams etLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         etLp.bottomMargin = 16 * density;
         etInput.setLayoutParams(etLp);
         root.addView(etInput);
@@ -112,7 +119,7 @@ public class UikitFullInputActivity extends Activity {
         btnRow.setGravity(Gravity.CENTER);
         
         UikitButton btnCancel = new UikitButton(this);
-        btnCancel.setText(negText); // 自定义取消文字
+        btnCancel.setText(negText);
         btnCancel.setTextColor(dark ? 0xFFFFFFFF : 0xFF1C1B1F);
         GradientDrawable cancelBg = new GradientDrawable();
         cancelBg.setCornerRadius(24 * density);
@@ -130,7 +137,7 @@ public class UikitFullInputActivity extends Activity {
         });
 
         UikitButton btnOk = new UikitButton(this);
-        btnOk.setText(posText); // 自定义确定文字
+        btnOk.setText(posText);
         LinearLayout.LayoutParams oLp = new LinearLayout.LayoutParams(0, 48 * density, 1);
         oLp.leftMargin = 8 * density;
         btnOk.setLayoutParams(oLp);
