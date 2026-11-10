@@ -45,14 +45,24 @@ public class UikitFullTextActivity extends Activity {
         int density = (int) getResources().getDisplayMetrics().density;
         int bgColor = dark ? 0xFF000000 : 0xFFF4F6F8;
 
-        // 根布局：垂直铺满
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(bgColor);
-        setContentView(root);
-        UikitUi.applyRoundPadding(this, root);
+        // 1. 铺满全屏的 ScrollView
+        ScrollView scroll = new ScrollView(this);
+        scroll.setBackgroundColor(bgColor);
+        // 关键：让内部容器铺满整个可视区域，确保首尾元素能滚动到绝对中心
+        scroll.setFillViewport(true);
+        scroll.setVerticalScrollBarEnabled(false);
 
-        // 1. 顶部：固定标题
+        // 2. 滚轮容器 (所有元素放在这里)
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setLayoutParams(new ScrollView.LayoutParams(
+                ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
+        // 应用圆屏左右避让
+        UikitUi.applyRoundPadding(this, container);
+        scroll.addView(container);
+        setContentView(scroll);
+
+        // ================= 第一部分：标题 =================
         TextView tvTitle = new TextView(this);
         tvTitle.setText(title);
         tvTitle.setTextSize(20);
@@ -60,26 +70,11 @@ public class UikitFullTextActivity extends Activity {
         tvTitle.setTextColor(UikitColor.getAccentColor(this, dark));
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleLp.topMargin = 16 * density;
-        titleLp.bottomMargin = 8 * density;
+        titleLp.bottomMargin = 16 * density;
         tvTitle.setLayoutParams(titleLp);
-        root.addView(tvTitle);
+        container.addView(tvTitle);
 
-        // 2. 中间：3D 滚轮滚动区 (占满剩余空间)
-        ScrollView scroll = new ScrollView(this);
-        LinearLayout.LayoutParams scrollLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
-        scroll.setLayoutParams(scrollLp);
-        scroll.setVerticalScrollBarEnabled(false);
-
-        LinearLayout textContainer = new LinearLayout(this);
-        textContainer.setOrientation(LinearLayout.VERTICAL);
-        textContainer.setLayoutParams(new ScrollView.LayoutParams(
-                ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
-        scroll.addView(textContainer);
-        root.addView(scroll);
-
-        // 拆分句子，生成卡片
+        // ================= 第二部分：拆分后的文本卡片 =================
         String[] sentences = message.split("(?<=。)|(?<=！)|(?<=？)|(?<=\\.)|(?<=\\n)");
         for (String sentence : sentences) {
             if (sentence.trim().isEmpty()) continue;
@@ -98,21 +93,16 @@ public class UikitFullTextActivity extends Activity {
             lp.bottomMargin = 12 * density;
             tvSentence.setLayoutParams(lp);
             
-            textContainer.addView(tvSentence);
+            container.addView(tvSentence);
         }
 
-        // 对中间的 textContainer 应用 3D 滚轮
-        UikitUi.setupWheelScroll(scroll, textContainer);
-
-        // 3. 底部：固定按钮
+        // ================= 第三部分：底部操作按钮 =================
         UikitButton btnOk = new UikitButton(this);
         btnOk.setText(posText);
         LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 48 * density);
-        btnLp.topMargin = 8 * density;
-        btnLp.bottomMargin = 16 * density;
-        btnLp.leftMargin = 16 * density;
-        btnLp.rightMargin = 16 * density;
+        btnLp.topMargin = 12 * density;
+        btnLp.bottomMargin = 12 * density;
         btnOk.setLayoutParams(btnLp);
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +111,12 @@ public class UikitFullTextActivity extends Activity {
                 overridePendingTransition(0, 0);
             }
         });
-        root.addView(btnOk);
+        container.addView(btnOk);
+
+        // ================= 核心：将整个 container 作为 3D 滚轮列表 =================
+        // 内部会自动给 container 添加半个屏幕高度的上下 padding，
+        // 保证默认情况下标题在中间，滑动到底部时按钮在中间。
+        UikitUi.setupWheelScroll(scroll, container);
     }
 
     @Override
