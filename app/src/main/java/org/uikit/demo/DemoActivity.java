@@ -132,10 +132,13 @@ public class DemoActivity extends Activity {
         addCodeTip(root, getString(R.string.api_full_input));
         addBtn(root, getString(R.string.btn_full_input), new View.OnClickListener() {
             public void onClick(View v) {
+                // 演示自定义按钮文字
                 UikitFullInputActivity.show(DemoActivity.this, 
                         getString(R.string.full_input_title), 
                         "", 
                         getString(R.string.full_input_hint), 
+                        "提交",
+                        "放弃",
                         1002);
             }
         });

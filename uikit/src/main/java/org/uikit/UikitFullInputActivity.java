@@ -17,13 +17,24 @@ public class UikitFullInputActivity extends Activity {
     public static final String EXTRA_TITLE = "uikit_title";
     public static final String EXTRA_DEFAULT_TEXT = "uikit_default_text";
     public static final String EXTRA_HINT = "uikit_hint";
+    public static final String EXTRA_POSITIVE_TEXT = "uikit_positive_text";
+    public static final String EXTRA_NEGATIVE_TEXT = "uikit_negative_text";
     public static final String EXTRA_RESULT_TEXT = "uikit_result_text";
 
+    // 默认调用（使用系统自带的 OK 和 Cancel）
     public static void show(Activity activity, String title, String defaultText, String hint, int requestCode) {
+        show(activity, title, defaultText, hint, null, null, requestCode);
+    }
+
+    // 高级调用（自定义按钮文字）
+    public static void show(Activity activity, String title, String defaultText, String hint,
+                            String positiveText, String negativeText, int requestCode) {
         Intent intent = new Intent(activity, UikitFullInputActivity.class);
         intent.putExtra(EXTRA_TITLE, title);
         intent.putExtra(EXTRA_DEFAULT_TEXT, defaultText);
         intent.putExtra(EXTRA_HINT, hint);
+        intent.putExtra(EXTRA_POSITIVE_TEXT, positiveText);
+        intent.putExtra(EXTRA_NEGATIVE_TEXT, negativeText);
         activity.startActivityForResult(intent, requestCode);
     }
 
@@ -38,12 +49,16 @@ public class UikitFullInputActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         UikitTheme.applyTheme(this);
         UikitUi.applyEntryAnimation(this);
-        // 确保键盘弹起时不会遮挡布局
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         String defaultText = getIntent().getStringExtra(EXTRA_DEFAULT_TEXT);
         String hint = getIntent().getStringExtra(EXTRA_HINT);
+        String posText = getIntent().getStringExtra(EXTRA_POSITIVE_TEXT);
+        String negText = getIntent().getStringExtra(EXTRA_NEGATIVE_TEXT);
+
+        if (posText == null) posText = getString(android.R.string.ok);
+        if (negText == null) negText = getString(android.R.string.cancel);
 
         boolean dark = UikitTheme.isDarkMode(this);
         int density = (int) getResources().getDisplayMetrics().density;
@@ -74,7 +89,7 @@ public class UikitFullInputActivity extends Activity {
         etInput.setHint(hint);
         etInput.setTextSize(16);
         etInput.setSingleLine(false);
-        etInput.setMaxLines(3);
+        etInput.setGravity(Gravity.TOP | Gravity.START); // 修复：左上角对齐
         etInput.setPadding(16 * density, 12 * density, 16 * density, 12 * density);
         
         GradientDrawable inputBg = new GradientDrawable();
@@ -86,7 +101,7 @@ public class UikitFullInputActivity extends Activity {
         etInput.setHintTextColor(dark ? 0xFF888888 : 0xFF999999);
         
         LinearLayout.LayoutParams etLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1); // 占满中间区域
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
         etLp.bottomMargin = 16 * density;
         etInput.setLayoutParams(etLp);
         root.addView(etInput);
@@ -97,7 +112,7 @@ public class UikitFullInputActivity extends Activity {
         btnRow.setGravity(Gravity.CENTER);
         
         UikitButton btnCancel = new UikitButton(this);
-        btnCancel.setText(android.R.string.cancel);
+        btnCancel.setText(negText); // 自定义取消文字
         btnCancel.setTextColor(dark ? 0xFFFFFFFF : 0xFF1C1B1F);
         GradientDrawable cancelBg = new GradientDrawable();
         cancelBg.setCornerRadius(24 * density);
@@ -115,7 +130,7 @@ public class UikitFullInputActivity extends Activity {
         });
 
         UikitButton btnOk = new UikitButton(this);
-        btnOk.setText(android.R.string.ok);
+        btnOk.setText(posText); // 自定义确定文字
         LinearLayout.LayoutParams oLp = new LinearLayout.LayoutParams(0, 48 * density, 1);
         oLp.leftMargin = 8 * density;
         btnOk.setLayoutParams(oLp);
@@ -134,7 +149,6 @@ public class UikitFullInputActivity extends Activity {
         btnRow.addView(btnOk);
         root.addView(btnRow);
 
-        // 自动弹起键盘
         etInput.requestFocus();
     }
 
