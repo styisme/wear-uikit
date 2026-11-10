@@ -69,7 +69,7 @@ public class UikitFullInputActivity extends Activity {
         root.addView(tvTitle);
 
         // 2. 输入框
-        EditText etInput = new EditText(this);
+        final EditText etInput = new EditText(this);
         etInput.setText(defaultText);
         etInput.setHint(hint);
         etInput.setTextSize(16);
