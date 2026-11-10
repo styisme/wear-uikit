@@ -68,7 +68,7 @@ public class DemoActivity extends Activity {
         title.setLayoutParams(titleLp);
         root.addView(title);
 
-        // ================= 1. 组件区 =================
+        // ================= 1. 基础组件区 =================
         addCodeTip(root, getString(R.string.api_list_switch));
         UikitListItem listItem1 = new UikitListItem(this, getString(R.string.label_wifi), getString(R.string.sub_wifi));
         listItem1.setSwitch(true, new CompoundButton.OnCheckedChangeListener() {
@@ -81,7 +81,7 @@ public class DemoActivity extends Activity {
         listItem2.setArrow();
         listItem2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                UikitToast.show(DemoActivity.this, "Clicked");
+                UikitToast.show(DemoActivity.this, getString(R.string.toast_clicked));
             }
         });
         addViewWithMargin(root, listItem2);
@@ -96,27 +96,45 @@ public class DemoActivity extends Activity {
         progressBar.setLayoutParams(pbLp);
         root.addView(progressBar);
 
+        addCodeTip(root, getString(R.string.api_progress_ring));
+        UikitProgressRing ring = new UikitProgressRing(this);
+        LinearLayout.LayoutParams ringLp = new LinearLayout.LayoutParams(UikitScreenUtils.dp2px(this, 60), UikitScreenUtils.dp2px(this, 60));
+        ringLp.gravity = Gravity.CENTER_HORIZONTAL;
+        ringLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        ring.setLayoutParams(ringLp);
+        ring.setProgress(0.45f);
+        root.addView(ring);
+
+        addCodeTip(root, getString(R.string.api_skeleton));
+        UikitSkeleton skeleton = new UikitSkeleton(this);
+        LinearLayout.LayoutParams skLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 40));
+        skLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
+        skLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
+        skLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        skeleton.setLayoutParams(skLp);
+        root.addView(skeleton);
+
         // ================= 2. 弹窗与交互 =================
-        addCodeTip(root, "UikitFullListActivity.show()");
-        addBtn(root, "Open Full List", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_full_list));
+        addBtn(root, getString(R.string.btn_full_list), new View.OnClickListener() {
             public void onClick(View v) {
                 ArrayList<UikitListItemModel> items = new ArrayList<>();
-                items.add(new UikitListItemModel("Normal Item", "Default style"));
-                items.add(new UikitListItemModel("Success", "Green accent text", 0xFF4CAF50));
-                items.add(new UikitListItemModel("Custom Card 1", "Red background", 0, 0xFFF44336));
-                items.add(new UikitListItemModel("Custom Card 2", "Blue background", 0, 0xFF2196F3));
-                items.add(new UikitListItemModel("All Custom", "Green text on yellow bg", 0xFF388E3C, 0xFFFFEB3B));
+                items.add(new UikitListItemModel(getString(R.string.item_normal), getString(R.string.item_normal_sub)));
+                items.add(new UikitListItemModel(getString(R.string.item_success), getString(R.string.item_success_sub), 0xFF4CAF50));
+                items.add(new UikitListItemModel(getString(R.string.item_custom1), getString(R.string.item_custom1_sub), 0, 0xFFF44336));
+                items.add(new UikitListItemModel(getString(R.string.item_custom2), getString(R.string.item_custom2_sub), 0, 0xFF2196F3));
+                items.add(new UikitListItemModel(getString(R.string.item_all_custom), getString(R.string.item_all_custom_sub), 0xFF388E3C, 0xFFFFEB3B));
                 
-                UikitFullListActivity.show(DemoActivity.this, "Advanced List", items, 1001);
+                UikitFullListActivity.show(DemoActivity.this, getString(R.string.list_advanced_title), items, 1001);
             }
         });
 
         addCodeTip(root, getString(R.string.api_show_input));
         addBtn(root, getString(R.string.btn_input), new View.OnClickListener() {
             public void onClick(View v) {
-                UikitUi.showInput(DemoActivity.this, "Input", "", new UikitUi.OnInputListener() {
+                UikitUi.showInput(DemoActivity.this, getString(R.string.dlg_input_title), "", new UikitUi.OnInputListener() {
                     public void onInput(String s) {
-                        UikitUi.showConfirm(DemoActivity.this, "Echo", s, null).show();
+                        UikitUi.showConfirm(DemoActivity.this, getString(R.string.dlg_echo_title), s, null).show();
                     }
                 }).show();
             }
@@ -126,7 +144,14 @@ public class DemoActivity extends Activity {
         addBtn(root, getString(R.string.btn_sheet), new View.OnClickListener() {
             public void onClick(View v) {
                 UikitEmptyView empty = new UikitEmptyView(DemoActivity.this);
-                new UikitBottomSheet(DemoActivity.this, "Options", empty).show();
+                new UikitBottomSheet(DemoActivity.this, getString(R.string.sheet_options_title), empty).show();
+            }
+        });
+
+        addCodeTip(root, getString(R.string.api_toast));
+        addBtn(root, getString(R.string.btn_toast), new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitToast.show(DemoActivity.this, getString(R.string.toast_clicked));
             }
         });
 
@@ -134,7 +159,7 @@ public class DemoActivity extends Activity {
         addCodeTip(root, getString(R.string.api_change_color));
         addBtn(root, getString(R.string.btn_color), new View.OnClickListener() {
             public void onClick(View v) {
-                UikitUi.showList(DemoActivity.this, "Pick Color", colorNames,
+                UikitUi.showList(DemoActivity.this, getString(R.string.dlg_pick_color), colorNames,
                     new UikitUi.OnItemSelectListener() {
                         public void onItemSelect(int p) {
                             if (colorValues[p] == 0) {
@@ -153,7 +178,7 @@ public class DemoActivity extends Activity {
         addBtn(root, getString(R.string.btn_vibrate), new View.OnClickListener() {
             public void onClick(View v) {
                 WearHardwareUtils.vibrate(DemoActivity.this, WearHardwareUtils.HAPTIC_SUCCESS);
-                UikitToast.show(DemoActivity.this, "Vibrate");
+                UikitToast.show(DemoActivity.this, getString(R.string.toast_vibrate));
             }
         });
 
@@ -193,7 +218,7 @@ public class DemoActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
             String result = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
-            UikitToast.show(this, "Selected: " + result);
+            UikitToast.show(this, getString(R.string.toast_selected, result));
         }
     }
 

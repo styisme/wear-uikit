@@ -3,32 +3,59 @@
     <string name="app_name">Uikit 测试</string>
     <string name="title_main">Uikit API 测试大厅</string>
     
+    <!-- Code Tips -->
     <string name="api_list_switch">UikitListItem (带开关)</string>
     <string name="api_list_arrow">UikitListItem (带箭头)</string>
     <string name="api_progress_bar">UikitProgressBar</string>
+    <string name="api_progress_ring">UikitProgressRing</string>
+    <string name="api_skeleton">UikitSkeleton</string>
+    <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_show_input">UikitUi.showInput()</string>
-    <string name="api_show_list">UikitUi.showList()</string>
     <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
     <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
     <string name="api_vibrate">WearHardwareUtils.vibrate()</string>
-    <string name="api_sub_menu">startActivity(Intent)</string>
+    <string name="api_toast">UikitToast.show()</string>
     <string name="api_switch">UikitSwitch</string>
 
+    <!-- List Items -->
     <string name="label_wifi">Wi-Fi 传输</string>
     <string name="sub_wifi">允许局域网发现设备</string>
     <string name="label_device">关于设备</string>
     <string name="sub_device">查看版本与存储信息</string>
     
+    <!-- Buttons -->
+    <string name="btn_full_list">打开全屏列表</string>
     <string name="btn_input">显示输入框</string>
-    <string name="btn_list">显示列表</string>
     <string name="btn_sheet">显示底部抽屉</string>
     <string name="btn_color">切换主题颜色</string>
-    <string name="btn_vibrate">震动反馈</string>
-    <string name="btn_sub_menu">打开二级菜单</string>
+    <string name="btn_vibrate">触发震动</string>
+    <string name="btn_toast">显示 Toast</string>
     
+    <!-- Switches -->
     <string name="sw_dark">深色模式</string>
     <string name="sw_dynamic">动态取色</string>
-    <string name="sw_low_perf">低性能模式</string>
     <string name="sw_round">强制圆屏</string>
     <string name="sw_lang">语言 (简体中文)</string>
+
+    <!-- Toasts & Dialogs -->
+    <string name="toast_clicked">已点击</string>
+    <string name="toast_vibrate">已触发震动</string>
+    <string name="toast_selected">已选择: %s</string>
+    <string name="dlg_input_title">输入</string>
+    <string name="dlg_echo_title">回显</string>
+    <string name="sheet_options_title">选项</string>
+    <string name="dlg_pick_color">选择颜色</string>
+    <string name="list_advanced_title">高级列表</string>
+
+    <!-- Advanced List Data -->
+    <string name="item_normal">普通选项</string>
+    <string name="item_normal_sub">默认样式</string>
+    <string name="item_success">成功状态</string>
+    <string name="item_success_sub">绿色强调文字</string>
+    <string name="item_custom1">自定义卡片 1</string>
+    <string name="item_custom1_sub">红色背景</string>
+    <string name="item_custom2">自定义卡片 2</string>
+    <string name="item_custom2_sub">蓝色背景</string>
+    <string name="item_all_custom">全自定义</string>
+    <string name="item_all_custom_sub">黄底绿字</string>
 </resources>
