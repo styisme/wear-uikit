@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -61,18 +62,21 @@ public class UikitFullInputActivity extends Activity {
 
         boolean dark = UikitTheme.isDarkMode(this);
         int density = (int) getResources().getDisplayMetrics().density;
+        int bgColor = dark ? 0xFF000000 : 0xFFF4F6F8;
 
-        // 【修复】重新引入 ScrollView 以支持 3D 滚轮
         ScrollView scroll = new ScrollView(this);
+        scroll.setBackgroundColor(bgColor); // 【修复】背景色设置在这里
+        scroll.setFillViewport(true); // 【修复】让内部布局撑满屏幕
+
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
+        root.setLayoutParams(new ScrollView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         root.setPadding(16 * density, 16 * density, 16 * density, 16 * density);
+        
         scroll.addView(root);
         setContentView(scroll);
 
-        root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
-        
-        // 【修复】应用圆屏边距与 3D 滚轮特效
         UikitUi.applyRoundPadding(this, root);
         UikitUi.setupWheelScroll(scroll, root);
 
@@ -96,7 +100,7 @@ public class UikitFullInputActivity extends Activity {
         etInput.setSingleLine(false);
         etInput.setGravity(Gravity.TOP | Gravity.START);
         etInput.setPadding(16 * density, 12 * density, 16 * density, 12 * density);
-        etInput.setMinHeight(100 * density); // 【修复】避免输入框太薄或太长
+        etInput.setMinHeight(100 * density);
         
         GradientDrawable inputBg = new GradientDrawable();
         inputBg.setColor(dark ? 0xFF1E1E1E : 0xFFFFFFFF);
@@ -106,9 +110,8 @@ public class UikitFullInputActivity extends Activity {
         etInput.setTextColor(dark ? 0xFFFFFFFF : 0xFF1C1B1F);
         etInput.setHintTextColor(dark ? 0xFF888888 : 0xFF999999);
         
-        // 【修复】改为 WRAP_CONTENT，不再强行占满剩余空间
         LinearLayout.LayoutParams etLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f); // 用权重 1 占据中间剩余空间
         etLp.bottomMargin = 16 * density;
         etInput.setLayoutParams(etLp);
         root.addView(etInput);
