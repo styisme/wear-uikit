@@ -37,7 +37,7 @@ public class UikitFullListActivity extends Activity {
         UikitUi.applyEntryAnimation(this);
 
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        final String[] items = getIntent().getStringArrayExtra(EXTRA_ITEMS);
+        String[] items = getIntent().getStringArrayExtra(EXTRA_ITEMS);
         if (items == null) items = new String[0];
 
         ScrollView scroll = new ScrollView(this);
