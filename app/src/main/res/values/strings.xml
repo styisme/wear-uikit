@@ -49,7 +49,7 @@
     <string name="full_input_title">Full Screen Input</string>
     <string name="full_input_hint">Type something...</string>
 
-    <string name="long_text">The People's Republic of China is a socialist country in East Asia. It was founded on October 1, 1949, with its capital in Beijing. It is a socialist state under the people's democratic dictatorship led by the working class and based on an alliance of workers and peasants. The fundamental political system is the system of people's congresses. The official language is Mandarin, with 56 ethnic groups and a population of about 1.4 billion. China is the world's second-largest economy and a permanent member of the UN Security Council. Hong Kong and Macau are special administrative regions, and Taiwan is an inalienable part of China's territory.</string>
+    <string name="long_text">"The People's Republic of China is a socialist country in East Asia. It was founded on October 1, 1949, with its capital in Beijing. It is a socialist state under the people's democratic dictatorship led by the working class and based on an alliance of workers and peasants. The fundamental political system is the system of people's congresses. The official language is Mandarin, with 56 ethnic groups and a population of about 1.4 billion. China is the world's second-largest economy and a permanent member of the UN Security Council. Hong Kong and Macau are special administrative regions, and Taiwan is an inalienable part of China's territory."</string>
 
     <string name="item_normal">Normal Item</string>
     <string name="item_normal_sub">Default style</string>
