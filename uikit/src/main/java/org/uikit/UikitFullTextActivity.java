@@ -45,22 +45,14 @@ public class UikitFullTextActivity extends Activity {
         int density = (int) getResources().getDisplayMetrics().density;
         int bgColor = dark ? 0xFF000000 : 0xFFF4F6F8;
 
-        ScrollView scroll = new ScrollView(this);
-        scroll.setBackgroundColor(bgColor);
-        scroll.setFillViewport(true);
-
+        // 根布局：垂直铺满
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setLayoutParams(new ScrollView.LayoutParams(
-                ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
-        root.setPadding(16 * density, 16 * density, 16 * density, 16 * density);
-        
-        scroll.addView(root);
-        setContentView(scroll);
-
+        root.setBackgroundColor(bgColor);
+        setContentView(root);
         UikitUi.applyRoundPadding(this, root);
 
-        // 1. 标题
+        // 1. 顶部：固定标题
         TextView tvTitle = new TextView(this);
         tvTitle.setText(title);
         tvTitle.setTextSize(20);
@@ -68,22 +60,27 @@ public class UikitFullTextActivity extends Activity {
         tvTitle.setTextColor(UikitColor.getAccentColor(this, dark));
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleLp.bottomMargin = 16 * density;
+        titleLp.topMargin = 16 * density;
+        titleLp.bottomMargin = 8 * density;
         tvTitle.setLayoutParams(titleLp);
         root.addView(tvTitle);
 
-        // 2. 文本容器（用于应用 3D 滚轮）
+        // 2. 中间：3D 滚轮滚动区 (占满剩余空间)
+        ScrollView scroll = new ScrollView(this);
+        LinearLayout.LayoutParams scrollLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
+        scroll.setLayoutParams(scrollLp);
+        scroll.setVerticalScrollBarEnabled(false);
+
         LinearLayout textContainer = new LinearLayout(this);
         textContainer.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams containerLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        containerLp.bottomMargin = 24 * density;
-        textContainer.setLayoutParams(containerLp);
+        textContainer.setLayoutParams(new ScrollView.LayoutParams(
+                ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
+        scroll.addView(textContainer);
+        root.addView(scroll);
 
-        // 3. 按句号/问号/叹号/换行符拆分长文本
-        // 正则解释：匹配任意标点后紧跟的位置，保留标点
+        // 拆分句子，生成卡片
         String[] sentences = message.split("(?<=。)|(?<=！)|(?<=？)|(?<=\\.)|(?<=\\n)");
-        
         for (String sentence : sentences) {
             if (sentence.trim().isEmpty()) continue;
             
@@ -92,9 +89,8 @@ public class UikitFullTextActivity extends Activity {
             tvSentence.setTextSize(16);
             tvSentence.setTextColor(dark ? 0xFFE0E0E0 : 0xFF1C1B1F);
             tvSentence.setGravity(Gravity.CENTER);
-            tvSentence.setLineSpacing(0, 1.2f);
-            tvSentence.setPadding(16, 16, 16, 16);
-            // 给每句话加个卡片背景，看起来像独立的字幕块
+            tvSentence.setLineSpacing(0, 1.3f);
+            tvSentence.setPadding(16 * density, 16 * density, 16 * density, 16 * density);
             tvSentence.setBackground(UikitUi.getPillBackground(this));
             
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -105,16 +101,18 @@ public class UikitFullTextActivity extends Activity {
             textContainer.addView(tvSentence);
         }
 
-        root.addView(textContainer);
-
-        // 【核心修复】应用 3D 滚轮特效（针对拆分后的 textContainer 生效）
+        // 对中间的 textContainer 应用 3D 滚轮
         UikitUi.setupWheelScroll(scroll, textContainer);
 
-        // 4. 确定按钮 (放在容器外，确保滑动时按钮不会跟着变小)
+        // 3. 底部：固定按钮
         UikitButton btnOk = new UikitButton(this);
         btnOk.setText(posText);
         LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 48 * density);
+        btnLp.topMargin = 8 * density;
+        btnLp.bottomMargin = 16 * density;
+        btnLp.leftMargin = 16 * density;
+        btnLp.rightMargin = 16 * density;
         btnOk.setLayoutParams(btnLp);
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
