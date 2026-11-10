@@ -54,6 +54,7 @@ public class UikitFullListActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         scroll.addView(root);
         setContentView(scroll);
+        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(bgColor));
 
         UikitUi.applyRoundPadding(this, root);
         UikitUi.setupWheelScroll(scroll, root);
