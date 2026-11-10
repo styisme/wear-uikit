@@ -10,6 +10,7 @@
     <string name="api_skeleton">UikitSkeleton</string>
     <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_full_input">UikitFullInputActivity.show()</string>
+    <string name="api_full_text">UikitFullTextActivity.show()</string>
     <string name="api_show_input">UikitUi.showInput()</string>
     <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
     <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
@@ -24,6 +25,7 @@
     
     <string name="btn_full_list">打开全屏列表</string>
     <string name="btn_full_input">打开全屏输入</string>
+    <string name="btn_full_text">显示全屏长文本</string>
     <string name="btn_input">显示弹窗输入</string>
     <string name="btn_sheet">显示底部抽屉</string>
     <string name="btn_color">切换主题颜色</string>
@@ -43,9 +45,11 @@
     <string name="sheet_options_title">选项</string>
     <string name="dlg_pick_color">选择颜色</string>
     <string name="list_advanced_title">高级列表</string>
-    
+    <string name="full_text_title">回显</string>
     <string name="full_input_title">全屏输入</string>
     <string name="full_input_hint">请输入内容...</string>
+
+    <string name="long_text">中华人民共和国是位于东亚的社会主义国家，1949年10月1日成立，首都北京。它是中国共产党领导的、以工农联盟为基础的人民民主专政的社会主义国家，根本政治制度是人民代表大会制度。官方语言为普通话，共有56个民族，人口约14亿。中国是世界第二大经济体、联合国安理会常任理事国，实行改革开放，坚持中国特色社会主义道路。香港、澳门是中国的特别行政区；台湾是中国领土不可分割的一部分。</string>
 
     <string name="item_normal">普通选项</string>
     <string name="item_normal_sub">默认样式</string>

@@ -132,14 +132,22 @@ public class DemoActivity extends Activity {
         addCodeTip(root, getString(R.string.api_full_input));
         addBtn(root, getString(R.string.btn_full_input), new View.OnClickListener() {
             public void onClick(View v) {
-                // 演示自定义按钮文字
                 UikitFullInputActivity.show(DemoActivity.this, 
                         getString(R.string.full_input_title), 
                         "", 
                         getString(R.string.full_input_hint), 
-                        "提交",
-                        "放弃",
-                        1002);
+                        "提交", "放弃", 1002);
+            }
+        });
+
+        addCodeTip(root, getString(R.string.api_full_text));
+        addBtn(root, getString(R.string.btn_full_text), new View.OnClickListener() {
+            public void onClick(View v) {
+                // 展示全屏长文本（完美圆屏适配，内部可滚动）
+                UikitFullTextActivity.show(DemoActivity.this, 
+                        getString(R.string.full_text_title), 
+                        getString(R.string.long_text), 
+                        "知道了", 1003);
             }
         });
 
