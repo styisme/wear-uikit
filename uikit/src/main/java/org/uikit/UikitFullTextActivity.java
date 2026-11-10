@@ -53,14 +53,12 @@ public class UikitFullTextActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setLayoutParams(new ScrollView.LayoutParams(
                 ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
-        root.setPadding(16 * density, 16 * density, 16 * density, 24 * density);
+        root.setPadding(16 * density, 16 * density, 16 * density, 16 * density);
         
         scroll.addView(root);
         setContentView(scroll);
 
-        // 应用圆屏边距，防止文字被切边
         UikitUi.applyRoundPadding(this, root);
-        // 注：长文本页面不使用 setupWheelScroll 3D特效，因为超大的文本块被缩放透明会严重影响阅读
 
         // 1. 标题
         TextView tvTitle = new TextView(this);
@@ -74,26 +72,45 @@ public class UikitFullTextActivity extends Activity {
         tvTitle.setLayoutParams(titleLp);
         root.addView(tvTitle);
 
-        // 2. 长文本卡片
-        LinearLayout card = new LinearLayout(this);
-        card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(16 * density, 16 * density, 16 * density, 16 * density);
-        card.setBackground(UikitUi.getPillBackground(this));
-        
-        LinearLayout.LayoutParams cardLp = new LinearLayout.LayoutParams(
+        // 2. 文本容器（用于应用 3D 滚轮）
+        LinearLayout textContainer = new LinearLayout(this);
+        textContainer.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams containerLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        cardLp.bottomMargin = 24 * density;
-        card.setLayoutParams(cardLp);
+        containerLp.bottomMargin = 24 * density;
+        textContainer.setLayoutParams(containerLp);
 
-        TextView tvMessage = new TextView(this);
-        tvMessage.setText(message);
-        tvMessage.setTextSize(15);
-        tvMessage.setTextColor(dark ? 0xFFE0E0E0 : 0xFF1C1B1F);
-        tvMessage.setLineSpacing(0, 1.4f); // 增加行距，长文本阅读更舒适
-        card.addView(tvMessage);
-        root.addView(card);
+        // 3. 按句号/问号/叹号/换行符拆分长文本
+        // 正则解释：匹配任意标点后紧跟的位置，保留标点
+        String[] sentences = message.split("(?<=。)|(?<=！)|(?<=？)|(?<=\\.)|(?<=\\n)");
+        
+        for (String sentence : sentences) {
+            if (sentence.trim().isEmpty()) continue;
+            
+            TextView tvSentence = new TextView(this);
+            tvSentence.setText(sentence.trim());
+            tvSentence.setTextSize(16);
+            tvSentence.setTextColor(dark ? 0xFFE0E0E0 : 0xFF1C1B1F);
+            tvSentence.setGravity(Gravity.CENTER);
+            tvSentence.setLineSpacing(0, 1.2f);
+            tvSentence.setPadding(16, 16, 16, 16);
+            // 给每句话加个卡片背景，看起来像独立的字幕块
+            tvSentence.setBackground(UikitUi.getPillBackground(this));
+            
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.bottomMargin = 12 * density;
+            tvSentence.setLayoutParams(lp);
+            
+            textContainer.addView(tvSentence);
+        }
 
-        // 3. 确定按钮
+        root.addView(textContainer);
+
+        // 【核心修复】应用 3D 滚轮特效（针对拆分后的 textContainer 生效）
+        UikitUi.setupWheelScroll(scroll, textContainer);
+
+        // 4. 确定按钮 (放在容器外，确保滑动时按钮不会跟着变小)
         UikitButton btnOk = new UikitButton(this);
         btnOk.setText(posText);
         LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
