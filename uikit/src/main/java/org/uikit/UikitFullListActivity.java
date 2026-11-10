@@ -10,6 +10,7 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import java.util.ArrayList;
 
 public class UikitFullListActivity extends Activity {
     public static final String EXTRA_TITLE = "uikit_title";
@@ -17,7 +18,15 @@ public class UikitFullListActivity extends Activity {
     public static final String EXTRA_RESULT_INDEX = "uikit_result_index";
     public static final String EXTRA_RESULT_TEXT = "uikit_result_text";
 
+    // 兼容旧版：仅传入 String[]
     public static void show(Activity activity, String title, String[] items, int requestCode) {
+        ArrayList<UikitListItemModel> models = new ArrayList<UikitListItemModel>();
+        for (String s : items) models.add(new UikitListItemModel(s));
+        show(activity, title, models, requestCode);
+    }
+
+    // 新版：支持 List<UikitListItemModel>
+    public static void show(Activity activity, String title, ArrayList<UikitListItemModel> items, int requestCode) {
         Intent intent = new Intent(activity, UikitFullListActivity.class);
         intent.putExtra(EXTRA_TITLE, title);
         intent.putExtra(EXTRA_ITEMS, items);
@@ -37,10 +46,8 @@ public class UikitFullListActivity extends Activity {
         UikitUi.applyEntryAnimation(this);
 
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        String[] itemsExtra = getIntent().getStringArrayExtra(EXTRA_ITEMS);
-        
-        // 【关键修复】定义一个全新的 final 变量，确保内部类可以正常访问
-        final String[] items = itemsExtra == null ? new String[0] : itemsExtra;
+        ArrayList<UikitListItemModel> itemsExtra = (ArrayList<UikitListItemModel>) getIntent().getSerializableExtra(EXTRA_ITEMS);
+        final ArrayList<UikitListItemModel> items = itemsExtra == null ? new ArrayList<UikitListItemModel>() : itemsExtra;
 
         ScrollView scroll = new ScrollView(this);
         LinearLayout root = new LinearLayout(this);
@@ -67,40 +74,61 @@ public class UikitFullListActivity extends Activity {
         tvTitle.setLayoutParams(titleLp);
         root.addView(tvTitle);
 
-        // 列表项
-        for (int i = 0; i < items.length; i++) {
+        // 遍历列表
+        for (int i = 0; i < items.size(); i++) {
             final int index = i;
-            TextView tv = new TextView(this);
-            tv.setText(items[i]);
-            tv.setTextSize(16);
-            tv.setGravity(Gravity.CENTER);
-            tv.setTextColor(dark ? 0xFFE0E0E0 : 0xFF1C1B1F);
-            tv.setPadding(UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 20),
-                    UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 20));
-            tv.setBackground(UikitUi.getPillBackground(this));
+            final UikitListItemModel model = items.get(i);
+
+            LinearLayout itemCard = new LinearLayout(this);
+            itemCard.setOrientation(LinearLayout.VERTICAL);
+            itemCard.setPadding(UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 12),
+                    UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 12));
+            itemCard.setBackground(UikitUi.getPillBackground(this));
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             lp.leftMargin = UikitScreenUtils.dp2px(this, 16);
             lp.rightMargin = UikitScreenUtils.dp2px(this, 16);
             lp.bottomMargin = UikitScreenUtils.dp2px(this, 12);
-            tv.setLayoutParams(lp);
+            itemCard.setLayoutParams(lp);
 
-            tv.setOnClickListener(new View.OnClickListener() {
+            // 主标题
+            TextView tvMain = new TextView(this);
+            tvMain.setText(model.title);
+            tvMain.setTextSize(16);
+            // 如果传了强调色且不是0，就用强调色；否则用默认主题色或主文字色
+            if (model.accentColor != 0) {
+                tvMain.setTextColor(model.accentColor);
+            } else {
+                tvMain.setTextColor(dark ? 0xFFE0E0E0 : 0xFF1C1B1F);
+            }
+            tvMain.setGravity(model.subtitle != null ? Gravity.START : Gravity.CENTER);
+            itemCard.addView(tvMain);
+
+            // 副标题 (如果有)
+            if (model.subtitle != null) {
+                TextView tvSub = new TextView(this);
+                tvSub.setText(model.subtitle);
+                tvSub.setTextSize(12);
+                tvSub.setTextColor(dark ? 0xFFAAAAAA : 0xFF666666);
+                tvSub.setPadding(0, UikitScreenUtils.dp2px(this, 4), 0, 0);
+                itemCard.addView(tvSub);
+            }
+
+            itemCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent data = new Intent();
                     data.putExtra(EXTRA_RESULT_INDEX, index);
-                    data.putExtra(EXTRA_RESULT_TEXT, items[index]);
+                    data.putExtra(EXTRA_RESULT_TEXT, model.title);
                     setResult(RESULT_OK, data);
                     finish();
                     overridePendingTransition(0, 0);
                 }
             });
-            root.addView(tv);
+            root.addView(itemCard);
         }
         
-        // 底部留白防切边
         View bottomSpace = new View(this);
         bottomSpace.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 32)));

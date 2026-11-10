@@ -15,6 +15,7 @@ import android.widget.CompoundButton;
 
 import org.uikit.*;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class DemoActivity extends Activity {
@@ -99,8 +100,15 @@ public class DemoActivity extends Activity {
         addCodeTip(root, "UikitFullListActivity.show()");
         addBtn(root, "Open Full List", new View.OnClickListener() {
             public void onClick(View v) {
-                String[] items = {"Option 1", "Option 2", "Option 3", "Option 4", "Option 5", "Option 6"};
-                UikitFullListActivity.show(DemoActivity.this, "Full List", items, 1001);
+                ArrayList<UikitListItemModel> items = new ArrayList<>();
+                items.add(new UikitListItemModel("Normal Item", "Default text color"));
+                items.add(new UikitListItemModel("Success", "Green accent", 0xFF4CAF50));
+                items.add(new UikitListItemModel("Warning", "Orange accent", 0xFFFF9800));
+                items.add(new UikitListItemModel("Error", "Red accent", 0xFFF44336));
+                items.add(new UikitListItemModel("Only Title", null));
+                items.add(new UikitListItemModel("Another Title", "With subtitle"));
+                
+                UikitFullListActivity.show(DemoActivity.this, "Advanced List", items, 1001);
             }
         });
 

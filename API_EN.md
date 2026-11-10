@@ -104,3 +104,14 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 }
 ```
+
+### `UikitFullListActivity.show() (Advanced)`
+Supports two-line display (Title + Subtitle) and custom accent colors per item.
+```java
+ArrayList<UikitListItemModel> items = new ArrayList<>();
+items.add(new UikitListItemModel("Normal", "Subtitle here"));
+items.add(new UikitListItemModel("Success", "Green accent", 0xFF4CAF50));
+items.add(new UikitListItemModel("Error", "Red accent", 0xFFF44336));
+
+UikitFullListActivity.show(this, "Choose", items, 1001);
+```

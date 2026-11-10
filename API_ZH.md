@@ -104,3 +104,14 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 }
 ```
+
+### `UikitFullListActivity.show() (高级版)`
+支持双行显示（标题 + 副标题）以及每个选项单独的自定义颜色。
+```java
+ArrayList<UikitListItemModel> items = new ArrayList<>();
+items.add(new UikitListItemModel("普通选项", "这是副标题"));
+items.add(new UikitListItemModel("成功状态", "绿色强调", 0xFF4CAF50));
+items.add(new UikitListItemModel("错误状态", "红色强调", 0xFFF44336));
+
+UikitFullListActivity.show(this, "请选择", items, 1001);
+```
