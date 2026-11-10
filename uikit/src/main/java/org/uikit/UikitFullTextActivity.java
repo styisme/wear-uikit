@@ -3,6 +3,7 @@ package org.uikit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -44,6 +45,9 @@ public class UikitFullTextActivity extends Activity {
         boolean dark = UikitTheme.isDarkMode(this);
         int density = (int) getResources().getDisplayMetrics().density;
         int bgColor = dark ? 0xFF000000 : 0xFFF4F6F8;
+        
+        // 【修复】设置 Window 默认背景色
+        getWindow().setBackgroundDrawable(new ColorDrawable(bgColor));
 
         // 1. 铺满全屏的 ScrollView
         ScrollView scroll = new ScrollView(this);

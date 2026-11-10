@@ -59,7 +59,7 @@ public class UikitFullListActivity extends Activity {
         UikitUi.setupWheelScroll(scroll, root);
 
         boolean dark = UikitTheme.isDarkMode(this);
-        root.setBackgroundColor(dark ? 0xFF000000 : 0xFFF4F6F8);
+        root.setBackgroundColor(bgColor);
 
         // 标题
         TextView tvTitle = new TextView(this);
