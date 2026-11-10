@@ -3,8 +3,6 @@ package org.uikit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -49,18 +47,28 @@ public class UikitFullListActivity extends Activity {
         ArrayList<UikitListItemModel> itemsExtra = (ArrayList<UikitListItemModel>) getIntent().getSerializableExtra(EXTRA_ITEMS);
         final ArrayList<UikitListItemModel> items = itemsExtra == null ? new ArrayList<UikitListItemModel>() : itemsExtra;
 
+        boolean dark = UikitTheme.isDarkMode(this);
+        int density = (int) getResources().getDisplayMetrics().density;
+        int bgColor = dark ? 0xFF000000 : 0xFFF4F6F8;
+
+        // 设置 Window 背景，防止漏出系统灰色
+        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(bgColor));
+
         ScrollView scroll = new ScrollView(this);
+        scroll.setBackgroundColor(bgColor);
+        scroll.setFillViewport(true);
+
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
+        root.setLayoutParams(new ScrollView.LayoutParams(
+                ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
+        root.setBackgroundColor(bgColor);
+        
         scroll.addView(root);
         setContentView(scroll);
-        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(bgColor));
 
         UikitUi.applyRoundPadding(this, root);
         UikitUi.setupWheelScroll(scroll, root);
-
-        boolean dark = UikitTheme.isDarkMode(this);
-        root.setBackgroundColor(bgColor);
 
         // 标题
         TextView tvTitle = new TextView(this);
@@ -75,7 +83,7 @@ public class UikitFullListActivity extends Activity {
         tvTitle.setLayoutParams(titleLp);
         root.addView(tvTitle);
 
-        // 遍历列表
+        // 列表
         for (int i = 0; i < items.size(); i++) {
             final int index = i;
             final UikitListItemModel model = items.get(i);
@@ -85,10 +93,9 @@ public class UikitFullListActivity extends Activity {
             itemCard.setPadding(UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 12),
                     UikitScreenUtils.dp2px(this, 16), UikitScreenUtils.dp2px(this, 12));
 
-            // 【核心修复】处理自定义卡片颜色
             if (model.cardColor != 0) {
-                GradientDrawable bg = new GradientDrawable();
-                bg.setCornerRadius(32 * getResources().getDisplayMetrics().density);
+                android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+                bg.setCornerRadius(32 * density);
                 bg.setColor(model.cardColor);
                 itemCard.setBackground(bg);
             } else {
@@ -106,12 +113,9 @@ public class UikitFullListActivity extends Activity {
             TextView tvMain = new TextView(this);
             tvMain.setText(model.title);
             tvMain.setTextSize(16);
-            
-            // 如果传了强调色且不是0，就用强调色
             if (model.accentColor != 0) {
                 tvMain.setTextColor(model.accentColor);
             } else if (model.cardColor != 0) {
-                // 如果设置了卡片背景色，根据背景亮度自动计算文字颜色（黑或白）
                 int r = (model.cardColor >> 16) & 0xFF;
                 int g = (model.cardColor >> 8) & 0xFF;
                 int b = model.cardColor & 0xFF;
@@ -128,7 +132,6 @@ public class UikitFullListActivity extends Activity {
                 TextView tvSub = new TextView(this);
                 tvSub.setText(model.subtitle);
                 tvSub.setTextSize(12);
-                
                 if (model.accentColor == 0 && model.cardColor != 0) {
                     int r = (model.cardColor >> 16) & 0xFF;
                     int g = (model.cardColor >> 8) & 0xFF;
@@ -138,7 +141,6 @@ public class UikitFullListActivity extends Activity {
                 } else {
                     tvSub.setTextColor(dark ? 0xFFAAAAAA : 0xFF666666);
                 }
-                
                 tvSub.setPadding(0, UikitScreenUtils.dp2px(this, 4), 0, 0);
                 itemCard.addView(tvSub);
             }
