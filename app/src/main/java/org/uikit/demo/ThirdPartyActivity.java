@@ -7,11 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,6 +47,8 @@ public class ThirdPartyActivity extends Activity {
 
         ScrollView scroll = new ScrollView(this);
         scroll.setBackgroundColor(bgColor);
+        scroll.setClipToPadding(false); // 配合 3D 滚轮
+        scroll.setVerticalScrollBarEnabled(false);
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -57,10 +57,14 @@ public class ThirdPartyActivity extends Activity {
         scroll.addView(root);
         setContentView(scroll);
 
+        // 【修复】应用圆屏边距
         UikitUi.applyRoundPadding(this, root);
+        // 【修复】应用 3D 滚轮特效
+        UikitUi.setupWheelScroll(scroll, root);
 
+        // 标题
         TextView title = new TextView(this);
-        title.setText("Third-Party Resources");
+        title.setText(R.string.tp_title);
         title.setTextSize(20);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(UikitColor.getAccentColor(this, dark));
@@ -69,8 +73,8 @@ public class ThirdPartyActivity extends Activity {
         titleLp.bottomMargin = 24 * density;
         root.addView(title, titleLp);
 
-        // ================= 1. PNG 图片加载 (原生) =================
-        addCodeTip(root, "PNG Image (Native BitmapFactory)");
+        // ================= 1. PNG 图片加载 =================
+        addCodeTip(root, getString(R.string.tp_png_tip));
         ImageView pngImageView = new ImageView(this);
         LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 150 * density);
@@ -92,24 +96,27 @@ public class ThirdPartyActivity extends Activity {
         }
         root.addView(pngImageView);
 
-        // ================= 2. SVG 图片加载 (WebView 渲染) =================
-        addCodeTip(root, "SVG Image (via WebView)");
+        // ================= 2. SVG 图片加载 =================
+        addCodeTip(root, getString(R.string.tp_svg_tip));
         try {
             WebView webView = new WebView(this);
             LinearLayout.LayoutParams webLp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 150 * density);
             webLp.bottomMargin = 24 * density;
             webView.setLayoutParams(webLp);
-            // 设置透明背景，完美融入宿主环境
             webView.setBackgroundColor(Color.TRANSPARENT);
-            // 缩放适配
             webView.getSettings().setUseWideViewPort(true);
             webView.getSettings().setLoadWithOverviewMode(true);
-            // 加载 assets 里的 SVG 文件
+            // 禁用滚动，防止与外部 ScrollView 冲突
+            webView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, android.view.MotionEvent event) {
+                    return event.getAction() == android.view.MotionEvent.ACTION_MOVE;
+                }
+            });
             webView.loadUrl("file:///android_asset/demo_image.svg");
             root.addView(webView);
         } catch (Throwable t) {
-            // 如果设备没有 WebView（部分极简系统），显示占位图
             ImageView svgFallback = new ImageView(this);
             LinearLayout.LayoutParams svgLp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 120 * density);
@@ -120,9 +127,9 @@ public class ThirdPartyActivity extends Activity {
         }
 
         // ================= 3. 原生按钮跳转 =================
-        addCodeTip(root, "Android Native Button (Intent)");
+        addCodeTip(root, getString(R.string.tp_btn_tip));
         Button nativeBtn = new Button(this);
-        nativeBtn.setText("Visit GitHub Repo");
+        nativeBtn.setText(R.string.tp_btn_text);
         nativeBtn.setAllCaps(false);
         LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 56 * density);

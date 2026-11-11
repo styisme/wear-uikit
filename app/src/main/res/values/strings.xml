@@ -75,4 +75,10 @@
     <string name="item_custom2_sub">Blue background</string>
     <string name="item_all_custom">All Custom</string>
     <string name="item_all_custom_sub">Green text on yellow bg</string>
+
+    <string name="tp_title">Third-Party Resources</string>
+    <string name="tp_png_tip">PNG Image (Native)</string>
+    <string name="tp_svg_tip">SVG Image (via WebView)</string>
+    <string name="tp_btn_tip">Native Button</string>
+    <string name="tp_btn_text">Visit GitHub Repo</string>
 </resources>
