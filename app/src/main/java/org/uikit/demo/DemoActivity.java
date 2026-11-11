@@ -133,7 +133,7 @@ public class DemoActivity extends Activity {
         skeleton.setLayoutParams(skLp);
         root.addView(skeleton);
 
-        // ================= 2. 全屏组件 (推荐) =================
+        // ================= 2. 全屏组件区 =================
         addCodeTip(root, getString(R.string.api_full_list));
         addBtn(root, getString(R.string.btn_full_list), new View.OnClickListener() {
             public void onClick(View v) {
@@ -143,7 +143,6 @@ public class DemoActivity extends Activity {
                 items.add(new UikitListItemModel(getString(R.string.item_custom1), getString(R.string.item_custom1_sub), 0, 0xFFF44336));
                 items.add(new UikitListItemModel(getString(R.string.item_custom2), getString(R.string.item_custom2_sub), 0, 0xFF2196F3));
                 items.add(new UikitListItemModel(getString(R.string.item_all_custom), getString(R.string.item_all_custom_sub), 0xFF388E3C, 0xFFFFEB3B));
-                
                 UikitFullListActivity.show(DemoActivity.this, getString(R.string.list_advanced_title), items, 1001);
             }
         });
@@ -151,33 +150,25 @@ public class DemoActivity extends Activity {
         addCodeTip(root, getString(R.string.api_full_input));
         addBtn(root, getString(R.string.btn_full_input), new View.OnClickListener() {
             public void onClick(View v) {
-                UikitFullInputActivity.show(DemoActivity.this, 
-                        getString(R.string.full_input_title), 
-                        "", 
-                        getString(R.string.full_input_hint), 
-                        "提交", "放弃", 1002);
+                UikitFullInputActivity.show(DemoActivity.this, getString(R.string.full_input_title), "", getString(R.string.full_input_hint), "提交", "放弃", 1002);
             }
         });
 
         addCodeTip(root, getString(R.string.api_full_text));
         addBtn(root, getString(R.string.btn_full_text), new View.OnClickListener() {
             public void onClick(View v) {
-                UikitFullTextActivity.show(DemoActivity.this, 
-                        getString(R.string.full_text_title), 
-                        getString(R.string.long_text), 
-                        "知道了", 1003);
+                UikitFullTextActivity.show(DemoActivity.this, getString(R.string.full_text_title), getString(R.string.long_text), "知道了", 1003);
             }
         });
 
-        // ================= 3. 旧版组件 (即将废弃) =================
         addCodeTip(root, getString(R.string.api_picker));
         addBtn(root, getString(R.string.btn_picker), new View.OnClickListener() {
             public void onClick(View v) {
-                UikitPickerActivity.show(DemoActivity.this, getString(R.string.picker_title), 
-                    new String[]{"Option A", "Option B", "Option C"}, 1005);
+                UikitPickerActivity.show(DemoActivity.this, getString(R.string.picker_title), new String[]{"Option A", "Option B", "Option C"}, 1005);
             }
         });
 
+        // ================= 3. 对话框区 =================
         addCodeTip(root, getString(R.string.api_show_input));
         addBtn(root, getString(R.string.btn_input), new View.OnClickListener() {
             public void onClick(View v) {
@@ -211,7 +202,6 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // ================= 4. 其他交互与设置 =================
         addCodeTip(root, getString(R.string.api_bottom_sheet));
         addBtn(root, getString(R.string.btn_sheet), new View.OnClickListener() {
             public void onClick(View v) {
@@ -227,6 +217,7 @@ public class DemoActivity extends Activity {
             }
         });
 
+        // ================= 4. 色彩与震动 =================
         addCodeTip(root, getString(R.string.api_change_color));
         addBtn(root, getString(R.string.btn_color), new View.OnClickListener() {
             public void onClick(View v) {
@@ -236,7 +227,6 @@ public class DemoActivity extends Activity {
                 colorItems.add(new UikitListItemModel("Sunset Red"));
                 colorItems.add(new UikitListItemModel("Deep Purple"));
                 colorItems.add(new UikitListItemModel("Cyber Yellow"));
-                
                 UikitFullListActivity.show(DemoActivity.this, getString(R.string.dlg_pick_color), colorItems, 1004);
             }
         });
@@ -249,24 +239,20 @@ public class DemoActivity extends Activity {
             }
         });
 
-        // ================= 5. 设置开关 =================
-        addCodeTip(root, getString(R.string.api_switch));
-        // ================= 5. 终极组件测试 =================
-        addCodeTip(root, "UikitTabView + UikitBadge + UikitDivider");
+        // ================= 5. 新增终极组件 =================
+        addCodeTip(root, getString(R.string.api_tab_badge_divider));
         UikitTabView tabView = new UikitTabView(this, new String[]{"Tab 1", "Tab 2"});
-        LinearLayout.LayoutParams tabLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams tabLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         tabLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
         tabLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
         tabLp.bottomMargin = UikitScreenUtils.dp2px(this, 8);
         tabView.setLayoutParams(tabLp);
         root.addView(tabView);
 
-        UikitListItem listItemWithBadge = new UikitListItem(this, "Unread Messages", "Tap to view");
+        UikitListItem listItemWithBadge = new UikitListItem(this, getString(R.string.label_unread), getString(R.string.sub_unread));
         UikitBadge badge = new UikitBadge(this);
         badge.setBadge("99+");
-        LinearLayout.LayoutParams badgeLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams badgeLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         badgeLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
         badgeLp.gravity = Gravity.CENTER_VERTICAL;
         badge.setLayoutParams(badgeLp);
@@ -274,37 +260,44 @@ public class DemoActivity extends Activity {
         addViewWithMargin(root, listItemWithBadge);
         root.addView(new UikitDivider(this));
 
-        addCodeTip(root, "UikitLoadingView");
+        addCodeTip(root, getString(R.string.api_loading_view));
         UikitLoadingView loadingView = new UikitLoadingView(this);
-        LinearLayout.LayoutParams loadLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 40));
+        LinearLayout.LayoutParams loadLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 40));
         loadingView.setLayoutParams(loadLp);
         root.addView(loadingView);
 
-        addCodeTip(root, "UikitFullConfirmActivity");
-        addBtn(root, "Confirm Dialog", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_full_confirm));
+        addBtn(root, getString(R.string.btn_full_confirm), new View.OnClickListener() {
             public void onClick(View v) {
                 if (UikitClickUtils.isFastDoubleClick()) return;
-                UikitFullConfirmActivity.show(DemoActivity.this, "Delete Item?", "This cannot be undone.", 2001);
+                UikitFullConfirmActivity.show(DemoActivity.this, getString(R.string.dlg_confirm_title), getString(R.string.dlg_confirm_msg), 2001);
             }
         });
 
-        addCodeTip(root, "UikitImageViewerActivity");
-        addBtn(root, "View Image", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_image_viewer));
+        addBtn(root, getString(R.string.btn_image_viewer), new View.OnClickListener() {
             public void onClick(View v) {
                 if (UikitClickUtils.isFastDoubleClick()) return;
                 UikitImageViewerActivity.show(DemoActivity.this, "demo_image.png");
             }
         });
 
-        addCodeTip(root, "UikitDatePickerActivity");
-        addBtn(root, "Date Picker", new View.OnClickListener() {
+        addCodeTip(root, getString(R.string.api_date_picker));
+        addBtn(root, getString(R.string.btn_date_picker), new View.OnClickListener() {
             public void onClick(View v) {
                 if (UikitClickUtils.isFastDoubleClick()) return;
                 UikitDatePickerActivity.show(DemoActivity.this, 2003);
             }
         });
 
+        addCodeTip(root, getString(R.string.api_third_party));
+        addBtn(root, getString(R.string.btn_third_party), new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(DemoActivity.this, ThirdPartyActivity.class));
+            }
+        });
+
+        // ================= 6. 设置开关区 =================
         addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_dark), dark, new OnChecked() {
             public void onChecked(boolean v) {
@@ -327,14 +320,6 @@ public class DemoActivity extends Activity {
             }
         });
 
-        addCodeTip(root, "startActivity(ThirdPartyActivity)");
-        addBtn(root, "Test Third-Party Resources", new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivity(new Intent(DemoActivity.this, ThirdPartyActivity.class));
-            }
-        });
-
-        addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_lang), "zh".equals(UikitConfig.getAppLang(this)), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setAppLang(DemoActivity.this, v ? "zh" : "en");
@@ -353,16 +338,6 @@ public class DemoActivity extends Activity {
             } else if (requestCode == 1002) {
                 String result = data.getStringExtra(UikitFullInputActivity.EXTRA_RESULT_TEXT);
                 UikitToast.show(this, getString(R.string.toast_selected, result));
-            } else if (requestCode == 1005) {
-                String result = data.getStringExtra(UikitPickerActivity.EXTRA_RESULT_TEXT);
-                UikitToast.show(this, getString(R.string.toast_selected, result));
-            } else if (requestCode == 2001) {
-                UikitToast.show(this, "Confirmed!");
-            } else if (requestCode == 2003) {
-                String y = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_YEAR);
-                String m = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_MONTH);
-                String d = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_DAY);
-                UikitToast.show(this, y + "-" + m + "-" + d);
             } else if (requestCode == 1004) {
                 int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
                 if (index >= 0 && index < colorValues.length) {
@@ -374,6 +349,16 @@ public class DemoActivity extends Activity {
                     }
                     recreate();
                 }
+            } else if (requestCode == 1005) {
+                String result = data.getStringExtra(UikitPickerActivity.EXTRA_RESULT_TEXT);
+                UikitToast.show(this, getString(R.string.toast_selected, result));
+            } else if (requestCode == 2001) {
+                UikitToast.show(this, getString(R.string.toast_confirmed));
+            } else if (requestCode == 2003) {
+                String y = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_YEAR);
+                String m = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_MONTH);
+                String d = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_DAY);
+                UikitToast.show(this, y + "-" + m + "-" + d);
             }
         }
     }
@@ -414,7 +399,7 @@ public class DemoActivity extends Activity {
         TextView tv = new TextView(this);
         tv.setText(code);
         tv.setTextSize(11);
-        tv.setTextColor(code.contains("Deprecated") || code.contains("废弃") ? 0xFFFF5252 : 0xFF888888); // 废弃 API 显示为红色
+        tv.setTextColor(code.contains("Deprecated") || code.contains("废弃") ? 0xFFFF5252 : 0xFF888888);
         tv.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

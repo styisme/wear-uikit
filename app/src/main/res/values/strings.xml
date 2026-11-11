@@ -3,57 +3,74 @@
     <string name="app_name">Uikit Demo</string>
     <string name="title_main">Uikit API Playground</string>
     
+    <!-- Code Tips -->
     <string name="api_list_switch">UikitListItem (Switch)</string>
     <string name="api_list_arrow">UikitListItem (Arrow)</string>
     <string name="api_progress_bar">UikitProgressBar</string>
     <string name="api_progress_ring">UikitProgressRing</string>
-    <string name="api_skeleton">UikitSkeleton</string>
     <string name="api_slider">UikitSlider (Draggable)</string>
     <string name="api_loading_bar">UikitLoadingBar</string>
+    <string name="api_skeleton">UikitSkeleton</string>
     <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_full_input">UikitFullInputActivity.show()</string>
     <string name="api_full_text">UikitFullTextActivity.show()</string>
-    
-    <!-- Deprecated APIs -->
     <string name="api_show_input">[Deprecated] UikitUi.showInput()</string>
     <string name="api_show_list">[Deprecated] UikitUi.showList()</string>
     <string name="api_show_confirm">[Deprecated] UikitUi.showConfirm()</string>
-    
     <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
     <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
     <string name="api_vibrate">WearHardwareUtils.vibrate()</string>
     <string name="api_toast">UikitToast.show()</string>
     <string name="api_switch">UikitSwitch</string>
+    <string name="api_picker">UikitPickerActivity.show()</string>
+    
+    <string name="api_tab_badge_divider">UikitTabView + UikitBadge + UikitDivider</string>
+    <string name="api_loading_view">UikitLoadingView</string>
+    <string name="api_full_confirm">UikitFullConfirmActivity.show()</string>
+    <string name="api_image_viewer">UikitImageViewerActivity.show()</string>
+    <string name="api_date_picker">UikitDatePickerActivity.show()</string>
+    <string name="api_third_party">Third-Party Resources</string>
 
+    <!-- List Items -->
     <string name="label_wifi">Wi-Fi Transfer</string>
     <string name="sub_wifi">Allow LAN discovery</string>
     <string name="label_device">About Device</string>
     <string name="sub_device">Version &amp; Storage</string>
+    <string name="label_unread">Unread Messages</string>
+    <string name="sub_unread">Tap to view</string>
     
+    <!-- Buttons -->
     <string name="btn_full_list">Open Full List</string>
     <string name="btn_full_input">Open Full Input</string>
     <string name="btn_full_text">Open Full Text</string>
-    
-    <!-- Deprecated Buttons -->
+    <string name="btn_picker">Test Horizontal Picker</string>
     <string name="btn_input">Show Input (Deprecated)</string>
     <string name="btn_list">Show List (Deprecated)</string>
     <string name="btn_confirm">Show Confirm (Deprecated)</string>
-    
     <string name="btn_sheet">Show Bottom Sheet</string>
     <string name="btn_color">Change Theme Color</string>
     <string name="btn_vibrate">Vibrate</string>
     <string name="btn_toast">Show Toast</string>
-    
+    <string name="btn_third_party">Test Third-Party</string>
+    <string name="btn_full_confirm">Confirm Dialog</string>
+    <string name="btn_image_viewer">View Image</string>
+    <string name="btn_date_picker">Date Picker</string>
+
+    <!-- Switches -->
     <string name="sw_dark">Dark Mode</string>
     <string name="sw_dynamic">Dynamic Color</string>
     <string name="sw_round">Force Round Screen</string>
     <string name="sw_lang">Language (English)</string>
 
+    <!-- Dialogs & Toasts -->
     <string name="toast_clicked">Clicked</string>
     <string name="toast_vibrate">Vibrate triggered</string>
     <string name="toast_selected">Selected: %s</string>
     <string name="toast_deprecated">This API is deprecated, use FullScreenActivity!</string>
+    <string name="toast_confirmed">Confirmed!</string>
     
+    <string name="dlg_confirm_title">Delete Item?</string>
+    <string name="dlg_confirm_msg">This cannot be undone.</string>
     <string name="dlg_input_title">Input</string>
     <string name="dlg_echo_title">Echo</string>
     <string name="sheet_options_title">Options</string>
@@ -62,9 +79,12 @@
     <string name="full_text_title">Full Text</string>
     <string name="full_input_title">Full Screen Input</string>
     <string name="full_input_hint">Type something...</string>
+    <string name="picker_title">Select Option</string>
 
+    <!-- Long Text -->
     <string name="long_text">The People’s Republic of China is a socialist country in East Asia. It was founded on October 1, 1949, with its capital in Beijing. It is a socialist state under the people’s democratic dictatorship led by the working class and based on an alliance of workers and peasants. The fundamental political system is the system of people’s congresses. The official language is Mandarin, with 56 ethnic groups and a population of about 1.4 billion. China is the world’s second-largest economy and a permanent member of the UN Security Council. Hong Kong and Macau are special administrative regions, and Taiwan is an inalienable part of China’s territory.</string>
 
+    <!-- Advanced List Data -->
     <string name="item_normal">Normal Item</string>
     <string name="item_normal_sub">Default style</string>
     <string name="item_success">Success</string>
@@ -76,13 +96,10 @@
     <string name="item_all_custom">All Custom</string>
     <string name="item_all_custom_sub">Green text on yellow bg</string>
 
+    <!-- Third Party Page -->
     <string name="tp_title">Third-Party Resources</string>
     <string name="tp_png_tip">PNG Image (Native)</string>
     <string name="tp_svg_tip">SVG Image (via WebView)</string>
     <string name="tp_btn_tip">Native Button</string>
     <string name="tp_btn_text">Visit GitHub Repo</string>
-
-    <string name="api_picker">UikitPickerActivity.show()</string>
-    <string name="btn_picker">Test Horizontal Picker</string>
-    <string name="picker_title">Select Option</string>
 </resources>

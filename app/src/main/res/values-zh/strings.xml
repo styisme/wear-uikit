@@ -3,57 +3,74 @@
     <string name="app_name">Uikit 测试</string>
     <string name="title_main">Uikit API 测试大厅</string>
     
+    <!-- Code Tips -->
     <string name="api_list_switch">UikitListItem (带开关)</string>
     <string name="api_list_arrow">UikitListItem (带箭头)</string>
     <string name="api_progress_bar">UikitProgressBar</string>
     <string name="api_progress_ring">UikitProgressRing</string>
-    <string name="api_skeleton">UikitSkeleton</string>
     <string name="api_slider">UikitSlider (可拖动)</string>
-    <string name="api_loading_bar">UikitLoadingBar (加载动画)</string>
+    <string name="api_loading_bar">UikitLoadingBar</string>
+    <string name="api_skeleton">UikitSkeleton</string>
     <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_full_input">UikitFullInputActivity.show()</string>
     <string name="api_full_text">UikitFullTextActivity.show()</string>
-    
-    <!-- Deprecated APIs -->
     <string name="api_show_input">[已废弃] UikitUi.showInput()</string>
     <string name="api_show_list">[已废弃] UikitUi.showList()</string>
     <string name="api_show_confirm">[已废弃] UikitUi.showConfirm()</string>
-    
     <string name="api_bottom_sheet">new UikitBottomSheet().show()</string>
     <string name="api_change_color">UikitConfig.setCustomPrimaryColor()</string>
     <string name="api_vibrate">WearHardwareUtils.vibrate()</string>
     <string name="api_toast">UikitToast.show()</string>
     <string name="api_switch">UikitSwitch</string>
+    <string name="api_picker">UikitPickerActivity.show()</string>
+    
+    <string name="api_tab_badge_divider">UikitTabView + UikitBadge + UikitDivider</string>
+    <string name="api_loading_view">UikitLoadingView</string>
+    <string name="api_full_confirm">UikitFullConfirmActivity.show()</string>
+    <string name="api_image_viewer">UikitImageViewerActivity.show()</string>
+    <string name="api_date_picker">UikitDatePickerActivity.show()</string>
+    <string name="api_third_party">第三方资源测试</string>
 
+    <!-- List Items -->
     <string name="label_wifi">Wi-Fi 传输</string>
     <string name="sub_wifi">允许局域网发现设备</string>
     <string name="label_device">关于设备</string>
     <string name="sub_device">查看版本与存储信息</string>
+    <string name="label_unread">未读消息</string>
+    <string name="sub_unread">点击查看</string>
     
+    <!-- Buttons -->
     <string name="btn_full_list">打开全屏列表</string>
     <string name="btn_full_input">打开全屏输入</string>
     <string name="btn_full_text">显示全屏长文本</string>
-    
-    <!-- Deprecated Buttons -->
-    <string name="btn_input">显示输入弹窗 (即将废弃)</string>
-    <string name="btn_list">显示列表弹窗 (即将废弃)</string>
-    <string name="btn_confirm">显示确认弹窗 (即将废弃)</string>
-    
+    <string name="btn_picker">测试滑动选择器</string>
+    <string name="btn_input">显示输入弹窗 (已废弃)</string>
+    <string name="btn_list">显示列表弹窗 (已废弃)</string>
+    <string name="btn_confirm">显示确认弹窗 (已废弃)</string>
     <string name="btn_sheet">显示底部抽屉</string>
     <string name="btn_color">切换主题颜色</string>
     <string name="btn_vibrate">触发震动</string>
     <string name="btn_toast">显示 Toast</string>
-    
+    <string name="btn_third_party">测试第三方资源</string>
+    <string name="btn_full_confirm">确认对话框</string>
+    <string name="btn_image_viewer">查看图片</string>
+    <string name="btn_date_picker">日期选择器</string>
+
+    <!-- Switches -->
     <string name="sw_dark">深色模式</string>
     <string name="sw_dynamic">动态取色</string>
     <string name="sw_round">强制圆屏</string>
     <string name="sw_lang">语言 (简体中文)</string>
 
+    <!-- Dialogs & Toasts -->
     <string name="toast_clicked">已点击</string>
     <string name="toast_vibrate">已触发震动</string>
     <string name="toast_selected">已选择: %s</string>
     <string name="toast_deprecated">该 API 已废弃，请迁移到全屏版本！</string>
+    <string name="toast_confirmed">已确认！</string>
     
+    <string name="dlg_confirm_title">删除项目？</string>
+    <string name="dlg_confirm_msg">此操作无法撤销。</string>
     <string name="dlg_input_title">输入</string>
     <string name="dlg_echo_title">回显</string>
     <string name="sheet_options_title">选项</string>
@@ -62,9 +79,12 @@
     <string name="full_text_title">回显</string>
     <string name="full_input_title">全屏输入</string>
     <string name="full_input_hint">请输入内容...</string>
+    <string name="picker_title">请选择</string>
 
+    <!-- Long Text -->
     <string name="long_text">中华人民共和国是位于东亚的社会主义国家，1949年10月1日成立，首都北京。它是中国共产党领导的、以工农联盟为基础的人民民主专政的社会主义国家，根本政治制度是人民代表大会制度。官方语言为普通话，共有56个民族，人口约14亿。中国是世界第二大经济体、联合国安理会常任理事国，实行改革开放，坚持中国特色社会主义道路。香港、澳门是中国的特别行政区；台湾是中国领土不可分割的一部分。</string>
 
+    <!-- Advanced List Data -->
     <string name="item_normal">普通选项</string>
     <string name="item_normal_sub">默认样式</string>
     <string name="item_success">成功状态</string>
@@ -76,13 +96,10 @@
     <string name="item_all_custom">全自定义</string>
     <string name="item_all_custom_sub">黄底绿字</string>
 
+    <!-- Third Party Page -->
     <string name="tp_title">第三方资源</string>
     <string name="tp_png_tip">PNG 图片 (原生加载)</string>
     <string name="tp_svg_tip">SVG 图片 (WebView 渲染)</string>
     <string name="tp_btn_tip">原生按钮</string>
     <string name="tp_btn_text">访问 GitHub 仓库</string>
-
-    <string name="api_picker">UikitPickerActivity.show()</string>
-    <string name="btn_picker">测试滑动选择器</string>
-    <string name="picker_title">请选择</string>
 </resources>
