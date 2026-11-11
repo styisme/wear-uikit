@@ -1,15 +1,24 @@
-# Uikit API Guide
+# Uikit Detailed API Guide (v1.4.0)
 
-This document describes how to use the core APIs of the `org.uikit` library.
+This document details all components, parameters, return types, and examples of the `org.uikit` library.
+
+---
 
 ## 1. Initialization & Lifecycle
 
 ### `UikitConfig.init(String prefsName)`
+Initializes the library's SharedPreferences file.
+* **Parameters**: `prefsName` - e.g., `"my_app_prefs"`.
+* **When to call**: In `Application.onCreate()` or early in `MainActivity`.
 ```java
 UikitConfig.init("my_app_prefs");
 ```
 
-### `UikitUi.wrapScale(Context base)`
+### `UikitUi.wrapScale(Context newBase)`
+Applies physical UI scaling (0.3x - 2.5x).
+* **Parameters**: `newBase` - The original Context.
+* **Returns**: The wrapped `Context`.
+* **When to call**: Must override `attachBaseContext` in every Activity.
 ```java
 @Override
 protected void attachBaseContext(Context newBase) {
@@ -18,31 +27,99 @@ protected void attachBaseContext(Context newBase) {
 ```
 
 ### `UikitTheme.applyTheme(Activity activity)`
+Applies dark/light theme and recursively fixes light backgrounds.
 ```java
 UikitTheme.applyTheme(this);
 ```
 
----
-
-## 2. Color & Customization
-
-### `UikitColor.getPrimaryColor(Context)`
-Gets the current primary color.
-
-### `UikitConfig.setCustomPrimaryColor(Context, int color)`
+### `UikitUi.applyEntryAnimation(Activity activity)`
+Applies predictive back entry animation.
 ```java
-UikitConfig.setCustomPrimaryColor(this, 0xFF1976D2); // Blue
+UikitUi.applyEntryAnimation(this);
+```
+
+### `UikitUi.handleSwipeBack(Activity activity, MotionEvent ev)`
+Handles global swipe-back gestures.
+* **Returns**: `true` if consumed.
+* **When to call**: In `dispatchTouchEvent`.
+```java
+@Override
+public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (UikitUi.handleSwipeBack(this, ev)) return true;
+    return super.dispatchTouchEvent(ev);
+}
 ```
 
 ---
 
-## 3. UI Widgets
+## 2. Color & Screen Utils
+
+### `UikitColor`
+* `UikitColor.getPrimaryColor(Context)`: Gets primary color.
+* `UikitColor.getOnPrimaryColor(Context)`: Auto-calculates black/white text contrast.
+* `UikitColor.getAccentColor(Context, boolean isDark)`: Gets accent color.
+
+### `UikitConfig` Custom Colors
+```java
+UikitConfig.setCustomPrimaryColor(this, 0xFF1976D2);
+UikitConfig.setCustomAccentColor(this, 0xFF64B5F6);
+UikitConfig.clearCustomColors(this);
+```
+
+### `UikitScreenUtils`
+* `UikitScreenUtils.dp2px(Context, float dp)`
+* `UikitScreenUtils.isSquareScreen(View root)`
+
+---
+
+## 3. Basic Widgets
+
+### `UikitButton`
+Standard pill button with press-scale animation.
+```java
+UikitButton btn = new UikitButton(this);
+btn.setText("OK");
+```
+
+### `UikitSwitch`
+Custom MD3 switch.
+```java
+UikitSwitch sw = new UikitSwitch(this);
+sw.setChecked(true);
+```
 
 ### `UikitListItem`
+Standard settings list item.
 ```java
-UikitListItem item = new UikitListItem(this, "Wi-Fi", "Allow LAN discovery");
+UikitListItem item = new UikitListItem(this, "Wi-Fi", "Allow LAN");
 item.setSwitch(true, listener);
+// Or
+item.setArrow();
 ```
+
+### `UikitBadge`
+Unread message badge.
+```java
+UikitBadge badge = new UikitBadge(this);
+badge.setBadge("99+");
+// Or
+badge.setDot();
+listItem.addView(badge);
+```
+
+### `UikitDivider`
+```java
+root.addView(new UikitDivider(this));
+```
+
+### `UikitEmptyView`
+```java
+UikitEmptyView empty = new UikitEmptyView(this);
+```
+
+---
+
+## 4. Progress & Loading
 
 ### `UikitProgressBar`
 ```java
@@ -50,78 +127,136 @@ UikitProgressBar pb = new UikitProgressBar(this);
 pb.setProgress(0.75f);
 ```
 
+### `UikitProgressRing`
+```java
+UikitProgressRing ring = new UikitProgressRing(this);
+ring.setProgress(0.5f);
+```
+
+### `UikitSlider`
+```java
+UikitSlider slider = new UikitSlider(this);
+slider.setMaxProgress(100);
+slider.setProgress(30);
+slider.setOnProgressChangedListener(progress -> {});
+```
+
+### `UikitLoadingBar`
+```java
+UikitLoadingBar loading = new UikitLoadingBar(this);
+```
+
+### `UikitLoadingView`
+```java
+UikitLoadingView loadingView = new UikitLoadingView(this);
+```
+
+### `UikitSkeleton`
+```java
+UikitSkeleton skeleton = new UikitSkeleton(this);
+```
+
 ---
 
-## 4. Fullscreen Components (Recommended)
+## 5. Fullscreen Components (Recommended)
 
-> These components replace the legacy dialog APIs, perfectly adapting to round screens and 3D wheel effects.
-
-### `UikitFullTextActivity.show()`
+### `UikitFullListActivity.show()`
+* **Parameters**: `(Activity, String title, ArrayList<UikitListItemModel> items, int requestCode)`
+* **Returns**: `EXTRA_RESULT_INDEX` (int), `EXTRA_RESULT_TEXT` (String) via `onActivityResult`.
 ```java
-UikitFullTextActivity.show(this, "Agreement", "Long text here...", "OK", 1001);
+ArrayList<UikitListItemModel> items = new ArrayList<>();
+items.add(new UikitListItemModel("Normal", "Default", 0, 0));
+items.add(new UikitListItemModel("Error", "Red bg", 0, 0xFFF44336));
+UikitFullListActivity.show(this, "List", items, 1001);
 ```
 
 ### `UikitFullInputActivity.show()`
+* **Parameters**: `(Activity, String title, String defaultText, String hint, String positiveText, String negativeText, int requestCode)`
+* **Returns**: `EXTRA_RESULT_TEXT` (String).
 ```java
 UikitFullInputActivity.show(this, "Input", "", "Type...", "Submit", "Cancel", 1002);
 ```
 
-### `UikitFullListActivity.show()`
+### `UikitFullTextActivity.show()`
+* **Parameters**: `(Activity, String title, String message, String positiveText, int requestCode)`
 ```java
-ArrayList<UikitListItemModel> items = new ArrayList<>();
-items.add(new UikitListItemModel("Normal", "Subtitle"));
-items.add(new UikitListItemModel("Success", "Green accent", 0xFF4CAF50));
-items.add(new UikitListItemModel("Red Card", null, 0, 0xFFF44336));
+UikitFullTextActivity.show(this, "Agreement", longText, "OK", 1003);
+```
 
-UikitFullListActivity.show(this, "Choose", items, 1003);
+### `UikitFullConfirmActivity.show()`
+* **Parameters**: `(Activity, String title, String message, int requestCode)`
+```java
+UikitFullConfirmActivity.show(this, "Delete?", "Cannot be undone", 1004);
+```
+
+### `UikitPickerActivity.show()`
+* **Parameters**: `(Activity, String title, String[] items, int requestCode)`
+* **Returns**: `EXTRA_RESULT_INDEX` (int), `EXTRA_RESULT_TEXT` (String).
+```java
+UikitPickerActivity.show(this, "Select", new String[]{"A", "B", "C"}, 1005);
+```
+
+### `UikitDatePickerActivity.show()`
+* **Parameters**: `(Activity, int requestCode)`
+* **Returns**: `EXTRA_RESULT_YEAR`, `EXTRA_RESULT_MONTH`, `EXTRA_RESULT_DAY` (String).
+```java
+UikitDatePickerActivity.show(this, 1006);
+```
+
+### `UikitImageViewerActivity.show()`
+* **Parameters**: `(Activity, String assetName)`
+```java
+UikitImageViewerActivity.show(this, "demo_image.png");
 ```
 
 ---
 
-## 5. Legacy Dialog APIs (Deprecated)
+## 6. Deprecated APIs (Legacy Popups)
 
-> **⚠️ Warning**: The following APIs are marked `@Deprecated` and will be removed in a future version.
+> ⚠️ **Warning**: The following APIs are marked `@Deprecated` and will be removed in future versions.
+> Migrate to fullscreen components for better round-screen and 3D scrolling support.
 
-- `UikitUi.showList()` -> Use `UikitFullListActivity`
-- `UikitUi.showInput()` -> Use `UikitFullInputActivity`
-- `UikitUi.showConfirm()` -> Use `UikitFullTextActivity`
+### `UikitUi.showList()` - [Deprecated]
+* **Alternative**: `UikitFullListActivity.show()`
+```java
+// Deprecated
+UikitUi.showList(this, "Select", new String[]{"A", "B"}, listener).show();
+```
+
+### `UikitUi.showInput()` - [Deprecated]
+* **Alternative**: `UikitFullInputActivity.show()`
+```java
+// Deprecated
+UikitUi.showInput(this, "Input", "", listener).show();
+```
+
+### `UikitUi.showConfirm()` - [Deprecated]
+* **Alternative**: `UikitFullConfirmActivity.show()`
+```java
+// Deprecated
+UikitUi.showConfirm(this, "Confirm", "Are you sure?", null).show();
+```
 
 ---
 
-## 6. Hardware Interactions
+## 7. Popups & Hardware Utils
 
-### `WearHardwareUtils.vibrate(Context, int type)`
+### `UikitToast.show()`
 ```java
-WearHardwareUtils.vibrate(this, WearHardwareUtils.HAPTIC_SUCCESS);
+UikitToast.show(this, "Saved");
 ```
 
-### `UikitSlider`
-A draggable progress bar. Often used for volume, brightness, or progress control.
+### `UikitBottomSheet`
 ```java
-UikitSlider slider = new UikitSlider(this);
-slider.setMaxProgress(100);
-slider.setProgress(50);
-slider.setOnProgressChangedListener(new UikitSlider.OnProgressChangedListener() {
-    @Override
-    public void onProgressChanged(float progress) {
-        // Handle drag event
-    }
-});
+new UikitBottomSheet(this, "Options", new UikitEmptyView(this)).show();
 ```
 
-### `UikitLoadingBar`
-An indeterminate loading bar with a built-in infinite animation.
-```java
-UikitLoadingBar loadingBar = new UikitLoadingBar(this);
-// Animation starts automatically when attached to window
-// To control manually:
-loadingBar.startLoading();
-loadingBar.stopLoading();
-```
+### `WearHardwareUtils`
+* `WearHardwareUtils.vibrate(Context, int type)`
+* `WearHardwareUtils.keepScreenOn(Activity, boolean)`
+* `WearHardwareUtils.bindRotaryEncoder(ScrollView)`
 
-### `UikitPickerActivity.show()` - Horizontal Picker
-A centered horizontal scrolling picker. The middle item is enlarged and highlighted, while the sides are scaled down and faded. Perfect for 2, 3, or more options.
+### `UikitClickUtils`
 ```java
-String[] items = {"Option A", "Option B", "Option C"};
-UikitPickerActivity.show(this, "Select Option", items, 1005);
+if (UikitClickUtils.isFastDoubleClick()) return;
 ```
