@@ -2,7 +2,19 @@
 
 [简体中文](CONTRIBUTING.md) | **English**
 
-Thank you for contributing to **Uikit**! Follow **Conventional Commits + SemVer 2.0.0 + CHANGELOG**.
+---
+
+## ⚠️ Critical Build Environment Constraints
+
+To support legacy Android (API 10), we have **locked** the following toolchain:
+
+| Component | Version | Note |
+|---|---|---|
+| **Gradle** | `5.6.4` | **DO NOT upgrade to 6.0+** |
+| **AGP** | `3.6.3` | Strictly bound to Gradle 5.6.4 |
+| **JDK** | `8` | Required for compilation |
+
+If you see errors like `Could not create an instance of type com.android.build...`, your Gradle version is likely too high. **Always use Gradle 5.6.4.**
 
 ---
 
@@ -11,27 +23,5 @@ Thank you for contributing to **Uikit**! Follow **Conventional Commits + SemVer 
 ```bash
 git clone https://github.com/styisme/wear-uikit.git
 cd wear-uikit
-gradle :uikit:assembleRelease
-gradle :app:assembleDebug
+gradle :uikit:assembleRelease :app:assembleDebug
 ```
-
-## Commit Convention
-
-```
-<type>(<scope>): <subject>
-```
-Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `ci`.
-Common scopes: `ui`, `color`, `theme`, `widget`, `wear`.
-
-**Important**: Versioning relies on `CHANGELOG.md`.
-
-## Troubleshooting
-
-**Q: Dynamic color not working on Android 12+?**
-A: The host `<application>` theme must be `Theme.DeviceDefault.NoActionBar`.
-
-**Q: Bottom sheet cannot be dismissed?**
-A: Supports clicking outside, `Close` button, dragging down, and back button.
-
-**Q: CI release job returns 403?**
-A: Enable **Read and write permissions** under Settings → Actions → General.

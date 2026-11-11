@@ -2,18 +2,12 @@
 
 # Uikit
 
-> A reusable Android/Wear OS UI library extracted from [WatchSend](https://github.com/styisme/watchsend). Pure Java dynamic rendering + XML resources. No AndroidX, no third-party dependencies.
+> A reusable Android/Wear OS UI library extracted from [WatchSend](https://github.com/styisme/watchsend). Pure Java dynamic rendering + XML resources.
 
 [![Build Uikit](https://github.com/styisme/wear-uikit/actions/workflows/build.yml/badge.svg)](https://github.com/styisme/wear-uikit/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-1.4.0-512BD4)]()
+[![Version](https://img.shields.io/badge/version-1.4.1-512BD4)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![JitPack](https://jitpack.io/v/styisme/wear-uikit.svg)](https://jitpack.io/#styisme/wear-uikit)
-
----
-
-## AI Generation Disclosure
-
-> **This library is AI-assisted.** See [docs/AI_DISCLOSURE.md](docs/AI_DISCLOSURE.md) for details.
 
 ---
 
@@ -28,56 +22,66 @@ allprojects {
 }
 // app/build.gradle
 dependencies {
-    implementation 'com.github.styisme:wear-uikit:v1.4.0'
+    implementation 'com.github.styisme:wear-uikit:v1.4.1'
 }
 ```
 
 ---
 
+## ⚠️ Build Environment (Important)
+
+To maintain compatibility with API 10, this library uses an older toolchain:
+- **AGP**: `3.6.3`
+- **Gradle**: `5.6.4` (Locked in Wrapper)
+- **JDK**: `8`
+
+**You must use Gradle 5.6.4 to build this project.** Do not upgrade to Gradle 7.x or 8.x, as it will break AGP 3.6.3 (which caused JitPack build failures previously).
+
+---
+
 ## Core Components Overview
 
-### Architecture & Config
-- **`UikitConfig`**: Initialize config, manage theme, UI scale, custom colors, language.
-- **`UikitColor`**: MD3 dynamic color with fallback.
-- **`UikitTheme`**: Dark mode rendering and recursive tinting.
+### Architecture
+- **`UikitConfig`**: Init, theme, scale, custom colors, language.
+- **`UikitColor`**: MD3 dynamic color.
+- **`UikitTheme`**: Dark mode.
 
 ### Basic Widgets
-- **`UikitButton`**: Pill button with press-scale animation.
-- **`UikitSwitch`**: MD3 switch with smooth animation.
-- **`UikitListItem`**: Standard list item with subtitle, switch, arrow, or badge support.
-- **`UikitDivider`**: Elegant divider line.
-- **`UikitBadge`**: Unread message dot or number badge.
+- **`UikitButton`**: Pill button with press animation.
+- **`UikitSwitch`**: MD3 switch.
+- **`UikitListItem`**: Settings list item.
+- **`UikitDivider`**: Divider.
+- **`UikitBadge`**: Badge.
 
 ### Progress & Loading
-- **`UikitProgressBar`**: Horizontal progress bar.
-- **`UikitProgressRing`**: Circular progress bar.
+- **`UikitProgressBar`**: Horizontal progress.
+- **`UikitProgressRing`**: Circular progress.
 - **`UikitSlider`**: Draggable slider.
-- **`UikitLoadingBar`**: Indeterminate loading bar.
-- **`UikitLoadingView`**: Three-dots breathing loading animation.
-- **`UikitSkeleton`**: Shimmer skeleton placeholder.
+- **`UikitLoadingBar`**: Indeterminate bar.
+- **`UikitLoadingView`**: Breathing dots.
+- **`UikitSkeleton`**: Skeleton placeholder.
 
 ### Fullscreen Interactions (Recommended)
-- **`UikitFullListActivity`**: Full list with 2-line items and custom card colors.
-- **`UikitFullInputActivity`**: Full input, perfectly adapted for watch keyboards.
-- **`UikitFullTextActivity`**: Full text with 3D wheel subtitle effect.
-- **`UikitFullConfirmActivity`**: Minimal full confirm dialog with × / ✓ buttons.
-- **`UikitPickerActivity`**: Vertical 3D wheel picker.
-- **`UikitDatePickerActivity`**: Year-Month-Day 3-column date picker.
-- **`UikitImageViewerActivity`**: Fullscreen image viewer (zoom + pan).
+- **`UikitFullListActivity`**: Full list with 2-line items.
+- **`UikitFullInputActivity`**: Full input.
+- **`UikitFullTextActivity`**: Full text with 3D wheel.
+- **`UikitFullConfirmActivity`**: Minimal confirm dialog.
+- **`UikitPickerActivity`**: Vertical 3D picker.
+- **`UikitDatePickerActivity`**: Date picker.
+- **`UikitImageViewerActivity`**: Image viewer.
 
 ### Popups & Utils
-- **`UikitBottomSheet`**: Bottom sheet with drag-to-dismiss.
-- **`UikitToast`**: Centered edge-safe toast.
-- **`WearHardwareUtils`**: Haptics, rotary, screen-on, round screen detection.
-- **`UikitClickUtils`**: Anti-debounce utility.
+- **`UikitBottomSheet`**: Bottom sheet.
+- **`UikitToast`**: Centered toast.
+- **`WearHardwareUtils`**: Hardware utils.
+- **`UikitClickUtils`**: Anti-debounce.
 
 ---
 
 ## Related Docs
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [API_ZH.md](API_ZH.md) / [API_EN.md](API_EN.md) —— **Very detailed API guides**
-- [CONTRIBUTING_EN.md](CONTRIBUTING_EN.md)
+- [API_ZH.md](API_ZH.md) / [API_EN.md](API_EN.md)
 
 ## License
 
