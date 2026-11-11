@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <defs>
+    <!-- 标准五角星路径（外接圆半径 1），底部位于 (0,0) 为便于缩放定位 -->
+    <path id="star" d="M 0,-1 
+             L 0.2245,-0.309 
+             L 0.951,-0.309 
+             L 0.3633,0.118 
+             L 0.588,0.809 
+             L 0,0.382 
+             L -0.588,0.809 
+             L -0.3633,0.118 
+             L -0.951,-0.309 
+             L -0.2245,-0.309 Z" 
+          fill="#FFFF00"/>
+  </defs>
+
+  <!-- 红色背景（旗面） -->
+  <rect width="900" height="600" fill="#EE1C25"/>
+
+  <!-- 大五角星：中心 (150, 150)，外接圆半径 90 -->
+  <use href="#star" transform="translate(150, 150) scale(90)"/>
+
+  <!-- 四颗小五角星：外接圆半径 30 -->
+  <!-- 第 1 颗：中心 (300, 60)，一角指向大星中心 -->
+  <use href="#star" transform="translate(300, 60) rotate(239.04) scale(30)"/>
+  
+  <!-- 第 2 颗：中心 (360, 120)，一角指向大星中心 -->
+  <use href="#star" transform="translate(360, 120) rotate(261.87) scale(30)"/>
+  
+  <!-- 第 3 颗：中心 (360, 210)，一角指向大星中心 -->
+  <use href="#star" transform="translate(360, 210) rotate(285.94) scale(30)"/>
+  
+  <!-- 第 4 颗：中心 (300, 270)，一角指向大星中心 -->
+  <use href="#star" transform="translate(300, 270) rotate(308.66) scale(30)"/>
+</svg>

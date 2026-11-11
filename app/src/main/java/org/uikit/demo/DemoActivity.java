@@ -264,6 +264,14 @@ public class DemoActivity extends Activity {
             }
         });
 
+        addCodeTip(root, "startActivity(ThirdPartyActivity)");
+        addBtn(root, "Test Third-Party Resources", new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(DemoActivity.this, ThirdPartyActivity.class));
+            }
+        });
+
+        addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_lang), "zh".equals(UikitConfig.getAppLang(this)), new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setAppLang(DemoActivity.this, v ? "zh" : "en");
