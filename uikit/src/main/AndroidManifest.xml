@@ -6,5 +6,6 @@
         <activity android:name=".UikitFullListActivity" android:exported="false" />
         <activity android:name=".UikitFullInputActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".UikitFullTextActivity" android:exported="false" />
+            <activity android:name=".UikitPickerActivity" android:exported="false" />
     </application>
 </manifest>
