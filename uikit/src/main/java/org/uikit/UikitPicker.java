@@ -1,10 +1,8 @@
 package org.uikit;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -19,7 +17,6 @@ public class UikitPicker extends FrameLayout {
 
     private ScrollView scrollView;
     private LinearLayout container;
-    private View indicatorRing;
     private String[] items;
     private OnItemSelectedListener listener;
     private int lastSelectedIndex = -1;
@@ -27,7 +24,7 @@ public class UikitPicker extends FrameLayout {
     public UikitPicker(Context context) {
         super(context);
 
-        // 1. 底部滚动层
+        // 底层垂直滚动的文字列表
         scrollView = new ScrollView(context);
         scrollView.setVerticalScrollBarEnabled(false);
         scrollView.setClipToPadding(false);
@@ -35,13 +32,15 @@ public class UikitPicker extends FrameLayout {
         
         scrollView.setOnTouchListener(new OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+            public boolean onTouch(View v, android.view.MotionEvent event) {
+                if (event.getAction() == android.view.MotionEvent.ACTION_UP || 
+                    event.getAction() == android.view.MotionEvent.ACTION_CANCEL) {
                     snapToNearest();
                 }
                 return false;
             }
         });
+        
         scrollView.setOnScrollChangeListener(new OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -54,20 +53,6 @@ public class UikitPicker extends FrameLayout {
         container.setGravity(Gravity.CENTER_HORIZONTAL);
         scrollView.addView(container);
         addView(scrollView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-
-        // 2. 顶层固定圆环
-        indicatorRing = new View(context);
-        int ringSize = dp(72);
-        LayoutParams ringLp = new LayoutParams(ringSize, ringSize);
-        ringLp.gravity = Gravity.CENTER;
-        
-        GradientDrawable ringBg = new GradientDrawable();
-        ringBg.setShape(GradientDrawable.OVAL);
-        ringBg.setColor(Color.TRANSPARENT);
-        ringBg.setStroke(dp(2), UikitColor.getPrimaryColor(context));
-        indicatorRing.setBackground(ringBg);
-        
-        addView(indicatorRing, ringLp);
     }
 
     public void setOnItemSelectedListener(OnItemSelectedListener listener) {
@@ -83,10 +68,11 @@ public class UikitPicker extends FrameLayout {
         for (String item : items) {
             TextView tv = new TextView(getContext());
             tv.setText(item);
-            tv.setTextSize(24);
+            tv.setTextSize(22);
             tv.setGravity(Gravity.CENTER);
-            tv.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(72)));
-            tv.setTextColor(UikitColor.getPrimaryColor(getContext()));
+            // 设定固定高度，防止缩放导致布局跳动
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, dp(64)));
+            tv.setPadding(dp(32), 0, dp(32), 0);
             container.addView(tv);
         }
 
@@ -94,7 +80,8 @@ public class UikitPicker extends FrameLayout {
             @Override
             public void run() {
                 if (scrollView.getHeight() > 0) {
-                    scrollView.setPadding(0, scrollView.getHeight() / 2 - dp(36), 0, scrollView.getHeight() / 2 - dp(36));
+                    // 上下留白，让首尾项能居中
+                    scrollView.setPadding(0, scrollView.getHeight() / 2 - dp(32), 0, scrollView.getHeight() / 2 - dp(32));
                     updateScale(0);
                 }
             }
@@ -109,7 +96,7 @@ public class UikitPicker extends FrameLayout {
         int nearestIndex = 0;
 
         for (int i = 0; i < container.getChildCount(); i++) {
-            View child = container.getChildAt(i);
+            TextView child = (TextView) container.getChildAt(i);
             if (child.getHeight() == 0) continue;
 
             int childCenterY = child.getTop() + child.getHeight() / 2;
@@ -120,23 +107,36 @@ public class UikitPicker extends FrameLayout {
             if (fraction > 1f) fraction = 1f;
             if (Float.isNaN(fraction)) fraction = 1f; 
 
-            // 灵动微特效：缩放 + 旋转
-            float scale = 1.0f - 0.3f * fraction;
-            float alpha = 1.0f - 0.6f * fraction;
-            float rotation = fraction * 15f; 
-            if (childCenterY < centerY) rotation = -rotation;
-
+            // 直上直下，仅仅做缩放和透明度变化，无旋转
+            float scale = 1.0f - 0.35f * fraction;
+            float alpha = 1.0f - 0.7f * fraction;
+            
             child.setScaleX(scale);
             child.setScaleY(scale);
             child.setAlpha(alpha);
-            child.setRotation(rotation); 
             
+            // 寻找最中间的一项
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestIndex = i;
-                ((TextView) child).setTextColor(UikitColor.getAccentColor(getContext(), UikitTheme.isDarkMode(getContext())));
+            }
+        }
+
+        // 统一更新背景和文字颜色（将圆圈背景直接嵌在选中的项上）
+        for (int i = 0; i < container.getChildCount(); i++) {
+            TextView child = (TextView) container.getChildAt(i);
+            if (i == nearestIndex) {
+                // 选中项：加上圆角背景（药丸/圆环）
+                GradientDrawable bg = new GradientDrawable();
+                bg.setShape(GradientDrawable.RECTANGLE);
+                bg.setCornerRadius(dp(32)); // 全圆角
+                bg.setColor(UikitColor.getPrimaryColor(getContext()));
+                child.setBackground(bg);
+                child.setTextColor(UikitColor.getOnPrimaryColor(getContext()));
             } else {
-                ((TextView) child).setTextColor(UikitTheme.isDarkMode(getContext()) ? 0xFFAAAAAA : 0xFF666666);
+                // 未选中项：清除背景，文字变灰
+                child.setBackground(null);
+                child.setTextColor(UikitTheme.isDarkMode(getContext()) ? 0xFFAAAAAA : 0xFF666666);
             }
         }
 

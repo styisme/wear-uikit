@@ -3,12 +3,12 @@ package org.uikit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class UikitPickerActivity extends Activity {
@@ -60,14 +60,14 @@ public class UikitPickerActivity extends Activity {
         tvTitle.setTextColor(UikitColor.getAccentColor(this, dark));
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleLp.topMargin = 32 * density;
+        titleLp.topMargin = 24 * density;
         tvTitle.setLayoutParams(titleLp);
         root.addView(tvTitle);
 
         // 3D 滑动选择器
         UikitPicker picker = new UikitPicker(this);
         LinearLayout.LayoutParams pickerLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f); // 占据中间所有空间
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
         picker.setLayoutParams(pickerLp);
         
         final int[] selectedIndex = {0};
@@ -80,15 +80,25 @@ public class UikitPickerActivity extends Activity {
         picker.setItems(items);
         root.addView(picker);
 
-        // 底部确认按钮
-        UikitButton btnOk = new UikitButton(this);
-        btnOk.setText(android.R.string.ok);
+        // 底部：圆形勾号确认按钮
+        TextView btnOk = new TextView(this);
+        btnOk.setText("✓");
+        btnOk.setTextSize(28);
+        btnOk.setGravity(Gravity.CENTER);
+        btnOk.setTextColor(UikitColor.getOnPrimaryColor(this));
+        
+        // 圆形背景
+        GradientDrawable bg = new GradientDrawable();
+        bg.setShape(GradientDrawable.OVAL);
+        bg.setColor(UikitColor.getPrimaryColor(this));
+        btnOk.setBackground(bg);
+
         LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 48 * density);
-        btnLp.leftMargin = 24 * density;
-        btnLp.rightMargin = 24 * density;
-        btnLp.bottomMargin = 32 * density;
+                64 * density, 64 * density);
+        btnLp.gravity = Gravity.CENTER_HORIZONTAL;
+        btnLp.bottomMargin = 24 * density;
         btnOk.setLayoutParams(btnLp);
+        
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
