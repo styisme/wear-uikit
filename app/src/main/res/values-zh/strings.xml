@@ -8,6 +8,8 @@
     <string name="api_progress_bar">UikitProgressBar</string>
     <string name="api_progress_ring">UikitProgressRing</string>
     <string name="api_skeleton">UikitSkeleton</string>
+    <string name="api_slider">UikitSlider (可拖动)</string>
+    <string name="api_loading_bar">UikitLoadingBar (加载动画)</string>
     <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_full_input">UikitFullInputActivity.show()</string>
     <string name="api_full_text">UikitFullTextActivity.show()</string>
@@ -74,6 +76,3 @@
     <string name="item_all_custom">全自定义</string>
     <string name="item_all_custom_sub">黄底绿字</string>
 </resources>
-
-    <string name="api_slider">UikitSlider (可拖动)</string>
-    <string name="api_loading_bar">UikitLoadingBar (加载动画)</string>

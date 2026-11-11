@@ -8,6 +8,8 @@
     <string name="api_progress_bar">UikitProgressBar</string>
     <string name="api_progress_ring">UikitProgressRing</string>
     <string name="api_skeleton">UikitSkeleton</string>
+    <string name="api_slider">UikitSlider (Draggable)</string>
+    <string name="api_loading_bar">UikitLoadingBar</string>
     <string name="api_full_list">UikitFullListActivity.show()</string>
     <string name="api_full_input">UikitFullInputActivity.show()</string>
     <string name="api_full_text">UikitFullTextActivity.show()</string>
@@ -61,7 +63,6 @@
     <string name="full_input_title">Full Screen Input</string>
     <string name="full_input_hint">Type something...</string>
 
-    <!-- 注意：这里的所有撇号已经替换为全角单引号 ’ -->
     <string name="long_text">The People’s Republic of China is a socialist country in East Asia. It was founded on October 1, 1949, with its capital in Beijing. It is a socialist state under the people’s democratic dictatorship led by the working class and based on an alliance of workers and peasants. The fundamental political system is the system of people’s congresses. The official language is Mandarin, with 56 ethnic groups and a population of about 1.4 billion. China is the world’s second-largest economy and a permanent member of the UN Security Council. Hong Kong and Macau are special administrative regions, and Taiwan is an inalienable part of China’s territory.</string>
 
     <string name="item_normal">Normal Item</string>
@@ -75,6 +76,3 @@
     <string name="item_all_custom">All Custom</string>
     <string name="item_all_custom_sub">Green text on yellow bg</string>
 </resources>
-
-    <string name="api_slider">UikitSlider</string>
-    <string name="api_loading_bar">UikitLoadingBar</string>
