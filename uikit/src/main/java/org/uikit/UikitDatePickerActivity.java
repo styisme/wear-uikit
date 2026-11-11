@@ -32,22 +32,39 @@ public class UikitDatePickerActivity extends Activity {
         root.setBackgroundColor(bgColor);
         setContentView(root);
         UikitUi.applyRoundPadding(this, root);
+        
         Calendar cal = Calendar.getInstance();
         int curYear = cal.get(Calendar.YEAR);
-        String[] years = new String[10];
-        for (int i = 0; i < 10; i++) years[i] = String.valueOf(curYear + i);
+        
+        // 支持过去 50 年，未来 50 年
+        int startYear = curYear - 50;
+        int endYear = curYear + 50;
+        int yearCount = endYear - startYear + 1;
+        String[] years = new String[yearCount];
+        for (int i = 0; i < yearCount; i++) {
+            years[i] = String.valueOf(startYear + i);
+        }
         String[] months = new String[12];
         for (int i = 0; i < 12; i++) months[i] = String.format("%02d", i + 1);
         String[] days = new String[31];
         for (int i = 0; i < 31; i++) days[i] = String.format("%02d", i + 1);
+        
         LinearLayout pickerRow = new LinearLayout(this);
         pickerRow.setOrientation(LinearLayout.HORIZONTAL);
         pickerRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+        
         final UikitPicker yp = new UikitPicker(this); yp.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1.2f)); yp.setItems(years);
         final UikitPicker mp = new UikitPicker(this); mp.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f)); mp.setItems(months);
         final UikitPicker dp = new UikitPicker(this); dp.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f)); dp.setItems(days);
+        
+        // 默认定位到当前日期
+        yp.setSelectedIndex(50);
+        mp.setSelectedIndex(cal.get(Calendar.MONTH));
+        dp.setSelectedIndex(cal.get(Calendar.DAY_OF_MONTH) - 1);
+        
         pickerRow.addView(yp); pickerRow.addView(mp); pickerRow.addView(dp);
         root.addView(pickerRow);
+        
         TextView btnOk = new TextView(this);
         btnOk.setText("✓");
         btnOk.setTextSize(28);

@@ -105,6 +105,26 @@ public class UikitPicker extends FrameLayout {
         return getResources().getDisplayMetrics().heightPixels;
     }
 
+
+    public void setSelectedIndex(int index) {
+        if (items == null || index < 0 || index >= items.length) return;
+        lastSelectedIndex = index;
+        final int finalIndex = index;
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (container.getChildCount() > finalIndex + 1) {
+                    View target = container.getChildAt(finalIndex + 1);
+                    if (target != null && getHeight() > 0) {
+                        int targetScrollY = target.getTop() - (getHeight() - target.getHeight()) / 2;
+                        scrollView.scrollTo(0, targetScrollY);
+                        updateScale(targetScrollY);
+                    }
+                }
+            }
+        });
+    }
+
     private void updateScale(int scrollY) {
         if (getHeight() == 0 || items == null || container.getChildCount() == 0) return;
 

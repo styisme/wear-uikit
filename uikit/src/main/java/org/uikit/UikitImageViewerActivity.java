@@ -4,11 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -21,37 +20,98 @@ public class UikitImageViewerActivity extends Activity {
         intent.putExtra(EXTRA_IMAGE_NAME, assetName);
         activity.startActivity(intent);
     }
+    private ImageView imageView;
+    private Matrix matrix = new Matrix();
+    private ScaleGestureDetector scaleDetector;
+    private float lastX, lastY;
+    
     @Override protected void attachBaseContext(Context newBase) { super.attachBaseContext(UikitUi.wrapScale(newBase)); }
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0xFF000000));
-        final ImageView imageView = new ImageView(this);
+        
+        imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);
         setContentView(imageView);
+        
         String assetName = getIntent().getStringExtra(EXTRA_IMAGE_NAME);
         try {
             InputStream is = getAssets().open(assetName);
             Bitmap bmp = BitmapFactory.decodeStream(is);
             is.close();
-            if (bmp != null) imageView.setImageBitmap(bmp);
-            else { Toast.makeText(this, "Image load failed", Toast.LENGTH_SHORT).show(); finish(); }
-        } catch (IOException e) { Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show(); finish(); return; }
-        final Matrix matrix = new Matrix();
-        final float[] matrixValues = new float[9];
-        final ScaleGestureDetector scaleDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            @Override public boolean onScale(ScaleGestureDetector detector) {
-                float scale = detector.getScaleFactor();
-                matrix.getValues(matrixValues);
-                float currentScale = matrixValues[Matrix.MSCALE_X];
-                scale = Math.max(0.5f, Math.min(scale * currentScale, 3.0f)) / currentScale;
-                matrix.postScale(scale, scale, detector.getFocusX(), detector.getFocusY());
+            if (bmp != null) {
+                imageView.setImageBitmap(bmp);
+            } else {
+                Toast.makeText(this, "Image load failed", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+        } catch (IOException e) {
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+        
+        scaleDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                float scaleFactor = detector.getScaleFactor();
+                matrix.postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
                 imageView.setImageMatrix(matrix);
                 return true;
             }
         });
-        imageView.setOnTouchListener(new View.OnTouchListener() { public boolean onTouch(View v, MotionEvent event) { scaleDetector.onTouchEvent(event); return true; } });
-        imageView.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { finish(); overridePendingTransition(0,0); } });
+        
+        imageView.post(new Runnable() {
+            @Override
+            public void run() {
+                fitCenter();
+            }
+        });
     }
+    
+    private void fitCenter() {
+        Drawable drawable = imageView.getDrawable();
+        if (drawable == null) return;
+        int dw = drawable.getIntrinsicWidth();
+        int dh = drawable.getIntrinsicHeight();
+        int vw = imageView.getWidth();
+        int vh = imageView.getHeight();
+        
+        matrix.reset();
+        float wRatio = (float) vw / dw;
+        float hRatio = (float) vh / dh;
+        float ratio = Math.min(wRatio, hRatio);
+        matrix.postScale(ratio, ratio);
+        
+        float dx = (vw - dw * ratio) / 2f;
+        float dy = (vh - dh * ratio) / 2f;
+        matrix.postTranslate(dx, dy);
+        imageView.setImageMatrix(matrix);
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        scaleDetector.onTouchEvent(event);
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                lastX = event.getX();
+                lastY = event.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (event.getPointerCount() == 1) {
+                    float dx = event.getX() - lastX;
+                    float dy = event.getY() - lastY;
+                    matrix.postTranslate(dx, dy);
+                    imageView.setImageMatrix(matrix);
+                    lastX = event.getX();
+                    lastY = event.getY();
+                }
+                break;
+        }
+        return true;
+    }
+    
     @Override public boolean dispatchTouchEvent(android.view.MotionEvent ev) { if (UikitUi.handleSwipeBack(this, ev)) return true; return super.dispatchTouchEvent(ev); }
 }
