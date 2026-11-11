@@ -129,3 +129,10 @@ UikitLoadingBar loadingBar = new UikitLoadingBar(this);
 loadingBar.startLoading();
 loadingBar.stopLoading();
 ```
+
+### `UikitPickerActivity.show()` - 滑动选择器
+居中的水平滑动选择器，中间的文字放大高亮，两侧的文字缩小变淡。完美适配 2 个、3 个或多个选项。
+```java
+String[] items = {"Option A", "Option B", "Option C"};
+UikitPickerActivity.show(this, "请选择", items, 1005);
+```

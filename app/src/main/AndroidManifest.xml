@@ -14,5 +14,6 @@
         </activity>
             <activity android:name=".SubMenuActivity" android:exported="false" />
             <activity android:name=".ThirdPartyActivity" android:exported="false" />
+            <activity android:name=".UikitPickerActivity" android:exported="false" />
     </application>
 </manifest>

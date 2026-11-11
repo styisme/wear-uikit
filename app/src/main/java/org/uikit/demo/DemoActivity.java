@@ -170,6 +170,14 @@ public class DemoActivity extends Activity {
         });
 
         // ================= 3. 旧版组件 (即将废弃) =================
+        addCodeTip(root, getString(R.string.api_picker));
+        addBtn(root, getString(R.string.btn_picker), new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitPickerActivity.show(DemoActivity.this, getString(R.string.picker_title), 
+                    new String[]{"Option A", "Option B", "Option C"}, 1005);
+            }
+        });
+
         addCodeTip(root, getString(R.string.api_show_input));
         addBtn(root, getString(R.string.btn_input), new View.OnClickListener() {
             public void onClick(View v) {
@@ -289,6 +297,9 @@ public class DemoActivity extends Activity {
                 UikitToast.show(this, getString(R.string.toast_selected, result));
             } else if (requestCode == 1002) {
                 String result = data.getStringExtra(UikitFullInputActivity.EXTRA_RESULT_TEXT);
+                UikitToast.show(this, getString(R.string.toast_selected, result));
+            } else if (requestCode == 1005) {
+                String result = data.getStringExtra(UikitPickerActivity.EXTRA_RESULT_TEXT);
                 UikitToast.show(this, getString(R.string.toast_selected, result));
             } else if (requestCode == 1004) {
                 int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);

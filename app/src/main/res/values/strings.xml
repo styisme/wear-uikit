@@ -81,4 +81,8 @@
     <string name="tp_svg_tip">SVG Image (via WebView)</string>
     <string name="tp_btn_tip">Native Button</string>
     <string name="tp_btn_text">Visit GitHub Repo</string>
+
+    <string name="api_picker">UikitPickerActivity.show()</string>
+    <string name="btn_picker">Test Horizontal Picker</string>
+    <string name="picker_title">Select Option</string>
 </resources>

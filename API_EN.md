@@ -118,3 +118,10 @@ UikitLoadingBar loadingBar = new UikitLoadingBar(this);
 loadingBar.startLoading();
 loadingBar.stopLoading();
 ```
+
+### `UikitPickerActivity.show()` - Horizontal Picker
+A centered horizontal scrolling picker. The middle item is enlarged and highlighted, while the sides are scaled down and faded. Perfect for 2, 3, or more options.
+```java
+String[] items = {"Option A", "Option B", "Option C"};
+UikitPickerActivity.show(this, "Select Option", items, 1005);
+```

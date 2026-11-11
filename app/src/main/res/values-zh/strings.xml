@@ -81,4 +81,8 @@
     <string name="tp_svg_tip">SVG 图片 (WebView 渲染)</string>
     <string name="tp_btn_tip">原生按钮</string>
     <string name="tp_btn_text">访问 GitHub 仓库</string>
+
+    <string name="api_picker">UikitPickerActivity.show()</string>
+    <string name="btn_picker">测试滑动选择器</string>
+    <string name="picker_title">请选择</string>
 </resources>
