@@ -1,34 +1,73 @@
 package org.uikit;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class UikitPicker extends ScrollView {
+public class UikitPicker extends FrameLayout {
 
     public interface OnItemSelectedListener {
         void onItemSelected(int index, String item);
     }
 
+    private ScrollView scrollView;
     private LinearLayout container;
+    private View indicatorRing;
     private String[] items;
     private OnItemSelectedListener listener;
     private int lastSelectedIndex = -1;
 
     public UikitPicker(Context context) {
         super(context);
-        setVerticalScrollBarEnabled(false);
-        setClipToPadding(false);
-        setOverScrollMode(OVER_SCROLL_NEVER);
+
+        // 1. 底部滚动层
+        scrollView = new ScrollView(context);
+        scrollView.setVerticalScrollBarEnabled(false);
+        scrollView.setClipToPadding(false);
+        scrollView.setOverScrollMode(OVER_SCROLL_NEVER);
+        
+        scrollView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    snapToNearest();
+                }
+                return false;
+            }
+        });
+        scrollView.setOnScrollChangeListener(new OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                updateScale(scrollY);
+            }
+        });
         
         container = new LinearLayout(context);
         container.setOrientation(LinearLayout.VERTICAL);
         container.setGravity(Gravity.CENTER_HORIZONTAL);
-        addView(container);
+        scrollView.addView(container);
+        addView(scrollView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+        // 2. 顶层固定圆环
+        indicatorRing = new View(context);
+        int ringSize = dp(72);
+        LayoutParams ringLp = new LayoutParams(ringSize, ringSize);
+        ringLp.gravity = Gravity.CENTER;
+        
+        GradientDrawable ringBg = new GradientDrawable();
+        ringBg.setShape(GradientDrawable.OVAL);
+        ringBg.setColor(Color.TRANSPARENT);
+        ringBg.setStroke(dp(2), UikitColor.getPrimaryColor(context));
+        indicatorRing.setBackground(ringBg);
+        
+        addView(indicatorRing, ringLp);
     }
 
     public void setOnItemSelectedListener(OnItemSelectedListener listener) {
@@ -44,37 +83,28 @@ public class UikitPicker extends ScrollView {
         for (String item : items) {
             TextView tv = new TextView(getContext());
             tv.setText(item);
-            tv.setTextSize(22);
+            tv.setTextSize(24);
             tv.setGravity(Gravity.CENTER);
-            tv.setMaxLines(1);
-            tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
-            tv.setPadding(dp(16), dp(16), dp(16), dp(16));
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(72)));
             tv.setTextColor(UikitColor.getPrimaryColor(getContext()));
             container.addView(tv);
         }
 
-        // 等布局完成后，设置上下 padding 使首尾项能滚到屏幕正中心
-        post(new Runnable() {
+        scrollView.post(new Runnable() {
             @Override
             public void run() {
-                if (getHeight() > 0) {
-                    setPadding(0, getHeight() / 2, 0, getHeight() / 2);
+                if (scrollView.getHeight() > 0) {
+                    scrollView.setPadding(0, scrollView.getHeight() / 2 - dp(36), 0, scrollView.getHeight() / 2 - dp(36));
                     updateScale(0);
                 }
             }
         });
     }
 
-    @Override
-    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        super.onScrollChanged(l, t, oldl, oldt);
-        updateScale(t);
-    }
-
     private void updateScale(int scrollY) {
-        if (getHeight() == 0 || items == null || container.getChildCount() == 0) return;
+        if (scrollView.getHeight() == 0 || items == null || container.getChildCount() == 0) return;
 
-        int centerY = getHeight() / 2 + scrollY;
+        int centerY = scrollView.getHeight() / 2 + scrollY;
         int minDistance = Integer.MAX_VALUE;
         int nearestIndex = 0;
 
@@ -85,20 +115,22 @@ public class UikitPicker extends ScrollView {
             int childCenterY = child.getTop() + child.getHeight() / 2;
             int distance = Math.abs(centerY - childCenterY);
             
-            float maxDistance = getHeight() / 2f;
+            float maxDistance = scrollView.getHeight() / 2f;
             float fraction = distance / maxDistance;
             if (fraction > 1f) fraction = 1f;
             if (Float.isNaN(fraction)) fraction = 1f; 
 
-            // 越靠近中心越大，越远越小
-            float scale = 1.0f - 0.4f * fraction; 
+            // 灵动微特效：缩放 + 旋转
+            float scale = 1.0f - 0.3f * fraction;
             float alpha = 1.0f - 0.6f * fraction;
-            
+            float rotation = fraction * 15f; 
+            if (childCenterY < centerY) rotation = -rotation;
+
             child.setScaleX(scale);
             child.setScaleY(scale);
             child.setAlpha(alpha);
+            child.setRotation(rotation); 
             
-            // 高亮居中项
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestIndex = i;
@@ -116,18 +148,10 @@ public class UikitPicker extends ScrollView {
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_CANCEL) {
-            snapToNearest();
-        }
-        return super.onTouchEvent(ev);
-    }
-
     private void snapToNearest() {
-        if (getHeight() == 0 || items == null || container.getChildCount() == 0) return;
+        if (scrollView.getHeight() == 0 || items == null || container.getChildCount() == 0) return;
         
-        int centerY = getHeight() / 2 + getScrollY();
+        int centerY = scrollView.getHeight() / 2 + scrollView.getScrollY();
         int minDistance = Integer.MAX_VALUE;
         int nearestIndex = 0;
 
@@ -143,10 +167,9 @@ public class UikitPicker extends ScrollView {
             }
         }
 
-        // 自动吸附滚动到中间的选项
         View target = container.getChildAt(nearestIndex);
-        int targetScrollY = target.getTop() + target.getHeight() / 2 - getHeight() / 2;
-        smoothScrollTo(0, targetScrollY);
+        int targetScrollY = target.getTop() - (scrollView.getHeight() - target.getHeight()) / 2;
+        scrollView.smoothScrollTo(0, targetScrollY);
     }
 
     private int dp(int val) {
