@@ -55,6 +55,10 @@ public class UikitPicker extends FrameLayout {
         addView(scrollView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
 
+    public String getSelectedItem() {
+        if (items == null || lastSelectedIndex < 0) return "";
+        return items[lastSelectedIndex];
+    }
     public void setOnItemSelectedListener(OnItemSelectedListener listener) {
         this.listener = listener;
     }

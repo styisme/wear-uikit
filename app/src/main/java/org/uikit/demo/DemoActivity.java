@@ -251,6 +251,61 @@ public class DemoActivity extends Activity {
 
         // ================= 5. 设置开关 =================
         addCodeTip(root, getString(R.string.api_switch));
+        // ================= 5. 终极组件测试 =================
+        addCodeTip(root, "UikitTabView + UikitBadge + UikitDivider");
+        UikitTabView tabView = new UikitTabView(this, new String[]{"Tab 1", "Tab 2"});
+        LinearLayout.LayoutParams tabLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        tabLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
+        tabLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
+        tabLp.bottomMargin = UikitScreenUtils.dp2px(this, 8);
+        tabView.setLayoutParams(tabLp);
+        root.addView(tabView);
+
+        UikitListItem listItemWithBadge = new UikitListItem(this, "Unread Messages", "Tap to view");
+        UikitBadge badge = new UikitBadge(this);
+        badge.setBadge("99+");
+        LinearLayout.LayoutParams badgeLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        badgeLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
+        badgeLp.gravity = Gravity.CENTER_VERTICAL;
+        badge.setLayoutParams(badgeLp);
+        listItemWithBadge.addView(badge);
+        addViewWithMargin(root, listItemWithBadge);
+        root.addView(new UikitDivider(this));
+
+        addCodeTip(root, "UikitLoadingView");
+        UikitLoadingView loadingView = new UikitLoadingView(this);
+        LinearLayout.LayoutParams loadLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, UikitScreenUtils.dp2px(this, 40));
+        loadingView.setLayoutParams(loadLp);
+        root.addView(loadingView);
+
+        addCodeTip(root, "UikitFullConfirmActivity");
+        addBtn(root, "Confirm Dialog", new View.OnClickListener() {
+            public void onClick(View v) {
+                if (UikitClickUtils.isFastDoubleClick()) return;
+                UikitFullConfirmActivity.show(DemoActivity.this, "Delete Item?", "This cannot be undone.", 2001);
+            }
+        });
+
+        addCodeTip(root, "UikitImageViewerActivity");
+        addBtn(root, "View Image", new View.OnClickListener() {
+            public void onClick(View v) {
+                if (UikitClickUtils.isFastDoubleClick()) return;
+                UikitImageViewerActivity.show(DemoActivity.this, "demo_image.png");
+            }
+        });
+
+        addCodeTip(root, "UikitDatePickerActivity");
+        addBtn(root, "Date Picker", new View.OnClickListener() {
+            public void onClick(View v) {
+                if (UikitClickUtils.isFastDoubleClick()) return;
+                UikitDatePickerActivity.show(DemoActivity.this, 2003);
+            }
+        });
+
+        addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_dark), dark, new OnChecked() {
             public void onChecked(boolean v) {
                 UikitConfig.setThemeMode(DemoActivity.this, v ? UikitConfig.THEME_DARK : UikitConfig.THEME_LIGHT);
@@ -301,6 +356,13 @@ public class DemoActivity extends Activity {
             } else if (requestCode == 1005) {
                 String result = data.getStringExtra(UikitPickerActivity.EXTRA_RESULT_TEXT);
                 UikitToast.show(this, getString(R.string.toast_selected, result));
+            } else if (requestCode == 2001) {
+                UikitToast.show(this, "Confirmed!");
+            } else if (requestCode == 2003) {
+                String y = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_YEAR);
+                String m = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_MONTH);
+                String d = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_DAY);
+                UikitToast.show(this, y + "-" + m + "-" + d);
             } else if (requestCode == 1004) {
                 int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
                 if (index >= 0 && index < colorValues.length) {
