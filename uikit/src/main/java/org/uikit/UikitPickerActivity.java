@@ -60,7 +60,7 @@ public class UikitPickerActivity extends Activity {
         tvTitle.setTextColor(UikitColor.getAccentColor(this, dark));
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleLp.topMargin = 24 * density;
+        titleLp.topMargin = 8 * density;
         tvTitle.setLayoutParams(titleLp);
         root.addView(tvTitle);
 
@@ -80,14 +80,13 @@ public class UikitPickerActivity extends Activity {
         picker.setItems(items);
         root.addView(picker);
 
-        // 底部：圆形勾号确认按钮
+        // 底部确认按钮
         TextView btnOk = new TextView(this);
         btnOk.setText("✓");
         btnOk.setTextSize(28);
         btnOk.setGravity(Gravity.CENTER);
         btnOk.setTextColor(UikitColor.getOnPrimaryColor(this));
         
-        // 圆形背景
         GradientDrawable bg = new GradientDrawable();
         bg.setShape(GradientDrawable.OVAL);
         bg.setColor(UikitColor.getPrimaryColor(this));
@@ -96,7 +95,7 @@ public class UikitPickerActivity extends Activity {
         LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
                 64 * density, 64 * density);
         btnLp.gravity = Gravity.CENTER_HORIZONTAL;
-        btnLp.bottomMargin = 24 * density;
+        btnLp.bottomMargin = 16 * density;
         btnOk.setLayoutParams(btnLp);
         
         btnOk.setOnClickListener(new View.OnClickListener() {

@@ -20,11 +20,11 @@ public class UikitPicker extends FrameLayout {
     private String[] items;
     private OnItemSelectedListener listener;
     private int lastSelectedIndex = -1;
+    private final int ITEM_HEIGHT = 64; // 每个选项的高度 dp
 
     public UikitPicker(Context context) {
         super(context);
 
-        // 底层垂直滚动的文字列表
         scrollView = new ScrollView(context);
         scrollView.setVerticalScrollBarEnabled(false);
         scrollView.setClipToPadding(false);
@@ -65,49 +65,63 @@ public class UikitPicker extends FrameLayout {
         
         if (items == null || items.length == 0) return;
 
+        // 1. 顶部占位（高度 = 屏幕高度的一半 - 单项高度的一半）
+        View topSpacer = new View(getContext());
+        topSpacer.setLayoutParams(new LinearLayout.LayoutParams(1, getScreenHeight() / 2 - dp(ITEM_HEIGHT) / 2));
+        container.addView(topSpacer);
+
+        // 2. 选项列表
         for (String item : items) {
             TextView tv = new TextView(getContext());
             tv.setText(item);
             tv.setTextSize(22);
             tv.setGravity(Gravity.CENTER);
-            // 设定固定高度，防止缩放导致布局跳动
-            tv.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, dp(64)));
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, dp(ITEM_HEIGHT)));
             tv.setPadding(dp(32), 0, dp(32), 0);
             container.addView(tv);
         }
 
+        // 3. 底部占位
+        View bottomSpacer = new View(getContext());
+        bottomSpacer.setLayoutParams(new LinearLayout.LayoutParams(1, getScreenHeight() / 2 - dp(ITEM_HEIGHT) / 2));
+        container.addView(bottomSpacer);
+
         scrollView.post(new Runnable() {
             @Override
             public void run() {
-                if (scrollView.getHeight() > 0) {
-                    // 上下留白，让首尾项能居中
-                    scrollView.setPadding(0, scrollView.getHeight() / 2 - dp(32), 0, scrollView.getHeight() / 2 - dp(32));
-                    updateScale(0);
-                }
+                updateScale(0);
+                snapToNearest(); // 初始定位到第一项
             }
         });
     }
 
+    private int getScreenHeight() {
+        if (getHeight() > 0) return getHeight();
+        // 如果还没测量出来，用屏幕高度凑合
+        return getResources().getDisplayMetrics().heightPixels;
+    }
+
     private void updateScale(int scrollY) {
-        if (scrollView.getHeight() == 0 || items == null || container.getChildCount() == 0) return;
+        if (getHeight() == 0 || items == null || container.getChildCount() == 0) return;
 
-        int centerY = scrollView.getHeight() / 2 + scrollY;
+        int centerY = getHeight() / 2 + scrollY;
         int minDistance = Integer.MAX_VALUE;
-        int nearestIndex = 0;
+        int nearestIndex = -1;
 
-        for (int i = 0; i < container.getChildCount(); i++) {
-            TextView child = (TextView) container.getChildAt(i);
+        for (int i = 0; i < items.length; i++) {
+            // 注意：container 包含了 topSpacer，所以索引要 +1
+            TextView child = (TextView) container.getChildAt(i + 1);
             if (child.getHeight() == 0) continue;
 
             int childCenterY = child.getTop() + child.getHeight() / 2;
             int distance = Math.abs(centerY - childCenterY);
             
-            float maxDistance = scrollView.getHeight() / 2f;
+            float maxDistance = getHeight() / 2f;
             float fraction = distance / maxDistance;
             if (fraction > 1f) fraction = 1f;
             if (Float.isNaN(fraction)) fraction = 1f; 
 
-            // 直上直下，仅仅做缩放和透明度变化，无旋转
+            // 直上直下缩放
             float scale = 1.0f - 0.35f * fraction;
             float alpha = 1.0f - 0.7f * fraction;
             
@@ -115,32 +129,29 @@ public class UikitPicker extends FrameLayout {
             child.setScaleY(scale);
             child.setAlpha(alpha);
             
-            // 寻找最中间的一项
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestIndex = i;
             }
         }
 
-        // 统一更新背景和文字颜色（将圆圈背景直接嵌在选中的项上）
-        for (int i = 0; i < container.getChildCount(); i++) {
-            TextView child = (TextView) container.getChildAt(i);
+        // 更新选中状态样式
+        for (int i = 0; i < items.length; i++) {
+            TextView child = (TextView) container.getChildAt(i + 1);
             if (i == nearestIndex) {
-                // 选中项：加上圆角背景（药丸/圆环）
                 GradientDrawable bg = new GradientDrawable();
                 bg.setShape(GradientDrawable.RECTANGLE);
-                bg.setCornerRadius(dp(32)); // 全圆角
+                bg.setCornerRadius(dp(32));
                 bg.setColor(UikitColor.getPrimaryColor(getContext()));
                 child.setBackground(bg);
                 child.setTextColor(UikitColor.getOnPrimaryColor(getContext()));
             } else {
-                // 未选中项：清除背景，文字变灰
                 child.setBackground(null);
                 child.setTextColor(UikitTheme.isDarkMode(getContext()) ? 0xFFAAAAAA : 0xFF666666);
             }
         }
 
-        if (lastSelectedIndex != nearestIndex) {
+        if (nearestIndex != -1 && lastSelectedIndex != nearestIndex) {
             lastSelectedIndex = nearestIndex;
             if (listener != null) {
                 listener.onItemSelected(nearestIndex, items[nearestIndex]);
@@ -149,14 +160,14 @@ public class UikitPicker extends FrameLayout {
     }
 
     private void snapToNearest() {
-        if (scrollView.getHeight() == 0 || items == null || container.getChildCount() == 0) return;
+        if (getHeight() == 0 || items == null || items.length == 0) return;
         
-        int centerY = scrollView.getHeight() / 2 + scrollView.getScrollY();
+        int centerY = getHeight() / 2 + scrollView.getScrollY();
         int minDistance = Integer.MAX_VALUE;
         int nearestIndex = 0;
 
-        for (int i = 0; i < container.getChildCount(); i++) {
-            View child = container.getChildAt(i);
+        for (int i = 0; i < items.length; i++) {
+            View child = container.getChildAt(i + 1);
             if (child.getHeight() == 0) continue;
             
             int childCenterY = child.getTop() + child.getHeight() / 2;
@@ -167,8 +178,8 @@ public class UikitPicker extends FrameLayout {
             }
         }
 
-        View target = container.getChildAt(nearestIndex);
-        int targetScrollY = target.getTop() - (scrollView.getHeight() - target.getHeight()) / 2;
+        View target = container.getChildAt(nearestIndex + 1);
+        int targetScrollY = target.getTop() - (getHeight() - target.getHeight()) / 2;
         scrollView.smoothScrollTo(0, targetScrollY);
     }
 
