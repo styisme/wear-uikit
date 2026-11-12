@@ -82,7 +82,7 @@
     <string name="picker_title">请选择</string>
 
     <!-- Long Text -->
-    <string name="long_text">中华人民共和国是位于东亚的社会主义国家，1949年10月1日成立，首都北京。它是中国共产党领导的、以工农联盟为基础的人民民主专政的社会主义国家，根本政治制度是人民代表大会制度。官方语言为普通话，共有56个民族，人口约14亿。中国是世界第二大经济体、联合国安理会常任理事国，实行改革开放，坚持中国特色社会主义道路。香港、澳门是中国的特别行政区；台湾是中国领土不可分割的一部分。</string>
+    <string name="long_text">Uikit 是一个专为 Android 和 Wear OS 打造的通用 UI 组件库。它完全使用纯 Java 动态渲染，并且不依赖 AndroidX。项目继承了 WatchSend 的核心能力，针对圆屏和小屏幕进行了深度定制。如果你在使用中遇到问题，欢迎访问开源仓库：https://github.com/styisme/wear-uikit。我们期待你的 Star 和 Issue！</string>
 
     <!-- Advanced List Data -->
     <string name="item_normal">普通选项</string>

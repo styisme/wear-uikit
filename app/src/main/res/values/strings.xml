@@ -82,7 +82,7 @@
     <string name="picker_title">Select Option</string>
 
     <!-- Long Text -->
-    <string name="long_text">The People’s Republic of China is a socialist country in East Asia. It was founded on October 1, 1949, with its capital in Beijing. It is a socialist state under the people’s democratic dictatorship led by the working class and based on an alliance of workers and peasants. The fundamental political system is the system of people’s congresses. The official language is Mandarin, with 56 ethnic groups and a population of about 1.4 billion. China is the world’s second-largest economy and a permanent member of the UN Security Council. Hong Kong and Macau are special administrative regions, and Taiwan is an inalienable part of China’s territory.</string>
+    <string name="long_text">Uikit is a universal UI component library designed for Android and Wear OS. It is rendered completely in pure Java and has zero AndroidX dependencies. Inheriting core features from WatchSend, the UI is deeply optimized for round and small screens. If you encounter any issues, please visit the open-source repository: https://github.com/styisme/wear-uikit. We look forward to your Stars and Issues!</string>
 
     <!-- Advanced List Data -->
     <string name="item_normal">Normal Item</string>
