@@ -5,20 +5,27 @@
 > 从 [WatchSend](https://github.com/styisme/watchsend) 抽取的通用 Android/Wear OS UI 组件库。纯 Java 动态渲染 + XML 资源，无 AndroidX、无第三方依赖，最低支持 Android 2.3（API 10）。
 
 [![Build Uikit](https://github.com/styisme/wear-uikit/actions/workflows/build.yml/badge.svg)](https://github.com/styisme/wear-uikit/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-1.4.1-512BD4)]()
+[![Version](https://img.shields.io/badge/version-1.5.0-512BD4)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![JitPack](https://jitpack.io/v/styisme/wear-uikit.svg)](https://jitpack.io/#styisme/wear-uikit)
 
 ---
 
-## AI 生成声明
+## ⚖️ 版本选择建议（关于体积膨胀）
 
-> **本库由 AI 辅助生成。**
->
-> - **AI 深度参与**：3D 滚轮算法、物理级缩放、滑动返回、动态取色反射、自绘组件、CI 流水线。
-> - **人类负责**：需求定义、真机验证（手表 / 手机）、API 兼容性取舍、最终发布决策。
->
-> 详细范围见 [docs/AI_DISCLOSURE.md](docs/AI_DISCLOSURE.md)。
+从 `v1.5.0` 开始，为了提供开箱即用的完整体验，本库内置了 **35 个 MD3 矢量图标**、完整的 **XML 属性支持**，以及极其丰富的**全屏 3D 交互组件**。这导致 `.aar` 体积出现了显著增长。
+
+> **如何选择版本？**
+> - **推荐：`v1.5.0`（全量版）**。包含图标库、XML 支持和最新最全的全屏组件，适合绝大多数新建的手表项目。
+> - **精简替代：`v1.4.1`**。如果你的项目不需要内置图标，且能接受代码写法，可以使用这个版本。它的体积非常小巧，适合对安装包体积极度敏感的环境（或仅需基础 UI 的项目）。
+
+```gradle
+// 全量版 (推荐)
+implementation 'com.github.styisme:wear-uikit:v1.5.0'
+
+// 精简版 (无内置图标)
+// implementation 'com.github.styisme:wear-uikit:v1.4.1'
+```
 
 ---
 
@@ -37,7 +44,7 @@ allprojects {
 在 `app/build.gradle` 中引入：
 ```gradle
 dependencies {
-    implementation 'com.github.styisme:wear-uikit:v1.4.1'
+    implementation 'com.github.styisme:wear-uikit:v1.5.0'
 }
 ```
 
@@ -74,7 +81,7 @@ dependencies {
 - **`UikitTheme`**: 深色模式渲染与视图递归着色。
 
 ### 基础控件
-- **`UikitButton`**: 胶囊按钮，自带按压缩放微动效。
+- **`UikitButton`**: 胶囊按钮，自带按压缩放微动效。支持完整 XML 属性，支持内嵌图标染色与缩放。
 - **`UikitSwitch`**: 丝滑动画的 MD3 开关。
 - **`UikitListItem`**: 标准设置页列表项，支持副标题、开关、箭头。
 - **`UikitDivider`**: 优雅的分割线。
@@ -91,24 +98,21 @@ dependencies {
 ### 全屏交互组件（推荐）
 - **`UikitFullListActivity`**: 全屏列表，支持双行与自定义卡片颜色。
 - **`UikitFullInputActivity`**: 全屏输入，完美适配手表键盘。
-- **`UikitFullTextActivity`**: 全屏长文本，自带 3D 滚轮字幕效果。
+- **`UikitFullTextActivity`**: 全屏长文本，可配置 3D 滚轮字幕效果。
 - **`UikitFullConfirmActivity`**: 极简全屏确认框（× / ✓ 两个大圆按钮）。
 - **`UikitPickerActivity`**: 上下滚动的居中 3D 选择器。
 - **`UikitDatePickerActivity`**: 年月日三列滚轮日期选择。
 - **`UikitImageViewerActivity`**: 全屏图片查看（缩放+拖拽）。
 
-### 弹窗与辅助
-- **`UikitBottomSheet`**: 底部抽屉，带下拉回弹。
-- **`UikitToast`**: 居中显示的防切边提示。
-- **`WearHardwareUtils`**: 震动、表冠、屏幕常亮、圆屏判断。
-- **`UikitClickUtils`**: 防手抖连击工具。
+### 内置资源
+- **35 个 MD3 矢量图标**：如 `ic_uikit_home`, `ic_uikit_wifi` 等，直接在 XML 或 Java 中调用。
 
 ---
 
 ## 关联文档
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [API_ZH.md](API_ZH.md) / [API_EN.md](API_EN.md) —— 极度详细的组件调用指南
+- [API_ZH.md](API_ZH.md) / [API_EN.md](API_EN.md) —— 极其详细的组件调用指南
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 协议

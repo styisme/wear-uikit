@@ -14,7 +14,7 @@ To support legacy Android (API 10), we have **locked** the following toolchain:
 | **AGP** | `3.6.3` | Strictly bound to Gradle 5.6.4 |
 | **JDK** | `8` | Required for compilation |
 
-If you see errors like `Could not create an instance of type com.android.build...`, your Gradle version is likely too high. **Always use Gradle 5.6.4.**
+If you see errors like `Could not create an instance of type com.android.build...`, your Gradle version is likely too high.
 
 ---
 
