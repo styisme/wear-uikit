@@ -137,7 +137,7 @@ public class ThirdPartyActivity extends Activity {
         iconBtn.setLayoutParams(iconLp);
         iconBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(ThirdPartyActivity.this, org.uikit.IconGalleryActivity.class));
+                startActivity(new Intent(ThirdPartyActivity.this, IconGalleryActivity.class));
             }
         });
         root.addView(iconBtn);

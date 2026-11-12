@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/xml_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000">
@@ -22,7 +23,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"/>
 
-        <!-- 1. 默认样式 (无自定义属性) -->
         <org.uikit.UikitButton
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -31,7 +31,6 @@
             android:layout_marginBottom="16dp"
             android:text="Default Style" />
 
-        <!-- 2. 自定义圆角与背景，且带第三方图标 (drawableStart) -->
         <org.uikit.UikitButton
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -46,7 +45,6 @@
             app:uikit_backgroundColor="#F44336"
             app:uikit_textColor="#FFFFFF" />
 
-        <!-- 3. 自定义颜色，黄色，带第三方图片（使用我们之前画的图标） -->
         <org.uikit.UikitButton
             android:layout_width="match_parent"
             android:layout_height="56dp"

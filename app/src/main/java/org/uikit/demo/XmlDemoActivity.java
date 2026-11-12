@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import org.uikit.UikitTheme;
 import org.uikit.UikitUi;
 import org.uikit.UikitToast;
@@ -23,13 +24,15 @@ public class XmlDemoActivity extends Activity {
         UikitTheme.applyTheme(this);
         setContentView(R.layout.activity_xml_demo);
 
-        View root = findViewById(R.id.xml_root);
-        // 【修复】应用圆屏边距
-        UikitUi.applyRoundPadding(this, root);
+        ScrollView scroll = findViewById(R.id.xml_scroll);
+        LinearLayout root = findViewById(R.id.xml_root);
 
-        LinearLayout container = (LinearLayout) root;
-        for (int i = 0; i < container.getChildCount(); i++) {
-            View v = container.getChildAt(i);
+        // 【修复】应用圆屏边距与 3D 滚轮
+        UikitUi.applyRoundPadding(this, root);
+        UikitUi.setupWheelScroll(scroll, root);
+
+        for (int i = 0; i < root.getChildCount(); i++) {
+            View v = root.getChildAt(i);
             if (v instanceof org.uikit.UikitButton) {
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
