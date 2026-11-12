@@ -198,7 +198,7 @@ public class DemoActivity extends Activity {
         addBtn(root, getString(R.string.btn_confirm), new View.OnClickListener() {
             public void onClick(View v) {
                 UikitToast.show(DemoActivity.this, getString(R.string.toast_deprecated));
-                UikitUi.showConfirm(DemoActivity.this, "Legacy Confirm", "This is a legacy dialog.", null).show();
+                UikitUi.showConfirm(DemoActivity.this, getString(R.string.legacy_confirm_title), getString(R.string.legacy_confirm_msg), null).show();
             }
         });
 

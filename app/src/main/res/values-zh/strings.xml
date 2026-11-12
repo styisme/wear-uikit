@@ -102,4 +102,7 @@
     <string name="tp_svg_tip">SVG 图片 (WebView 渲染)</string>
     <string name="tp_btn_tip">原生按钮</string>
     <string name="tp_btn_text">访问 GitHub 仓库</string>
+
+    <string name="legacy_confirm_title">旧版确认弹窗</string>
+    <string name="legacy_confirm_msg">《アクマバライ》（驱魔）是うちのボカロは様子がおかしい于2026年7月31日投稿至YouTube和bilibili、次日投稿至niconico的VOCALOID和VoiSona和日语原创歌曲，由初音ミク、雨衣、Gemini演唱。</string>
 </resources>

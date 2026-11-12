@@ -102,4 +102,7 @@
     <string name="tp_svg_tip">SVG Image (via WebView)</string>
     <string name="tp_btn_tip">Native Button</string>
     <string name="tp_btn_text">Visit GitHub Repo</string>
+
+    <string name="legacy_confirm_title">Legacy Confirm</string>
+    <string name="legacy_confirm_msg">"Akumabarai" is an original Japanese VOCALOID and VoiSona song from "Uchi no Vocalo wa Yousu ga Okashii", published to YouTube and bilibili on July 31, 2026, and to niconico the next day. Sung by Hatsune Miku, Amagoromo (Raincoat), and Gemini.</string>
 </resources>
