@@ -1,6 +1,7 @@
 package org.uikit;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -12,25 +13,50 @@ public class UikitButton extends TextView {
 
     public UikitButton(Context context) {
         super(context);
-        init();
+        init(context, null);
     }
 
     public UikitButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    public UikitButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    private void init(Context context, AttributeSet attrs) {
         setGravity(android.view.Gravity.CENTER);
         setTextSize(16);
         setClickable(true);
         setFocusable(true);
+
+        // 默认值
+        int defaultRadius = UikitScreenUtils.dp2px(context, 32);
+        int defaultBgColor = UikitColor.getPrimaryColor(context);
+        int defaultTextColor = UikitColor.getOnPrimaryColor(context);
         
+        float radius = defaultRadius;
+        int bgColor = defaultBgColor;
+        int textColor = defaultTextColor;
+
+        // 解析 XML 属性
+        if (attrs != null) {
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.UikitButton);
+            if (a != null) {
+                radius = a.getDimension(R.styleable.UikitButton_uikit_radius, defaultRadius);
+                bgColor = a.getColor(R.styleable.UikitButton_uikit_backgroundColor, defaultBgColor);
+                textColor = a.getColor(R.styleable.UikitButton_uikit_textColor, defaultTextColor);
+                a.recycle();
+            }
+        }
+
         GradientDrawable bg = new GradientDrawable();
-        bg.setCornerRadius(UikitScreenUtils.dp2px(getContext(), 32));
-        bg.setColor(UikitColor.getPrimaryColor(getContext()));
+        bg.setCornerRadius(radius);
+        bg.setColor(bgColor);
         setBackground(bg);
-        setTextColor(UikitColor.getOnPrimaryColor(getContext()));
+        setTextColor(textColor);
 
         // 绑定触感反馈
         setupTouchFeedback();
@@ -40,11 +66,10 @@ public class UikitButton extends TextView {
         setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (Build.VERSION.SDK_INT < 11) return false; // 低版本不支持属性动画，直接跳过
+                if (Build.VERSION.SDK_INT < 11) return false;
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        // 按下：缩小到 92%，透明度降到 70%
                         v.animate()
                          .scaleX(0.92f).scaleY(0.92f).alpha(0.7f)
                          .setDuration(100)
@@ -52,14 +77,12 @@ public class UikitButton extends TextView {
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        // 抬起/取消：恢复原状
                         v.animate()
                          .scaleX(1f).scaleY(1f).alpha(1f)
                          .setDuration(150)
                          .start();
                         break;
                 }
-                // 返回 false 让原本的 onClick 事件能够正常触发
                 return false; 
             }
         });
