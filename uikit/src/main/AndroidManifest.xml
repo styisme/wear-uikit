@@ -10,5 +10,6 @@
             <activity android:name=".UikitFullConfirmActivity" android:exported="false" />
             <activity android:name=".UikitImageViewerActivity" android:exported="false" />
             <activity android:name=".UikitDatePickerActivity" android:exported="false" />
+            <activity android:name=".IconGalleryActivity" android:exported="false" />
     </application>
 </manifest>

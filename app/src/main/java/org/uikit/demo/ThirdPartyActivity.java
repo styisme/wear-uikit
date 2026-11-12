@@ -127,6 +127,20 @@ public class ThirdPartyActivity extends Activity {
         }
 
         // ================= 3. 原生按钮跳转 =================
+        addCodeTip(root, "Icon Gallery (MD3 Icons)");
+        UikitButton iconBtn = new UikitButton(this);
+        iconBtn.setText("Open Icon Gallery");
+        LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 56 * density);
+        iconLp.bottomMargin = 24 * density;
+        iconBtn.setLayoutParams(iconLp);
+        iconBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(ThirdPartyActivity.this, org.uikit.IconGalleryActivity.class));
+            }
+        });
+        root.addView(iconBtn);
+
         addCodeTip(root, getString(R.string.tp_btn_tip));
         Button nativeBtn = new Button(this);
         nativeBtn.setText(R.string.tp_btn_text);
