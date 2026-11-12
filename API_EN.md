@@ -277,3 +277,33 @@ Prefix: `ic_uikit_`.
 ```java
 imageView.setImageResource(R.drawable.ic_uikit_wifi);
 ```
+
+### `UikitCheckBox` & `UikitRadioButton` [Since v1.5.0]
+MD3 style checkbox and radio button.
+```java
+UikitCheckBox cb = new UikitCheckBox(this);
+cb.setChecked(true);
+```
+
+### `UikitStepper` [Since v1.5.0]
+A stepper control (+ / -).
+```java
+UikitStepper stepper = new UikitStepper(this);
+stepper.setMinValue(0);
+stepper.setMaxValue(100);
+stepper.setCurrentValue(30);
+```
+
+### `UikitMarqueeTextView` [Since v1.5.0]
+Auto-scrolling marquee text.
+```java
+UikitMarqueeTextView marquee = new UikitMarqueeTextView(this);
+marquee.setText("A very long text...");
+```
+
+### `UikitCircularProgressTimer` [Since v1.5.0]
+A circular countdown timer.
+```java
+UikitCircularProgressTimer timer = new UikitCircularProgressTimer(this);
+timer.start(10000); // 10 seconds countdown
+```

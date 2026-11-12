@@ -105,4 +105,11 @@
 
     <string name="legacy_confirm_title">旧版确认弹窗</string>
     <string name="legacy_confirm_msg">《アクマバライ》（驱魔）是うちのボカロは様子がおかしい于2026年7月31日投稿至YouTube和bilibili、次日投稿至niconico的VOCALOID和VoiSona和日语原创歌曲，由初音ミク、雨衣、Gemini演唱。</string>
+
+    <string name="api_checkbox">UikitCheckBox</string>
+    <string name="api_radio">UikitRadioButton</string>
+    <string name="api_stepper">UikitStepper</string>
+    <string name="api_marquee">UikitMarqueeTextView</string>
+    <string name="api_timer">UikitCircularProgressTimer</string>
+    <string name="demo_marquee_text">这是一段非常长的文字，用来测试跑马灯的自动滚动效果。</string>
 </resources>

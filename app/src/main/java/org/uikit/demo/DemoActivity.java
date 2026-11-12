@@ -305,6 +305,57 @@ public class DemoActivity extends Activity {
             }
         });
 
+        // ================= 6. 表单与微交互 =================
+        
+        addCodeTip(root, getString(R.string.api_checkbox) + " & " + getString(R.string.api_radio));
+        LinearLayout checkRow = new LinearLayout(this);
+        checkRow.setOrientation(LinearLayout.HORIZONTAL);
+        checkRow.setGravity(Gravity.CENTER);
+        
+        UikitCheckBox cb = new UikitCheckBox(this);
+        cb.setLayoutParams(new LinearLayout.LayoutParams(48, 48));
+        UikitRadioButton rb = new UikitRadioButton(this);
+        rb.setLayoutParams(new LinearLayout.LayoutParams(48, 48));
+        rb.setChecked(true);
+        checkRow.addView(cb);
+        checkRow.addView(rb);
+        addViewWithMargin(root, checkRow);
+
+        addCodeTip(root, getString(R.string.api_stepper));
+        UikitStepper stepper = new UikitStepper(this);
+        stepper.setMaxValue(60);
+        stepper.setCurrentValue(30);
+        addViewWithMargin(root, stepper);
+
+        addCodeTip(root, getString(R.string.api_marquee));
+        UikitMarqueeTextView marquee = new UikitMarqueeTextView(this);
+        marquee.setText(R.string.demo_marquee_text);
+        marquee.setTextSize(16);
+        marquee.setTextColor(UikitTheme.isDarkMode(this) ? 0xFFFFFFFF : 0xFF000000);
+        marquee.setPadding(16, 8, 16, 8);
+        marquee.setBackground(UikitUi.getPillBackground(this));
+        addViewWithMargin(root, marquee);
+
+        addCodeTip(root, getString(R.string.api_timer));
+        final UikitCircularProgressTimer timer = new UikitCircularProgressTimer(this);
+        LinearLayout.LayoutParams timerLp = new LinearLayout.LayoutParams(
+                UikitScreenUtils.dp2px(this, 100), UikitScreenUtils.dp2px(this, 100));
+        timerLp.gravity = Gravity.CENTER_HORIZONTAL;
+        timerLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        timer.setLayoutParams(timerLp);
+        timer.setOnTimerFinishListener(new UikitCircularProgressTimer.OnTimerFinishListener() {
+            public void onFinish() {
+                UikitToast.show(DemoActivity.this, "Timer Finished!");
+            }
+        });
+        timer.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                timer.start(10000); // 每次点击重新开始 10 秒倒计时
+            }
+        });
+        root.addView(timer);
+        timer.start(10000); // 默认开启倒计时
+
         addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_dark), dark, new OnChecked() {
             public void onChecked(boolean v) {

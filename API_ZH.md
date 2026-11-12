@@ -329,3 +329,34 @@ btn.setOnClickListener(v -> {
 ```java
 imageView.setImageResource(R.drawable.ic_uikit_wifi);
 ```
+
+### `UikitCheckBox` & `UikitRadioButton` [Since v1.5.0]
+MD3 风格的方形复选框与圆形单选按钮，完全自适应主题色。
+```java
+UikitCheckBox cb = new UikitCheckBox(this);
+cb.setChecked(true);
+```
+
+### `UikitStepper` [Since v1.5.0]
+步进器（+ / -），适合调音量、计时。
+```java
+UikitStepper stepper = new UikitStepper(this);
+stepper.setMinValue(0);
+stepper.setMaxValue(100);
+stepper.setCurrentValue(30);
+stepper.setOnValueChangeListener(value -> { /* 处理变化 */ });
+```
+
+### `UikitMarqueeTextView` [Since v1.5.0]
+自动滚动的跑马灯文字。
+```java
+UikitMarqueeTextView marquee = new UikitMarqueeTextView(this);
+marquee.setText("很长很长的一段文字...");
+```
+
+### `UikitCircularProgressTimer` [Since v1.5.0]
+带倒计时动画的环形进度条。结束时自带震动。
+```java
+UikitCircularProgressTimer timer = new UikitCircularProgressTimer(this);
+timer.start(10000); // 开始 10 秒倒计时
+```
