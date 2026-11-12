@@ -61,18 +61,26 @@ public class UikitButton extends TextView {
         setupTouchFeedback();
     }
 
-    // 当 XML 布局解析完毕时，所有属性（包括 drawableStart）都已经绑定好了
+    // 在 XML 所有属性（包括 drawableStart）解析完毕后触发
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        fixCompoundDrawables();
+        // 关键修复：使用 post 延迟到下一帧渲染前处理
+        // 这样可以确保 View 已经被完全加到 View 树中，底层不会吞掉 Drawable
+        post(new Runnable() {
+            @Override
+            public void run() {
+                fixCompoundDrawables();
+            }
+        });
     }
 
     private void fixCompoundDrawables() {
-        Drawable[] drawables = getCompoundDrawables();
-        int size = UikitScreenUtils.dp2px(getContext(), 18); // 强制图标大小 18dp
-        int color = getCurrentTextColor(); // 强制图标颜色跟随文字
+        Drawable[] drawables = getCompoundDrawablesRelative();
+        int size = UikitScreenUtils.dp2px(getContext(), 18); // 统一强制图标大小
+        int color = getCurrentTextColor();
 
+        boolean changed = false;
         for (Drawable d : drawables) {
             if (d != null) {
                 d.setBounds(0, 0, size, size);
@@ -81,10 +89,18 @@ public class UikitButton extends TextView {
                 } else {
                     d.setColorFilter(color, PorterDuff.Mode.SRC_IN);
                 }
+                changed = true;
             }
         }
-        // 重新设置回去
-        setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+        
+        if (changed) {
+            // API 17+ 使用 Relative 保持 Start/End 布局特性，低版本用绝对位置兼容
+            if (Build.VERSION.SDK_INT >= 17) {
+                setCompoundDrawablesRelative(drawables[0], drawables[1], drawables[2], drawables[3]);
+            } else {
+                setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+            }
+        }
     }
 
     private void setupTouchFeedback() {
