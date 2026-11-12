@@ -61,16 +61,16 @@ public class UikitButton extends TextView {
         setupTouchFeedback();
     }
 
+    // 当 XML 布局解析完毕时，所有属性（包括 drawableStart）都已经绑定好了
     @Override
-    public void setText(CharSequence text, BufferType type) {
-        super.setText(text, type);
-        // 每次设置文字后，重新校正图标的尺寸和颜色
+    protected void onFinishInflate() {
+        super.onFinishInflate();
         fixCompoundDrawables();
     }
 
     private void fixCompoundDrawables() {
         Drawable[] drawables = getCompoundDrawables();
-        int size = UikitScreenUtils.dp2px(getContext(), 18); // 统一强制图标大小为 18dp
+        int size = UikitScreenUtils.dp2px(getContext(), 18); // 强制图标大小 18dp
         int color = getCurrentTextColor(); // 强制图标颜色跟随文字
 
         for (Drawable d : drawables) {
@@ -83,6 +83,7 @@ public class UikitButton extends TextView {
                 }
             }
         }
+        // 重新设置回去
         setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
     }
 
