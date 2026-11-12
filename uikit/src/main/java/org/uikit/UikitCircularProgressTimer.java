@@ -97,7 +97,7 @@ public class UikitCircularProgressTimer extends View {
 
     @Override
     protected void onDetachedFromWindow() {
-        super.detachFromWindow();
+        super.onDetachedFromWindow();
         stop();
     }
 }
