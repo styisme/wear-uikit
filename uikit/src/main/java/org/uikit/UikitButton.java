@@ -2,6 +2,8 @@ package org.uikit;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -32,7 +34,6 @@ public class UikitButton extends TextView {
         setClickable(true);
         setFocusable(true);
 
-        // 默认值
         int defaultRadius = UikitScreenUtils.dp2px(context, 32);
         int defaultBgColor = UikitColor.getPrimaryColor(context);
         int defaultTextColor = UikitColor.getOnPrimaryColor(context);
@@ -41,7 +42,6 @@ public class UikitButton extends TextView {
         int bgColor = defaultBgColor;
         int textColor = defaultTextColor;
 
-        // 解析 XML 属性
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.UikitButton);
             if (a != null) {
@@ -58,8 +58,32 @@ public class UikitButton extends TextView {
         setBackground(bg);
         setTextColor(textColor);
 
-        // 绑定触感反馈
         setupTouchFeedback();
+    }
+
+    @Override
+    public void setText(CharSequence text, BufferType type) {
+        super.setText(text, type);
+        // 每次设置文字后，重新校正图标的尺寸和颜色
+        fixCompoundDrawables();
+    }
+
+    private void fixCompoundDrawables() {
+        Drawable[] drawables = getCompoundDrawables();
+        int size = UikitScreenUtils.dp2px(getContext(), 18); // 统一强制图标大小为 18dp
+        int color = getCurrentTextColor(); // 强制图标颜色跟随文字
+
+        for (Drawable d : drawables) {
+            if (d != null) {
+                d.setBounds(0, 0, size, size);
+                if (Build.VERSION.SDK_INT >= 21) {
+                    d.setTint(color);
+                } else {
+                    d.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                }
+            }
+        }
+        setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
     }
 
     private void setupTouchFeedback() {
@@ -67,20 +91,13 @@ public class UikitButton extends TextView {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (Build.VERSION.SDK_INT < 11) return false;
-
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        v.animate()
-                         .scaleX(0.92f).scaleY(0.92f).alpha(0.7f)
-                         .setDuration(100)
-                         .start();
+                        v.animate().scaleX(0.92f).scaleY(0.92f).alpha(0.7f).setDuration(100).start();
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        v.animate()
-                         .scaleX(1f).scaleY(1f).alpha(1f)
-                         .setDuration(150)
-                         .start();
+                        v.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(150).start();
                         break;
                 }
                 return false; 

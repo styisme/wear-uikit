@@ -42,19 +42,19 @@ public class IconGalleryActivity extends Activity {
         scroll.addView(root);
         setContentView(scroll);
 
-        // 【修复】应用圆屏边距与 3D 滚轮
         UikitUi.applyRoundPadding(this, root);
         UikitUi.setupWheelScroll(scroll, root);
 
         TextView title = new TextView(this);
-        title.setText("MD3 Icons");
+        title.setText("MD3 图标库"); // 汉化
         title.setTextSize(20);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(UikitColor.getAccentColor(this, dark));
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleLp.topMargin = 16 * (int)getResources().getDisplayMetrics().density;
-        titleLp.bottomMargin = 16 * (int)getResources().getDisplayMetrics().density;
+        int density = (int)getResources().getDisplayMetrics().density;
+        titleLp.topMargin = 16 * density;
+        titleLp.bottomMargin = 16 * density;
         root.addView(title, titleLp);
 
         GridLayout grid = new GridLayout(this);
@@ -62,7 +62,6 @@ public class IconGalleryActivity extends Activity {
         grid.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
         LinearLayout.LayoutParams gridLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        int density = (int) getResources().getDisplayMetrics().density;
         gridLp.leftMargin = 8 * density;
         gridLp.rightMargin = 8 * density;
         gridLp.bottomMargin = 24 * density;
@@ -102,7 +101,7 @@ public class IconGalleryActivity extends Activity {
 
             itemBox.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    UikitToast.show(IconGalleryActivity.this, "Tapped: " + name);
+                    UikitToast.show(IconGalleryActivity.this, "点击: " + name);
                 }
             });
 

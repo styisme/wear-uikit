@@ -128,9 +128,9 @@ public class ThirdPartyActivity extends Activity {
         }
 
         // ================= 3. 原生按钮跳转 =================
-        addCodeTip(root, "Icon Gallery (MD3 Icons)");
+        addCodeTip(root, "图标画廊 (MD3 图标)");
         UikitButton iconBtn = new UikitButton(this);
-        iconBtn.setText("Open Icon Gallery");
+        iconBtn.setText("打开图标画廊");
         LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 56 * density);
         iconLp.bottomMargin = 24 * density;

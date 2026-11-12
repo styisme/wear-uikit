@@ -27,7 +27,6 @@ public class XmlDemoActivity extends Activity {
         ScrollView scroll = findViewById(R.id.xml_scroll);
         LinearLayout root = findViewById(R.id.xml_root);
 
-        // 【修复】应用圆屏边距与 3D 滚轮
         UikitUi.applyRoundPadding(this, root);
         UikitUi.setupWheelScroll(scroll, root);
 
@@ -36,7 +35,7 @@ public class XmlDemoActivity extends Activity {
             if (v instanceof org.uikit.UikitButton) {
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
-                        UikitToast.show(XmlDemoActivity.this, "XML Button Clicked!");
+                        UikitToast.show(XmlDemoActivity.this, "XML 按钮被点击！");
                     }
                 });
             }

@@ -298,8 +298,8 @@ public class DemoActivity extends Activity {
         });
 
         // ================= 6. 设置开关区 =================
-        addCodeTip(root, "XML Attributes Demo");
-        addBtn(root, "Test XML Layout", new View.OnClickListener() {
+        addCodeTip(root, "XML 属性演示");
+        addBtn(root, "测试 XML 布局", new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(DemoActivity.this, XmlDemoActivity.class));
             }
