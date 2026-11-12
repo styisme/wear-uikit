@@ -17,12 +17,10 @@ public class UikitFullTextActivity extends Activity {
     public static final String EXTRA_POSITIVE_TEXT = "uikit_positive_text";
     public static final String EXTRA_AUTO_SPLIT = "uikit_auto_split";
 
-    // 默认不拆分（推荐阅读长文、包含网址/版本号的内容）
     public static void show(Activity activity, String title, String message, String positiveText, int requestCode) {
         show(activity, title, message, positiveText, false, requestCode);
     }
 
-    // 允许开发者决定是否开启 3D 滚轮拆分特效
     public static void show(Activity activity, String title, String message, String positiveText, boolean autoSplit, int requestCode) {
         Intent intent = new Intent(activity, UikitFullTextActivity.class);
         intent.putExtra(EXTRA_TITLE, title);
@@ -92,9 +90,9 @@ public class UikitFullTextActivity extends Activity {
         root.addView(textContainer);
 
         if (autoSplit) {
-            // 按句号/换行符拆分（用于展示 3D 滚轮字幕特效）
-            // 智能断句：只切分中文标点和换行。如果是英文句号，要求它前面不是数字，且后面跟着空格或大写字母
-            String[] sentences = message.split("(?<=。)|(?<=！)|(?<=？)|(?<=\n)|(?<![0-9])\.(?=\s+[A-Z])");
+            // 【核心修复】智能断句：只切分中文标点和换行。如果是英文句号，要求它前面不是数字，且后面跟着空格或大写字母
+            // 注意这里的正则字符串在 Java 中的转义：\\n, \\. 和 \\s
+            String[] sentences = message.split("(?<=。)|(?<=！)|(?<=？)|(?<=\\n)|(?<![0-9])\\.(?=\\s+[A-Z])");
             for (String sentence : sentences) {
                 if (sentence.trim().isEmpty()) continue;
                 
@@ -116,7 +114,6 @@ public class UikitFullTextActivity extends Activity {
             }
             UikitUi.setupWheelScroll(scroll, textContainer);
         } else {
-            // 不拆分，整段展示（完美保留长句、网址、版本号）
             TextView tvAllText = new TextView(this);
             tvAllText.setText(message);
             tvAllText.setTextSize(16);
@@ -129,9 +126,7 @@ public class UikitFullTextActivity extends Activity {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             tvAllText.setLayoutParams(lp);
-            
             textContainer.addView(tvAllText);
-            // 整段展示时不启用 3D 滚轮特效（避免大字块边缘变透明，影响阅读）
         }
 
         // 3. 底部按钮
