@@ -20,15 +20,13 @@ public class XmlDemoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // 虽然 XML 里写死了黑底，但依然应用一下主题以支持圆屏
         UikitTheme.applyTheme(this);
         setContentView(R.layout.activity_xml_demo);
 
-        // 为了适配圆屏，应用边距
         View root = findViewById(R.id.xml_root);
+        // 【修复】应用圆屏边距
         UikitUi.applyRoundPadding(this, root);
 
-        // 给里面的按钮加个点击事件，证明是活的
         LinearLayout container = (LinearLayout) root;
         for (int i = 0; i < container.getChildCount(); i++) {
             View v = container.getChildAt(i);

@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,24 +26,36 @@
         <org.uikit.UikitButton
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
             android:text="Default Style" />
 
-        <!-- 2. 自定义圆角与背景 (红色警告按钮) -->
+        <!-- 2. 自定义圆角与背景，且带第三方图标 (drawableStart) -->
         <org.uikit.UikitButton
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
-            android:text="Custom Red"
+            android:text=" Custom Red"
+            android:drawableStart="@drawable/ic_uikit_wifi"
+            android:drawablePadding="8dp"
+            android:gravity="center"
             app:uikit_radius="8dp"
             app:uikit_backgroundColor="#F44336"
             app:uikit_textColor="#FFFFFF" />
 
-        <!-- 3. 自定义颜色 (黄色，只有一半圆角) -->
+        <!-- 3. 自定义颜色，黄色，带第三方图片（使用我们之前画的图标） -->
         <org.uikit.UikitButton
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Custom Yellow"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text=" Custom Yellow"
+            android:drawableStart="@drawable/ic_uikit_heart"
+            android:drawablePadding="8dp"
+            android:gravity="center"
             app:uikit_radius="16dp"
             app:uikit_backgroundColor="#FFEB3B"
             app:uikit_textColor="#1C1B1F" />
