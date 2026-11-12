@@ -65,6 +65,9 @@ public final class UikitUi {
         boolean isRound = WearHardwareUtils.isRoundScreen(sv);
         sv.setClipToPadding(false);
         sv.setVerticalScrollBarEnabled(false);
+        // 统一挂载回弹特效
+        setupBounceEffect(sv, c);
+        
         if (!isRound) {
             for (int i = 0; i < c.getChildCount(); i++) {
                 View ch = c.getChildAt(i);
@@ -432,4 +435,60 @@ public final class UikitUi {
     private static int dp(int v, Context ctx) {
         return (int)(v * ctx.getResources().getDisplayMetrics().density);
     }
+
+    private static void setupBounceEffect(final ScrollView sv, final View content) {
+        sv.setOverScrollMode(View.OVER_SCROLL_NEVER); // 关闭系统自带发光
+        sv.setClipChildren(false); // 允许越界绘制
+        
+        sv.setOnTouchListener(new View.OnTouchListener() {
+            float startY = 0;
+            boolean isDragging = false;
+            
+            @Override
+            public boolean onTouch(View v, android.view.MotionEvent event) {
+                switch (event.getAction()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        startY = event.getY();
+                        isDragging = false;
+                        break;
+                    case android.view.MotionEvent.ACTION_MOVE:
+                        float deltaY = event.getY() - startY;
+                        int scrollY = sv.getScrollY();
+                        int maxScrollY = Math.max(0, content.getHeight() - sv.getHeight());
+                        
+                        // 阻尼系数 0.35，最大拉伸 180dp
+                        float maxDrag = UikitScreenUtils.dp2px(sv.getContext(), 180);
+                        
+                        if (scrollY == 0 && deltaY > 0) {
+                            // 顶部下拉
+                            float translation = Math.min(deltaY * 0.35f, maxDrag);
+                            content.setTranslationY(translation);
+                            isDragging = true;
+                        } else if (scrollY == maxScrollY && deltaY < 0) {
+                            // 底部上推
+                            float translation = Math.max(deltaY * 0.35f, -maxDrag);
+                            content.setTranslationY(translation);
+                            isDragging = true;
+                        } else if (isDragging) {
+                            // 如果滑回了有效区域，立刻复位
+                            content.setTranslationY(0);
+                            isDragging = false;
+                        }
+                        break;
+                    case android.view.MotionEvent.ACTION_UP:
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        if (isDragging) {
+                            // 松手后使用弹性插值器弹回
+                            content.animate().translationY(0).setDuration(400)
+                                .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f))
+                                .start();
+                            isDragging = false;
+                        }
+                        break;
+                }
+                return false; // 返回 false 保证事件继续传递给子 View 和原生滑动
+            }
+        });
+    }
+
 }
