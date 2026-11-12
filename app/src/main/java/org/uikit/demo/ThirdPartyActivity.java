@@ -18,6 +18,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.uikit.UikitButton;
 import org.uikit.UikitColor;
 import org.uikit.UikitScreenUtils;
 import org.uikit.UikitTheme;
