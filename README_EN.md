@@ -5,25 +5,25 @@
 > A reusable Android/Wear OS UI library extracted from [WatchSend](https://github.com/styisme/watchsend). Pure Java dynamic rendering + XML resources.
 
 [![Build Uikit](https://github.com/styisme/wear-uikit/actions/workflows/build.yml/badge.svg)](https://github.com/styisme/wear-uikit/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-1.5.0-512BD4)]()
+[![Version](https://img.shields.io/badge/version-1.6.0-512BD4)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![JitPack](https://jitpack.io/v/styisme/wear-uikit.svg)](https://jitpack.io/#styisme/wear-uikit)
 
 ---
 
-## ⚖️ Version Selection Advice (About Size Inflation)
+## ⚖️ Version Selection Advice
 
-Starting from `v1.5.0`, to provide an out-of-the-box experience, the library includes **35 built-in MD3 vector icons**, full **XML attribute support**, and extremely rich **fullscreen 3D interactive components**. This caused a significant increase in the `.aar` size.
+Starting from `v1.5.0`, the library includes **35 built-in MD3 vector icons**. In `v1.6.0`, 5 advanced form/micro-interaction components and physical bounce effects were added. This caused an increase in the `.aar` size.
 
 > **How to choose?**
-> - **Recommended: `v1.5.0` (Full)**. Includes icons, XML support, and the latest components. Suitable for most new watch projects.
-> - **Lite Alternative: `v1.4.1`**. If your project does not need built-in icons, use this version. It is very lightweight.
+> - **Recommended: `v1.6.0` (Full)**. Includes everything. Suitable for most new projects.
+> - **Lite Alternative: `v1.4.1`**. If you don't need built-in icons or bounce effects.
 
 ```gradle
 // Full (Recommended)
-implementation 'com.github.styisme:wear-uikit:v1.5.0'
+implementation 'com.github.styisme:wear-uikit:v1.6.0'
 
-// Lite (No built-in icons)
+// Lite
 // implementation 'com.github.styisme:wear-uikit:v1.4.1'
 ```
 
@@ -40,7 +40,7 @@ allprojects {
 }
 // app/build.gradle
 dependencies {
-    implementation 'com.github.styisme:wear-uikit:v1.5.0'
+    implementation 'com.github.styisme:wear-uikit:v1.6.0'
 }
 ```
 
@@ -60,22 +60,23 @@ To maintain compatibility with API 10, this library uses an older toolchain:
 ## Core Components Overview
 
 ### Architecture
-- **`UikitConfig`**: Init, theme, scale, custom colors, language.
-- **`UikitColor`**: MD3 dynamic color.
-- **`UikitTheme`**: Dark mode.
+- **`UikitConfig`**, **`UikitColor`**, **`UikitTheme`**.
 
 ### Basic Widgets
-- **`UikitButton`**: Pill button. Supports XML attributes and tinted compound drawables.
-- **`UikitSwitch`**: MD3 switch.
-- **`UikitListItem`**: Settings list item.
-- **`UikitDivider`**: Divider.
-- **`UikitBadge`**: Badge.
+- **`UikitButton`**: Pill button. Refactored to a `LinearLayout` architecture, perfectly supports arbitrary nested views and centered compound drawables.
+- **`UikitSwitch`**, **`UikitListItem`**, **`UikitDivider`**, **`UikitBadge`**.
+- **`UikitCheckBox` & `UikitRadioButton`**: MD3 hand-drawn controls.
+- **`UikitStepper`**: `- 30 +` stepper control.
 
 ### Progress & Loading
-- **`UikitProgressBar`**, **`UikitProgressRing`**, **`UikitSlider`**, **`UikitLoadingBar`**, **`UikitLoadingView`**, **`UikitSkeleton`**.
+- **`UikitProgressBar`**, **`UikitProgressRing`**, **`UikitSlider`**, **`UikitLoadingBar`**, **`UikitLoadingView`**, **`UikitSkeleton`**, **`UikitCircularProgressTimer`**.
 
 ### Fullscreen Interactions (Recommended)
 - **`UikitFullListActivity`**, **`UikitFullInputActivity`**, **`UikitFullTextActivity`**, **`UikitFullConfirmActivity`**, **`UikitPickerActivity`**, **`UikitDatePickerActivity`**, **`UikitImageViewerActivity`**.
+
+### Visual & Micro-interactions
+- **`UikitMarqueeTextView`**: Auto-scrolling marquee text.
+- **Bouncing Effect**: Physical damped bounce when over-scrolling any `ScrollView`.
 
 ### Built-in Resources
 - **35 MD3 Vector Icons** (e.g., `ic_uikit_home`, `ic_uikit_wifi`).

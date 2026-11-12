@@ -5,7 +5,7 @@
 > 从 [WatchSend](https://github.com/styisme/watchsend) 抽取的通用 Android/Wear OS UI 组件库。纯 Java 动态渲染 + XML 资源，无 AndroidX、无第三方依赖，最低支持 Android 2.3（API 10）。
 
 [![Build Uikit](https://github.com/styisme/wear-uikit/actions/workflows/build.yml/badge.svg)](https://github.com/styisme/wear-uikit/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-1.5.0-512BD4)]()
+[![Version](https://img.shields.io/badge/version-1.6.0-512BD4)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![JitPack](https://jitpack.io/v/styisme/wear-uikit.svg)](https://jitpack.io/#styisme/wear-uikit)
 
@@ -13,17 +13,17 @@
 
 ## ⚖️ 版本选择建议（关于体积膨胀）
 
-从 `v1.5.0` 开始，为了提供开箱即用的完整体验，本库内置了 **35 个 MD3 矢量图标**、完整的 **XML 属性支持**，以及极其丰富的**全屏 3D 交互组件**。这导致 `.aar` 体积出现了显著增长。
+从 `v1.5.0` 开始，为了提供开箱即用的完整体验，本库内置了 **35 个 MD3 矢量图标**、完整的 **XML 属性支持**。在 `v1.6.0` 中，更是加入了 5 个高阶表单/微交互组件与物理级回弹特效。这导致 `.aar` 体积有所增加。
 
 > **如何选择版本？**
-> - **推荐：`v1.5.0`（全量版）**。包含图标库、XML 支持和最新最全的全屏组件，适合绝大多数新建的手表项目。
-> - **精简替代：`v1.4.1`**。如果你的项目不需要内置图标，且能接受代码写法，可以使用这个版本。它的体积非常小巧，适合对安装包体积极度敏感的环境（或仅需基础 UI 的项目）。
+> - **推荐：`v1.6.0`（全量版）**。包含图标库、XML 支持、表单组件、滚动回弹及最新全屏组件，适合绝大多数新建的手表项目。
+> - **精简替代：`v1.4.1`**。如果你的项目不需要内置图标，且能接受纯代码写法，可以使用这个版本。体积小巧。
 
 ```gradle
 // 全量版 (推荐)
-implementation 'com.github.styisme:wear-uikit:v1.5.0'
+implementation 'com.github.styisme:wear-uikit:v1.6.0'
 
-// 精简版 (无内置图标)
+// 精简版 (无内置图标/表单/回弹特效)
 // implementation 'com.github.styisme:wear-uikit:v1.4.1'
 ```
 
@@ -44,7 +44,7 @@ allprojects {
 在 `app/build.gradle` 中引入：
 ```gradle
 dependencies {
-    implementation 'com.github.styisme:wear-uikit:v1.5.0'
+    implementation 'com.github.styisme:wear-uikit:v1.6.0'
 }
 ```
 
@@ -81,11 +81,13 @@ dependencies {
 - **`UikitTheme`**: 深色模式渲染与视图递归着色。
 
 ### 基础控件
-- **`UikitButton`**: 胶囊按钮，自带按压缩放微动效。支持完整 XML 属性，支持内嵌图标染色与缩放。
+- **`UikitButton`**: 胶囊按钮，自带按压缩放微动效。彻底重构为 `LinearLayout` 体系，完美支持任意子 View 嵌套与内嵌图标居中。
 - **`UikitSwitch`**: 丝滑动画的 MD3 开关。
 - **`UikitListItem`**: 标准设置页列表项，支持副标题、开关、箭头。
 - **`UikitDivider`**: 优雅的分割线。
 - **`UikitBadge`**: 未读消息小红点/数字角标。
+- **`UikitCheckBox` & `UikitRadioButton`**: MD3 纯手绘复选框与单选按钮。
+- **`UikitStepper`**: `- 30 +` 步进器，适合计时与音量调节。
 
 ### 进度与加载
 - **`UikitProgressBar`**: 横向进度条。
@@ -94,6 +96,7 @@ dependencies {
 - **`UikitLoadingBar`**: 不确定进度循环加载条。
 - **`UikitLoadingView`**: 三点呼吸 Loading 动画。
 - **`UikitSkeleton`**: 骨架屏占位。
+- **`UikitCircularProgressTimer`**: 自带倒计时与结束震动的环形进度条。
 
 ### 全屏交互组件（推荐）
 - **`UikitFullListActivity`**: 全屏列表，支持双行与自定义卡片颜色。
@@ -104,6 +107,10 @@ dependencies {
 - **`UikitDatePickerActivity`**: 年月日三列滚轮日期选择。
 - **`UikitImageViewerActivity`**: 全屏图片查看（缩放+拖拽）。
 
+### 视觉与微交互
+- **`UikitMarqueeTextView`**: 自动滚动的跑马灯长文本。
+- **边缘回弹特效**：在任意 `ScrollView` 滚动到顶部/底部时继续拖拽，产生物理级阻尼回弹（Bouncing）。
+
 ### 内置资源
 - **35 个 MD3 矢量图标**：如 `ic_uikit_home`, `ic_uikit_wifi` 等，直接在 XML 或 Java 中调用。
 
@@ -112,7 +119,7 @@ dependencies {
 ## 关联文档
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [API_ZH.md](API_ZH.md) / [API_EN.md](API_EN.md) —— 极其详细的组件调用指南
+- [API_ZH.md](API_ZH.md) / [API_EN.md](API_EN.md) —— 极其详细的字典级组件调用指南
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 协议
