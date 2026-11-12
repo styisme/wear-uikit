@@ -93,7 +93,8 @@ public class UikitFullTextActivity extends Activity {
 
         if (autoSplit) {
             // 按句号/换行符拆分（用于展示 3D 滚轮字幕特效）
-            String[] sentences = message.split("(?<=。)|(?<=！)|(?<=？)|(?<=\\n)");
+            // 智能断句：只切分中文标点和换行。如果是英文句号，要求它前面不是数字，且后面跟着空格或大写字母
+            String[] sentences = message.split("(?<=。)|(?<=！)|(?<=？)|(?<=\n)|(?<![0-9])\.(?=\s+[A-Z])");
             for (String sentence : sentences) {
                 if (sentence.trim().isEmpty()) continue;
                 
