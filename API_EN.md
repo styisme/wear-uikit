@@ -260,3 +260,16 @@ new UikitBottomSheet(this, "Options", new UikitEmptyView(this)).show();
 ```java
 if (UikitClickUtils.isFastDoubleClick()) return;
 ```
+
+### `UikitFullTextActivity.show() (Split Control)`
+When displaying long texts containing URLs or version numbers, forced splitting ruins the reading experience. Therefore, an `autoSplit` parameter is provided.
+- `autoSplit = false` (Default): Displays the entire text as a single card with natural line breaks (Recommended).
+- `autoSplit = true`: Splits by punctuation and enables the 3D wheel subtitle effect.
+
+```java
+// Default whole text (Recommended)
+UikitFullTextActivity.show(this, "Agreement", longText, "OK", 1003);
+
+// Enable 3D wheel split
+UikitFullTextActivity.show(this, "Features", "Feature 1. Feature 2. Feature 3.", "OK", true, 1004);
+```

@@ -157,7 +157,7 @@ public class DemoActivity extends Activity {
         addCodeTip(root, getString(R.string.api_full_text));
         addBtn(root, getString(R.string.btn_full_text), new View.OnClickListener() {
             public void onClick(View v) {
-                UikitFullTextActivity.show(DemoActivity.this, getString(R.string.full_text_title), getString(R.string.long_text), "知道了", 1003);
+                UikitFullTextActivity.show(DemoActivity.this, getString(R.string.full_text_title), getString(R.string.long_text), "知道了", false, 1003);
             }
         });
 

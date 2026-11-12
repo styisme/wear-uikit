@@ -306,3 +306,16 @@ btn.setOnClickListener(v -> {
     // 执行点击逻辑
 });
 ```
+
+### `UikitFullTextActivity.show() (支持断句控制)`
+在展示包含网址、版本号等包含英文句号的长文本时，强行拆分会导致阅读体验极差。因此提供了 `autoSplit` 参数。
+- `autoSplit = false` (默认)：整段文字作为一个卡片展示，支持自然换行（推荐）。
+- `autoSplit = true`：按句号拆分，并启用 3D 滚轮字幕特效（适合展示多条独立的短句）。
+
+```java
+// 默认整段展示 (推荐)
+UikitFullTextActivity.show(this, "用户协议", longText, "我知道了", 1003);
+
+// 开启 3D 滚轮切割
+UikitFullTextActivity.show(this, "特性列表", "特性一。特性二。特性三。", "知道了", true, 1004);
+```
