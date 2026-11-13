@@ -1,12 +1,15 @@
 package org.uikit;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,8 +21,6 @@ public class UikitButton extends LinearLayout {
 
     private ImageView iconView;
     private TextView textView;
-    private int defaultRadius;
-    private int bgColor;
     private int textColor;
     private int iconSize = 18; // dp
 
@@ -44,13 +45,12 @@ public class UikitButton extends LinearLayout {
         setClickable(true);
         setFocusable(true);
 
-        defaultRadius = UikitScreenUtils.dp2px(context, 32);
+        int defaultRadius = UikitScreenUtils.dp2px(context, 32);
         int defaultBgColor = UikitColor.getPrimaryColor(context);
-        int defaultTextColor = UikitColor.getOnPrimaryColor(context);
+        textColor = UikitColor.getOnPrimaryColor(context);
         
         float radius = defaultRadius;
-        bgColor = defaultBgColor;
-        textColor = defaultTextColor;
+        int bgColor = defaultBgColor;
 
         CharSequence text = "";
         Drawable drawableStart = null;
@@ -61,11 +61,10 @@ public class UikitButton extends LinearLayout {
             if (a != null) {
                 radius = a.getDimension(R.styleable.UikitButton_uikit_radius, defaultRadius);
                 bgColor = a.getColor(R.styleable.UikitButton_uikit_backgroundColor, defaultBgColor);
-                textColor = a.getColor(R.styleable.UikitButton_uikit_textColor, defaultTextColor);
+                textColor = a.getColor(R.styleable.UikitButton_uikit_textColor, textColor);
                 a.recycle();
             }
 
-            // 解析系统自带的 text 和 drawableStart
             TypedArray sysA = context.obtainStyledAttributes(attrs, new int[]{
                     android.R.attr.text,
                     android.R.attr.drawableStart,
@@ -79,13 +78,11 @@ public class UikitButton extends LinearLayout {
             }
         }
 
-        // 设置背景
         GradientDrawable bg = new GradientDrawable();
         bg.setCornerRadius(radius);
         bg.setColor(bgColor);
         setBackground(bg);
 
-        // 初始化图标 View
         iconView = new ImageView(context);
         iconView.setVisibility(GONE);
         iconSize = UikitScreenUtils.dp2px(context, iconSize);
@@ -95,21 +92,25 @@ public class UikitButton extends LinearLayout {
         iconView.setLayoutParams(iconLp);
         addView(iconView);
 
-        // 初始化文字 View
         textView = new TextView(context);
         textView.setTextSize(16);
         textView.setGravity(Gravity.CENTER);
         textView.setTextColor(textColor);
         addView(textView);
 
-        // 应用从 XML 解析出来的初始值
         setText(text);
         setIcon(drawableStart);
     }
 
+    // ================= 兼容原生 Button / TextView 的代理方法 =================
+
     public void setText(CharSequence text) {
         textView.setText(text);
         textView.setVisibility(text != null && text.length() > 0 ? VISIBLE : GONE);
+    }
+
+    public CharSequence getText() {
+        return textView.getText();
     }
 
     public void setTextColor(int color) {
@@ -119,6 +120,44 @@ public class UikitButton extends LinearLayout {
             applyIconTint();
         }
     }
+
+    public void setTextColor(ColorStateList colors) {
+        if (colors != null) {
+            textColor = colors.getDefaultColor();
+            textView.setTextColor(colors);
+        }
+    }
+
+    public void setTextSize(float size) {
+        textView.setTextSize(size);
+    }
+
+    public void setTextSize(int unit, float size) {
+        textView.setTextSize(unit, size);
+    }
+
+    public void setGravity(int gravity) {
+        textView.setGravity(gravity);
+    }
+
+    public void setTypeface(Typeface tf) {
+        textView.setTypeface(tf);
+    }
+
+    public void setAllCaps(boolean allCaps) {
+        textView.setAllCaps(allCaps);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        // 原生 Button 禁用的表现是降低透明度
+        setAlpha(enabled ? 1.0f : 0.5f);
+        textView.setEnabled(enabled);
+        iconView.setEnabled(enabled);
+    }
+
+    // ================= 自定义图标 API =================
 
     public void setIcon(Drawable drawable) {
         if (drawable != null) {
@@ -142,16 +181,17 @@ public class UikitButton extends LinearLayout {
 
     private void applyIconTint() {
         if (Build.VERSION.SDK_INT >= 21) {
-            iconView.setImageTintList(android.content.res.ColorStateList.valueOf(textColor));
+            iconView.setImageTintList(ColorStateList.valueOf(textColor));
         } else {
             iconView.setColorFilter(textColor, PorterDuff.Mode.SRC_IN);
         }
     }
 
-    // 【核心修复】重写 onTouchEvent 取代 OnTouchListener
+    // ================= 动画 =================
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (Build.VERSION.SDK_INT >= 11) {
+        if (Build.VERSION.SDK_INT >= 11 && isEnabled()) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     animate().scaleX(0.92f).scaleY(0.92f).alpha(0.7f).setDuration(100).start();
