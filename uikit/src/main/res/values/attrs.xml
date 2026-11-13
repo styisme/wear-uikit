@@ -5,4 +5,10 @@
         <attr name="uikit_backgroundColor" format="color" />
         <attr name="uikit_textColor" format="color" />
     </declare-styleable>
+    
+    <declare-styleable name="UikitIconButton">
+        <attr name="uikit_icon_radius" format="dimension" />
+        <attr name="uikit_icon_bg" format="color" />
+        <attr name="uikit_icon_tint" format="color" />
+    </declare-styleable>
 </resources>
