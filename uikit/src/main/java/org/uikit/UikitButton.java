@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,10 +17,10 @@ import android.widget.TextView;
 
 public class UikitButton extends LinearLayout {
 
-    private ImageView iconView;
-    private TextView textView;
-    private int textColor;
-    private int iconSize = 18; // dp
+    protected ImageView iconView;
+    protected TextView textView;
+    protected int textColor;
+    protected int iconSize = 18; // dp
 
     public UikitButton(Context context) {
         super(context);
@@ -102,7 +100,7 @@ public class UikitButton extends LinearLayout {
         setIcon(drawableStart);
     }
 
-    // ================= 兼容原生 Button / TextView 的代理方法 =================
+    // ================= 库原生专属 API =================
 
     public void setText(CharSequence text) {
         textView.setText(text);
@@ -112,52 +110,6 @@ public class UikitButton extends LinearLayout {
     public CharSequence getText() {
         return textView.getText();
     }
-
-    public void setTextColor(int color) {
-        textColor = color;
-        textView.setTextColor(color);
-        if (iconView.getDrawable() != null) {
-            applyIconTint();
-        }
-    }
-
-    public void setTextColor(ColorStateList colors) {
-        if (colors != null) {
-            textColor = colors.getDefaultColor();
-            textView.setTextColor(colors);
-        }
-    }
-
-    public void setTextSize(float size) {
-        textView.setTextSize(size);
-    }
-
-    public void setTextSize(int unit, float size) {
-        textView.setTextSize(unit, size);
-    }
-
-    public void setGravity(int gravity) {
-        textView.setGravity(gravity);
-    }
-
-    public void setTypeface(Typeface tf) {
-        textView.setTypeface(tf);
-    }
-
-    public void setAllCaps(boolean allCaps) {
-        textView.setAllCaps(allCaps);
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        // 原生 Button 禁用的表现是降低透明度
-        setAlpha(enabled ? 1.0f : 0.5f);
-        textView.setEnabled(enabled);
-        iconView.setEnabled(enabled);
-    }
-
-    // ================= 自定义图标 API =================
 
     public void setIcon(Drawable drawable) {
         if (drawable != null) {
@@ -179,7 +131,7 @@ public class UikitButton extends LinearLayout {
         }
     }
 
-    private void applyIconTint() {
+    protected void applyIconTint() {
         if (Build.VERSION.SDK_INT >= 21) {
             iconView.setImageTintList(ColorStateList.valueOf(textColor));
         } else {
