@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -100,7 +101,7 @@ public class UikitButton extends LinearLayout {
         setIcon(drawableStart);
     }
 
-    // ================= 库原生专属 API =================
+    // ================= 完整兼容层：绝不阉割任何旧 API =================
 
     public void setText(CharSequence text) {
         textView.setText(text);
@@ -110,6 +111,51 @@ public class UikitButton extends LinearLayout {
     public CharSequence getText() {
         return textView.getText();
     }
+
+    public void setTextColor(int color) {
+        textColor = color;
+        textView.setTextColor(color);
+        if (iconView.getDrawable() != null) {
+            applyIconTint();
+        }
+    }
+
+    public void setTextColor(ColorStateList colors) {
+        if (colors != null) {
+            textColor = colors.getDefaultColor();
+            textView.setTextColor(colors);
+            if (iconView.getDrawable() != null) {
+                applyIconTint();
+            }
+        }
+    }
+
+    public void setTextSize(float size) {
+        textView.setTextSize(size);
+    }
+
+    public void setTextSize(int unit, float size) {
+        textView.setTextSize(unit, size);
+    }
+
+    public void setGravity(int gravity) {
+        // 兼容旧代码：原生 Button 常用 center，我们内部处理一下
+        textView.setGravity(gravity);
+    }
+
+    public void setTypeface(Typeface tf) {
+        textView.setTypeface(tf);
+    }
+
+    public void setAllCaps(boolean allCaps) {
+        textView.setAllCaps(allCaps);
+    }
+
+    public ColorStateList getTextColors() {
+        return textView.getTextColors();
+    }
+
+    // ================= 库原生专属 API =================
 
     public void setIcon(Drawable drawable) {
         if (drawable != null) {
@@ -139,7 +185,15 @@ public class UikitButton extends LinearLayout {
         }
     }
 
-    // ================= 动画 =================
+    // ================= 动画与状态 =================
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        setAlpha(enabled ? 1.0f : 0.5f);
+        textView.setEnabled(enabled);
+        iconView.setEnabled(enabled);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
