@@ -112,4 +112,8 @@
     <string name="api_marquee">UikitMarqueeTextView</string>
     <string name="api_timer">UikitCircularProgressTimer</string>
     <string name="demo_marquee_text">This is a very long text used to test the marquee scrolling effect.</string>
+
+    <string name="api_theme_presets">UikitThemePresets (One-click Theme)</string>
+    <string name="api_icon_btn">UikitIconButton (Icon Only)</string>
+    <string name="api_linear_list">UikitLinearList (Lightweight List)</string>
 </resources>

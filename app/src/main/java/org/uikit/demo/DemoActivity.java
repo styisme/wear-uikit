@@ -356,6 +356,68 @@ public class DemoActivity extends Activity {
         root.addView(timer);
         timer.start(10000); // 默认开启倒计时
 
+        // ================= 7. v1.7.0 新增组件展示 =================
+        
+        addCodeTip(root, getString(R.string.api_theme_presets));
+        LinearLayout colorRow = new LinearLayout(this);
+        colorRow.setOrientation(LinearLayout.HORIZONTAL);
+        colorRow.setGravity(Gravity.CENTER);
+        
+        int[] presetColors = {UikitThemePresets.BLUE, UikitThemePresets.RED, UikitThemePresets.PURPLE};
+        for (final int color : presetColors) {
+            UikitIconButton colorBtn = new UikitIconButton(this);
+            colorBtn.setIconResource(R.drawable.ic_uikit_heart);
+            colorBtn.setIconTint(0xFFFFFFFF);
+            colorBtn.setBackgroundColor(color); // 为了示意，直接设置简单背景
+            // 其实 UikitIconButton 自带圆角，这里用代码动态改一下背景色示意
+            android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+            bg.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            bg.setColor(color);
+            colorBtn.setBackground(bg);
+            
+            LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
+                    UikitScreenUtils.dp2px(this, 48), UikitScreenUtils.dp2px(this, 48));
+            btnLp.leftMargin = UikitScreenUtils.dp2px(this, 8);
+            btnLp.rightMargin = UikitScreenUtils.dp2px(this, 8);
+            colorBtn.setLayoutParams(btnLp);
+            colorBtn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    UikitThemePresets.applyPreset(DemoActivity.this, color);
+                    recreate();
+                }
+            });
+            colorRow.addView(colorBtn);
+        }
+        root.addView(colorRow);
+
+        addCodeTip(root, getString(R.string.api_icon_btn));
+        UikitIconButton playBtn = new UikitIconButton(this);
+        playBtn.setIconResource(R.drawable.ic_uikit_play);
+        LinearLayout.LayoutParams playLp = new LinearLayout.LayoutParams(
+                UikitScreenUtils.dp2px(this, 64), UikitScreenUtils.dp2px(this, 64));
+        playLp.gravity = Gravity.CENTER_HORIZONTAL;
+        playLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        playBtn.setLayoutParams(playLp);
+        playBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                UikitToast.show(DemoActivity.this, "Play Clicked!");
+            }
+        });
+        root.addView(playBtn);
+
+        addCodeTip(root, getString(R.string.api_linear_list));
+        UikitLinearList linearList = new UikitLinearList(this);
+        linearList.addItem(new UikitListItem(this, "List Item 1", "Subtitle"), true);
+        linearList.addItem(new UikitListItem(this, "List Item 2", null), false);
+        LinearLayout.LayoutParams listLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        listLp.leftMargin = UikitScreenUtils.dp2px(this, 16);
+        listLp.rightMargin = UikitScreenUtils.dp2px(this, 16);
+        listLp.bottomMargin = UikitScreenUtils.dp2px(this, 16);
+        linearList.setLayoutParams(listLp);
+        root.addView(linearList);
+
+        // ================= 8. 设置开关区 =================
         addCodeTip(root, getString(R.string.api_switch));
         addSwitch(root, getString(R.string.sw_dark), dark, new OnChecked() {
             public void onChecked(boolean v) {

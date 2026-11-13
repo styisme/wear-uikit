@@ -112,4 +112,8 @@
     <string name="api_marquee">UikitMarqueeTextView</string>
     <string name="api_timer">UikitCircularProgressTimer</string>
     <string name="demo_marquee_text">这是一段非常长的文字，用来测试跑马灯的自动滚动效果。</string>
+
+    <string name="api_theme_presets">UikitThemePresets (一键换色)</string>
+    <string name="api_icon_btn">UikitIconButton (纯图标)</string>
+    <string name="api_linear_list">UikitLinearList (轻量列表)</string>
 </resources>
