@@ -40,7 +40,10 @@ public class UikitButton extends LinearLayout {
 
     private void init(Context context, AttributeSet attrs) {
         setOrientation(HORIZONTAL);
-        setGravity(Gravity.CENTER);
+        
+        // 【核心修复】必须调用 super.setGravity，防止此时 textView 为 null 导致 NPE 闪退
+        super.setGravity(Gravity.CENTER); 
+        
         setClickable(true);
         setFocusable(true);
 
@@ -93,7 +96,7 @@ public class UikitButton extends LinearLayout {
 
         textView = new TextView(context);
         textView.setTextSize(16);
-        textView.setGravity(Gravity.CENTER);
+        textView.setGravity(Gravity.CENTER); // 初始化内部 TextView 的对齐
         textView.setTextColor(textColor);
         addView(textView);
 
@@ -101,21 +104,23 @@ public class UikitButton extends LinearLayout {
         setIcon(drawableStart);
     }
 
-    // ================= 彻底消除阉割的兼容 API =================
+    // ================= 兼容原生 API =================
 
     public void setText(CharSequence text) {
-        textView.setText(text);
-        textView.setVisibility(text != null && text.length() > 0 ? VISIBLE : GONE);
+        if (textView != null) {
+            textView.setText(text);
+            textView.setVisibility(text != null && text.length() > 0 ? VISIBLE : GONE);
+        }
     }
 
     public CharSequence getText() {
-        return textView.getText();
+        return textView != null ? textView.getText() : "";
     }
 
     public void setTextColor(int color) {
         textColor = color;
-        textView.setTextColor(color);
-        if (iconView.getDrawable() != null) {
+        if (textView != null) textView.setTextColor(color);
+        if (iconView != null && iconView.getDrawable() != null) {
             applyIconTint();
         }
     }
@@ -123,60 +128,69 @@ public class UikitButton extends LinearLayout {
     public void setTextColor(ColorStateList colors) {
         if (colors != null) {
             textColor = colors.getDefaultColor();
-            textView.setTextColor(colors);
-            if (iconView.getDrawable() != null) {
+            if (textView != null) textView.setTextColor(colors);
+            if (iconView != null && iconView.getDrawable() != null) {
                 applyIconTint();
             }
         }
     }
 
     public void setTextSize(float size) {
-        textView.setTextSize(size);
+        if (textView != null) textView.setTextSize(size);
     }
 
     public void setTextSize(int unit, float size) {
-        textView.setTextSize(unit, size);
+        if (textView != null) textView.setTextSize(unit, size);
     }
 
+    @Override
     public void setGravity(int gravity) {
-        textView.setGravity(gravity);
+        super.setGravity(gravity);
+        if (textView != null) {
+            textView.setGravity(gravity);
+        }
     }
 
     public void setTypeface(Typeface tf) {
-        textView.setTypeface(tf);
+        if (textView != null) textView.setTypeface(tf);
     }
 
     public void setAllCaps(boolean allCaps) {
-        textView.setAllCaps(allCaps);
+        if (textView != null) textView.setAllCaps(allCaps);
     }
 
     public ColorStateList getTextColors() {
-        return textView.getTextColors();
+        return textView != null ? textView.getTextColors() : null;
     }
 
-    // ================= 库原生专属 API =================
+    // ================= 库原生 API =================
 
     public void setIcon(Drawable drawable) {
-        if (drawable != null) {
-            iconView.setVisibility(VISIBLE);
-            iconView.setImageDrawable(drawable);
-            applyIconTint();
-        } else {
-            iconView.setVisibility(GONE);
+        if (iconView != null) {
+            if (drawable != null) {
+                iconView.setVisibility(VISIBLE);
+                iconView.setImageDrawable(drawable);
+                applyIconTint();
+            } else {
+                iconView.setVisibility(GONE);
+            }
         }
     }
 
     public void setIconResource(int resId) {
-        if (resId != 0) {
-            iconView.setVisibility(VISIBLE);
-            iconView.setImageResource(resId);
-            applyIconTint();
-        } else {
-            iconView.setVisibility(GONE);
+        if (iconView != null) {
+            if (resId != 0) {
+                iconView.setVisibility(VISIBLE);
+                iconView.setImageResource(resId);
+                applyIconTint();
+            } else {
+                iconView.setVisibility(GONE);
+            }
         }
     }
 
     protected void applyIconTint() {
+        if (iconView == null) return;
         if (Build.VERSION.SDK_INT >= 21) {
             iconView.setImageTintList(ColorStateList.valueOf(textColor));
         } else {
@@ -188,13 +202,12 @@ public class UikitButton extends LinearLayout {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         setAlpha(enabled ? 1.0f : 0.5f);
-        textView.setEnabled(enabled);
-        iconView.setEnabled(enabled);
+        if (textView != null) textView.setEnabled(enabled);
+        if (iconView != null) iconView.setEnabled(enabled);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // 【核心修复】必须 >= 12 才能用 ViewPropertyAnimator
         if (Build.VERSION.SDK_INT >= 12 && isEnabled()) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
