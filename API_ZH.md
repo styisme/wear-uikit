@@ -1,277 +1,288 @@
-# Uikit 保姆级 API 字典 (v1.7.0)
+# Uikit 源码级 API 字典 (v1.7.1)
 
-本文档涵盖了 `org.uikit` 库中所有公开 API、XML 属性、返回值处理以及底层交互原理。请配合左侧目录按需查阅。
+本文档详尽到了“函数签名”级别。包含所有公开类、方法、常量、XML 属性以及事件回调。
 
 ---
 
 ## 一、 初始化与核心配置
 
-### 1.1 `UikitConfig.init(String prefsName)`
-- **版本溯源**：`[Since v1.0.0]`
-- **作用**：初始化库的 SharedPreferences，库中所有的主题、缩放、语言配置都会存入此文件。
-- **参数**：
-  - `prefsName` (String)：建议传入宿主 App 的名字，如 `"my_app_prefs"`。
-- **调用时机**：必须在 `Application.onCreate()` 最早期调用。
-```java
-UikitConfig.init("my_app_prefs");
-```
+### 1.1 `UikitConfig`
+全局配置管理器。
+- **`public static void init(String prefsName)`** [Since v1.0.0]
+  - `prefsName`: SharedPreferences 文件名，建议传入 `"my_app_prefs"`。
+  - 说明：必须在 `Application` 中调用。
+- **`public static void setCustomPrimaryColor(Context, int color)`** [Since v1.2.0]
+- **`public static void setCustomAccentColor(Context, int color)`** [Since v1.2.0]
+- **`public static void clearCustomColors(Context)`** [Since v1.2.0]
+- **`public static void setThemeMode(Context, String mode)`** [Since v1.0.0]
+  - `mode`: 可选 `"auto"`, `"light"`, `"dark"`。
 
-### 1.2 `UikitUi.wrapScale(Context newBase)`
-- **版本溯源**：`[Since v1.0.0]`
-- **作用**：应用物理级 UI 缩放（0.3x ~ 2.5x），彻底绕过 Android 11+ 对 `updateConfiguration` 的拦截。
-- **参数**：`newBase` (Context) - 宿主 Activity 原生的 Context。
-- **返回值**：包装后的 Context，**必须传给 super**。
-```java
-@Override
-protected void attachBaseContext(Context newBase) {
-    super.attachBaseContext(UikitUi.wrapScale(newBase));
-}
-```
-
-### 1.3 `UikitTheme.applyTheme(Activity activity)`
-- **版本溯源**：`[Since v1.0.0]`
-- **作用**：应用深色/浅色主题，递归修复白底白字。
-- **调用时机**：`setContentView()` 之后调用。
+### 1.2 `UikitUi`
+UI 核心渲染引擎。
+- **`public static Context wrapScale(Context newBase)`** [Since v1.0.0]
+- **`public static void applyEntryAnimation(Activity activity)`** [Since v1.1.0]
+- **`public static void applyRoundPadding(Context ctx, View root)`** [Since v1.0.0]
+- **`public static void setupWheelScroll(ScrollView sv, LinearLayout container)`** [Since v1.1.0, 回弹 v1.6.0]
+  - 说明：内部自动处理 3D 滚轮与边缘阻尼回弹（Bouncing）。
 
 ---
 
-## 二、 颜色、主题与预设
+## 二、 颜色与主题
 
-### 2.1 `UikitThemePresets` (预设主题)
-- **版本溯源**：`[Since v1.7.0]`
-- **作用**：专为没有动态取色的老设备（Android 12 以下）提供 MD3 配色。
-- **内置常量**：
-  - `UikitThemePresets.GREEN` (`#FF388E3C`)
-  - `UikitThemePresets.BLUE` (`#FF1976D2`)
-  - `UikitThemePresets.RED` (`#FFD32F2F`)
-  - `UikitThemePresets.PURPLE` (`#FF7B1FA2`)
-  - `UikitThemePresets.YELLOW` (`#FFFBC02D`)
-  - `UikitThemePresets.ORANGE` (`#FFF57C00`)
-  - `UikitThemePresets.TEAL` (`#FF00796B`)
-```java
-// 一键应用蓝色主题
-UikitThemePresets.applyPreset(this, UikitThemePresets.BLUE);
-```
+### 2.1 `UikitThemePresets`
+预设主题色工具类。
+- **`public static void applyPreset(Context ctx, int color)`** [Since v1.7.0]
+- **常量列表**：`GREEN`, `BLUE`, `RED`, `PURPLE`, `YELLOW`, `ORANGE`, `TEAL`。
 
 ### 2.2 `UikitColor`
-- **版本溯源**：`[Since v1.0.0]`
-- `getPrimaryColor(Context)`：获取当前主色。
-- `getOnPrimaryColor(Context)`：自动计算与主色对比度最高的文字色（黑或白）。
-- `getAccentColor(Context, boolean isDark)`：获取强调色。
+- **`public static int getPrimaryColor(Context)`**
+- **`public static int getOnPrimaryColor(Context)`**
+- **`public static int getAccentColor(Context, boolean isDark)`**
 
 ---
 
 ## 三、 基础控件与表单
 
-### 3.1 `UikitButton`
-- **版本溯源**：`[Since v1.0.0, 架构重构 Since v1.6.0]`
-- **特性**：底层由 `TextView` 重构为 `LinearLayout`。完美支持内嵌图标，低版本完美居中。
-- **XML 属性表**：
-  | 属性名 | 类型 | 默认值 | 说明 |
-  |---|---|---|---|
-  | `app:uikit_radius` | Dimension | `32dp` | 圆角大小 |
-  | `app:uikit_backgroundColor` | Color | 动态主色 | 背景色 |
-  | `app:uikit_textColor` | Color | 自动计算 | 文字颜色 |
-- **代码示例**：
-```xml
-<org.uikit.UikitButton
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:text="自定义"
-    android:drawableStart="@drawable/ic_uikit_wifi"
-    app:uikit_radius="16dp"
-    app:uikit_backgroundColor="#F44336" />
-```
+### 3.1 `UikitButton` (胶囊按钮)
+*底层为 `LinearLayout`，内部包含 `ImageView` 与 `TextView`。*
 
-### 3.2 `UikitIconButton`
-- **版本溯源**：`[Since v1.7.0]`
-- **特性**：纯图标按钮，无文字，自带按压缩放动画，完美适配播放器控制栏。
-- **XML 属性表**：
-  | 属性名 | 类型 | 默认值 | 说明 |
-  |---|---|---|---|
-  | `app:uikit_icon_radius` | Dimension | `48dp` | 圆角（默认正圆） |
-  | `app:uikit_icon_bg` | Color | 动态主色 | 背景色 |
-  | `app:uikit_icon_tint` | Color | 自动计算 | 图标颜色 |
-- **代码示例**：
-```xml
-<org.uikit.UikitIconButton
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:src="@drawable/ic_uikit_play"
-    app:uikit_icon_bg="#FF388E3C" />
-```
+**XML 属性**：
+| 属性名 | 类型 | 默认值 | 说明 |
+|---|---|---|---|
+| `app:uikit_radius` | Dimension | 32dp | 圆角 |
+| `app:uikit_backgroundColor` | Color | 动态主色 | 背景色 |
+| `app:uikit_textColor` | Color | 动态反色 | 文字色 |
 
-### 3.3 `UikitCheckBox` & `UikitRadioButton`
-- **版本溯源**：`[Since v1.6.0]`
-- **无缝替换**：完美继承了原生 `CheckBox` 和 `RadioButton`。你只需在 XML 里把标签名换掉，Java 里的 `setOnCheckedChangeListener` 逻辑完全不用改。
+**库原生 API**：
+- **`public void setText(CharSequence text)`**
+- **`public CharSequence getText()`**
+- **`public void setIcon(Drawable drawable)`**
+- **`public void setIconResource(int resId)`**
 
-### 3.4 `UikitStepper`
-- **版本溯源**：`[Since v1.6.0]`
-- **作用**：`- 30 +` 步进器。
-- **API**：`setMinValue(int)`、`setMaxValue(int)`、`setCurrentValue(int)`、`setOnValueChangeListener(Listener)`。
+**原生代理 API（完美无缝替换）**：
+- **`public void setTextColor(int color)`**
+- **`public void setTextColor(ColorStateList colors)`**
+- **`public ColorStateList getTextColors()`**
+- **`public void setTextSize(float size)`**
+- **`public void setTextSize(int unit, float size)`**
+- **`public void setGravity(int gravity)`**
+- **`public void setTypeface(Typeface tf)`**
+- **`public void setAllCaps(boolean allCaps)`**
+- **`public void setEnabled(boolean enabled)`** (禁用时自动变半透明)
 
-### 3.5 `UikitLinearList`
-- **版本溯源**：`[Since v1.7.0]`
-- **作用**：轻量级列表容器。如果你想在普通的 `ScrollView` 中嵌入标准列表项，用它。
-- **API**：`addItem(UikitListItem item, boolean showDivider)`、`clear()`。
+### 3.2 `UikitCompatButton` [Since v1.7.1]
+专用于无缝平替原生 `<Button>` 的空壳子类，直接继承自 `UikitButton`。
+
+### 3.3 `UikitIconButton` (纯图标按钮) [Since v1.7.0]
+**XML 属性**：
+| 属性名 | 类型 | 默认值 |
+|---|---|---|
+| `app:uikit_icon_radius` | Dimension | 48dp (圆形) |
+| `app:uikit_icon_bg` | Color | 动态主色 |
+| `app:uikit_icon_tint` | Color | 动态反色 |
+
+**方法**：
+- **`public void setIconResource(int resId)`**
+- **`public void setIconTint(int color)`**
+
+### 3.4 `UikitCheckBox` & `UikitRadioButton`
+直接继承自原生类。自带 Canvas 越界防御。
+- 直接调用原生 `setChecked(boolean)` 和 `setOnCheckedChangeListener(...)`。
+
+### 3.5 `UikitStepper` (步进器)
+- **`public void setMinValue(int min)`**
+- **`public void setMaxValue(int max)`**
+- **`public void setCurrentValue(int val)`**
+- **`public int getCurrentValue()`**
+- **`public void setOnValueChangeListener(OnValueChangeListener listener)`**
+
+### 3.6 `UikitLinearList` (轻量列表容器)
+- **`public void addItem(UikitListItem item, boolean showDivider)`**
+- **`public void clear()`**
 
 ---
 
 ## 四、 进度、加载与微交互
 
-### 4.1 `UikitCircularProgressTimer`
-- **版本溯源**：`[Since v1.6.0]`
-- **作用**：倒计时环形进度条。
-- **API**：
-  - `start(long millis)`：开始倒计时。
-  - `stop()`：停止。
-  - `setOnTimerFinishListener(Listener)`：结束时回调，并且自动触发震动。
+### 4.1 `UikitProgressBar` (横向进度条)
+**原生兼容 API**：
+- **`public void setMax(int max)`**
+- **`public int getMax()`**
+- **`public void setProgress(int progress)`**
+- **`public int getProgress()`**
 
-### 4.2 `UikitMarqueeTextView`
-- **版本溯源**：`[Since v1.6.0]`
-- **作用**：自动无限滚动的跑马灯文字。
+**库原生 API**：
+- **`public void setProgress(float progress)`** (范围 0.0f ~ 1.0f)
+
+### 4.2 `UikitSlider` (可拖动进度条)
+**原生兼容 API (SeekBar)**：
+- **`public void setMax(int max)`**
+- **`public void setProgress(int progress)`**
+- **`public void setOnSeekBarChangeListener(SeekBar.OnSeekBarChangeListener listener)`**
+
+**库原生 API**：
+- **`public void setMaxProgress(float max)`**
+- **`public void setProgress(float progress)`**
+- **`public interface OnProgressChangedListener { void onProgressChanged(float progress); }`**
+- **`public void setOnProgressChangedListener(...)`**
+
+### 4.3 `UikitCircularProgressTimer` (倒计时环)
+- **`public void start(long millis)`**
+- **`public void stop()`**
+- **`public void setOnTimerFinishListener(OnTimerFinishListener listener)`**
+
+### 4.4 `UikitMarqueeTextView` (跑马灯)
+- 自带无限滚动动画，直接 `setText()` 即可。
 
 ---
 
-## 五、 全屏交互组件（推荐）
+## 五、 全屏交互组件
 
-所有的全屏组件都必须通过 `startActivityForResult` 启动。以下示例假设 `requestCode = 1001`。
+所有全屏组件通过 `startActivityForResult` 启动。
 
-### 5.1 `UikitFullListActivity` (全屏列表)
-- **版本溯源**：`[Since v1.3.0]`
-- **启动**：
-```java
-ArrayList<UikitListItemModel> items = new ArrayList<>();
-// 参数：主标题, 副标题, 文字强调色(0为默认), 卡片背景色(0为默认)
-items.add(new UikitListItemModel("普通选项", "副标题", 0, 0));
-items.add(new UikitListItemModel("错误", null, 0, 0xFFF44336));
-UikitFullListActivity.show(this, "高级列表", items, 1001);
-```
-- **接收返回值**（重写 `onActivityResult`）：
-```java
-if (requestCode == 1001 && resultCode == RESULT_OK) {
-    int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
-    String text = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
-}
-```
+### 5.1 `UikitFullListActivity`
+- **`public static void show(Activity, String title, ArrayList<UikitListItemModel> items, int requestCode)`**
+- **返回值**：
+  - `int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);`
+  - `String text = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);`
 
-### 5.2 `UikitFullInputActivity` (全屏输入)
-- **版本溯源**：`[Since v1.3.0]`
-- **启动**：`UikitFullInputActivity.show(this, "输入名称", "", "请输入...", "提交", "取消", 1002);`
-- **接收返回值**：
-```java
-String text = data.getStringExtra(UikitFullInputActivity.EXTRA_RESULT_TEXT);
-```
+### 5.2 `UikitFullInputActivity`
+- **`public static void show(Activity, String title, String defaultText, String hint, String positiveText, String negativeText, int requestCode)`**
+- **返回值**：
+  - `String text = data.getStringExtra(UikitFullInputActivity.EXTRA_RESULT_TEXT);`
 
-### 5.3 `UikitFullTextActivity` (全屏长文本)
-- **版本溯源**：`[Since v1.3.0, 智能断句 Since v1.6.0]`
-- **启动**：`UikitFullTextActivity.show(this, "用户协议", longText, "我知道了", true, 1003);`
-  - 最后那个 `true` 表示开启智能断句，精准排除数字点（如 2.3）和网址（如 .com）。
+### 5.3 `UikitFullTextActivity`
+- **`public static void show(Activity, String title, String message, String positiveText, boolean autoSplit, int requestCode)`**
+  - `autoSplit`: 是否按句号拆分文本实现 3D 滚轮。智能断句已排除 `2.3` 和 `.com`。
 
-### 5.4 `UikitPickerActivity` (3D 选择器)
-- **版本溯源**：`[Since v1.5.0]`
-- **启动**：`UikitPickerActivity.show(this, "请选择", new String[]{"A", "B", "C"}, 1004);`
-- **接收返回值**：`EXTRA_RESULT_INDEX` (int) 和 `EXTRA_RESULT_TEXT` (String)。
-
-### 5.5 `UikitDatePickerActivity` (年月日选择)
-- **版本溯源**：`[Since v1.4.0]`
-- **启动**：`UikitDatePickerActivity.show(this, 1005);`
-- **接收返回值**：
-```java
-String year = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_YEAR);
-String month = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_MONTH);
-String day = data.getStringExtra(UikitDatePickerActivity.EXTRA_RESULT_DAY);
-```
-
-### 5.6 `UikitFullConfirmActivity` (极简确认)
-- **版本溯源**：`[Since v1.4.0]`
-- **启动**：`UikitFullConfirmActivity.show(this, "删除项目？", "此操作无法撤销", 1006);`
+### 5.4 `UikitFullConfirmActivity`
+- **`public static void show(Activity, String title, String message, int requestCode)`**
 - **返回值**：点击 ✓ 返回 `RESULT_OK`，点击 × 返回 `RESULT_CANCELED`。
 
-### 5.7 `UikitImageViewerActivity` (全屏看图)
-- **版本溯源**：`[Since v1.4.0]`
-- **启动**：`UikitImageViewerActivity.show(this, "demo_image.png");` （文件名需放在 `assets/` 下）。
+### 5.5 `UikitPickerActivity`
+- **`public static void show(Activity, String title, String[] items, int requestCode)`**
+- **返回值**：`EXTRA_RESULT_INDEX` 和 `EXTRA_RESULT_TEXT`。
+
+### 5.6 `UikitDatePickerActivity`
+- **`public static void show(Activity, int requestCode)`**
+- **返回值**：`EXTRA_RESULT_YEAR`, `EXTRA_RESULT_MONTH`, `EXTRA_RESULT_DAY`。
 
 ---
 
-## 六、 废弃 API 与迁移指南
+## 六、 废弃 API 说明
 
-> ⚠️ **状态说明**：以下 API 已标记 `@Deprecated`（自 v1.3.0 起）。
-> **它们在底层逻辑上依然完全可用，能够正常弹出、正常回调。** 
-> 被标记废弃的唯一原因是：受限于早期的非全屏 Dialog 架构，它们在手表的圆屏和软键盘弹起场景下，**视觉表现不如全屏组件**。为了给用户提供最完美的 UI 体验，强烈建议新项目使用全屏替代方案。
-
-| 废弃 API | 体验差异（为什么推荐迁移） | 替代方案 |
+| 废弃 API | 状态 | 替代方案 |
 |---|---|---|
-| `UikitUi.showList()` | 在圆屏设备上，弹窗边缘可能被遮挡，列表过长时滑动不够顺畅。 | `UikitFullListActivity` |
-| `UikitUi.showInput()` | 手表键盘弹起时，弹窗容易被挤压或发生遮挡，输入体验不及全屏。 | `UikitFullInputActivity` |
-| `UikitUi.showConfirm()` | 长文本时内部留白较大，排版不够美观。 | `UikitFullConfirmActivity` / `UikitFullTextActivity` |
+| `UikitUi.showList()` | 可用，但在圆屏上边缘会被切。 | `UikitFullListActivity` |
+| `UikitUi.showInput()` | 可用，但键盘弹起会遮挡输入框。 | `UikitFullInputActivity` |
+| `UikitUi.showConfirm()` | 可用，但长文本留白过大。 | `UikitFullConfirmActivity` |
 
 ---
 
-## 七、 视觉特效与低配优化
+## 七、 内置图标库 (36 个)
 
-### 7.1 3D 滚轮与边缘回弹
-只要你调用了 `UikitUi.setupWheelScroll(scrollView, container)`，你的页面就会自动获得：
-1. **3D 滚轮特效**：边缘视图缩小、变透明（仅圆屏触发）。
-2. **边缘阻尼回弹**：滑到顶部/底部继续拖拽，松手物理复位（全设备触发）。
+前缀为 `ic_uikit_`。
+- **文件与系统**：`home`, `settings`, `search`, `folder`, `image`, `time`, `menu`, `more_vert`
+- **媒体与播放**：`play`, `pause`, `stop`, `next`, `prev`, `music`, `volume_up`, `volume_down`
+- **操作与编辑**：`add`, `edit`, `delete`, `check`, `close`, `arrow_back`, `arrow_forward`
+- **网络与状态**：`wifi`, `bluetooth`, `battery`, `lock`, `unlock`, `alarm`
+- **通讯与社交**：`message`, `email`, `notifications`, `heart`, `star`, `cloud_download`, `cloud_upload`
 
-### 7.2 极低配设备降级
-如果设备性能极低（如 512MB 内存、单核 CPU）导致掉帧，可以强制关闭硬件加速：
+
+## 8. 内置 36 个 MD3 矢量图标 [Since v1.5.0]
+
+自 v1.5.0 起，库中直接内置了 **36 个纯正的 MD3 风格矢量图标**，无任何第三方依赖。
+所有图标统一存放在 `res/drawable` 中，资源前缀为 **`ic_uikit_`**。
+
+### 💡 基本用法
+**在 XML 中使用：**
+```xml
+<!-- 配合原生 ImageView -->
+<ImageView
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:src="@drawable/ic_uikit_wifi"
+    app:tint="#FFFFFF" /> 
+
+<!-- 配合库的纯图标按钮 UikitIconButton -->
+<org.uikit.UikitIconButton
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:src="@drawable/ic_uikit_play" />
+```
+
+**在 Java 中动态使用与染色：**
 ```java
-scrollView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+ImageView iv = new ImageView(this);
+// 1. 设置图标
+iv.setImageResource(R.drawable.ic_uikit_heart);
+// 2. 动态跟随主题染色
+iv.setColorFilter(UikitColor.getPrimaryColor(this));
 ```
 
 ---
 
-## 八、 内置 36 个 MD3 图标 [Since v1.5.0]
+### 🗂️ 图标图鉴 (36 个)
 
-前缀 `ic_uikit_`。所有图标均可在 Java 或 XML 中调用，且自动适配深色模式。
-```java
-imageView.setImageResource(R.drawable.ic_uikit_wifi);
-```
+#### 📁 文件与系统 (Files & System)
+| 资源名 | 含义 | 适用场景 |
+|---|---|---|
+| `ic_uikit_home` | 主页 / 房子 | 底部导航、返回首页 |
+| `ic_uikit_settings` | 齿轮 / 设置 | 设置页面入口 |
+| `ic_uikit_search` | 放大镜 / 搜索 | 搜索栏占位、搜索按钮 |
+| `ic_uikit_folder` | 文件夹 | 文件管理、目录选择 |
+| `ic_uikit_image` | 图片 / 相册 | 图片浏览、相册入口 |
+| `ic_uikit_time` | 时钟 / 历史 | 历史记录、时间轴 |
+| `ic_uikit_menu` | 汉堡菜单 (三横线) | 侧边栏呼出、抽屉菜单 |
+| `ic_uikit_more_vert` | 竖排三点 | 更多操作、溢出菜单 |
 
-### 📁 文件与系统
-- `ic_uikit_home`：主页
-- `ic_uikit_settings`：设置齿轮
-- `ic_uikit_search`：放大镜搜索
-- `ic_uikit_folder`：文件夹
-- `ic_uikit_image`：图片
-- `ic_uikit_time`：时钟
-- `ic_uikit_menu`：汉堡菜单
-- `ic_uikit_more_vert`：竖排三点
+#### 🎵 媒体与播放 (Media & Playback)
+| 资源名 | 含义 | 适用场景 |
+|---|---|---|
+| `ic_uikit_play` | 播放 (三角形) | 播放器控制栏、继续 |
+| `ic_uikit_pause` | 暂停 (双竖线) | 播放器控制栏 |
+| `ic_uikit_stop` | 停止 (方块) | 播放器控制栏、取消任务 |
+| `ic_uikit_next` | 下一首 (右箭头带竖线) | 播放器控制栏 |
+| `ic_uikit_prev` | 上一首 (左箭头带竖线) | 播放器控制栏 |
+| `ic_uikit_music` | 音符 | 音乐列表、歌曲占位 |
+| `ic_uikit_volume_up` | 喇叭带加号 | 音量增加、取消静音 |
+| `ic_uikit_volume_down` | 喇叭带减号 | 音量减少、静音 |
 
-### 🎵 媒体与播放
-- `ic_uikit_play`：播放
-- `ic_uikit_pause`：暂停
-- `ic_uikit_stop`：停止
-- `ic_uikit_next`：下一首
-- `ic_uikit_prev`：上一首
-- `ic_uikit_music`：音符
-- `ic_uikit_volume_up`：音量加
-- `ic_uikit_volume_down`：音量减
+#### 🛠️ 操作与编辑 (Actions & Editing)
+| 资源名 | 含义 | 适用场景 |
+|---|---|---|
+| `ic_uikit_add` | 加号 | 新建、添加项目 |
+| `ic_uikit_edit` | 铅笔 | 编辑资料、修改状态 |
+| `ic_uikit_delete` | 垃圾桶 | 删除、清空记录 |
+| `ic_uikit_check` | 对勾 | 确认、完成、选中状态 |
+| `ic_uikit_close` | 叉号 | 取消、关闭弹窗、清除输入 |
+| `ic_uikit_arrow_back` | 左箭头 | 返回上一页、折叠 |
+| `ic_uikit_arrow_forward` | 右箭头 | 进入下一页、展开 |
 
-### 🛠️ 操作与编辑
-- `ic_uikit_add`：加号
-- `ic_uikit_edit`：铅笔编辑
-- `ic_uikit_delete`：垃圾桶
-- `ic_uikit_check`：勾选
-- `ic_uikit_close`：关闭
-- `ic_uikit_arrow_back`：左箭头
-- `ic_uikit_arrow_forward`：右箭头
+#### 📶 网络与状态 (Network & Status)
+| 资源名 | 含义 | 适用场景 |
+|---|---|---|
+| `ic_uikit_wifi` | Wi-Fi 信号 | 网络状态、局域网传输 |
+| `ic_uikit_bluetooth` | 蓝牙标志 | 蓝牙配对、连接状态 |
+| `ic_uikit_battery` | 电池 | 电量显示、省电模式 |
+| `ic_uikit_lock` | 闭合的锁 | 隐私保护、加密、已锁定 |
+| `ic_uikit_unlock` | 打开的锁 | 公开访问、已解锁 |
+| `ic_uikit_alarm` | 闹钟 / 铃铛 | 定时提醒、闹钟设置 |
 
-### 📶 网络与状态
-- `ic_uikit_wifi`：Wi-Fi
-- `ic_uikit_bluetooth`：蓝牙
-- `ic_uikit_battery`：电池
-- `ic_uikit_lock`：锁定
-- `ic_uikit_unlock`：解锁
-- `ic_uikit_alarm`：闹钟
+#### 💬 通讯与社交 (Communication & Social)
+| 资源名 | 含义 | 适用场景 |
+|---|---|---|
+| `ic_uikit_message` | 对话气泡 | 聊天、消息列表、通知 |
+| `ic_uikit_email` | 信封 | 邮件、反馈、联系作者 |
+| `ic_uikit_notifications` | 铃铛 | 消息推送、通知中心 |
+| `ic_uikit_heart` | 爱心 | 点赞、收藏、喜欢 |
+| `ic_uikit_star` | 星标 | 收藏、评分、特别关注 |
+| `ic_uikit_cloud_download` | 云下载箭头 | 从云端获取文件 |
+| `ic_uikit_cloud_upload` | 云上传箭头 | 备份至云端、上传文件 |
 
-### 💬 通讯与社交
-- `ic_uikit_message`：消息气泡
-- `ic_uikit_email`：邮件
-- `ic_uikit_notifications`：通知铃铛
-- `ic_uikit_heart`：爱心
-- `ic_uikit_star`：星标
-- `ic_uikit_cloud_download`：云下载
-- `ic_uikit_cloud_upload`：云上传
+---
+
+### 🎨 为什么内置这些图标？
+1. **极低版本完美兼容**：所有图标均为 `VectorDrawable` 格式，在 Android 2.3 (API 10) 及以上完美渲染，绝不模糊。
+2. **完美跟随动态取色**：图标本身为纯黑色，在使用 `app:tint` 或代码中的 `setColorFilter` 时，可瞬间变成主题色、白色或任何你想要的颜色。
+3. **体积客观增加**：虽然纯文本的 SVG 路径本身很小，但经过 AAPT2 编译、资源索引生成后，36 个图标及相应的多密度适配确实会使 `.aar` 体积增加约几百 KB。如果你的项目对包体积极度敏感，且不需要这些图标，可以手动删除 `uikit/src/main/res/drawable/ic_uikit_*` 相关文件。

@@ -9,6 +9,23 @@
 
 ---
 
+## [1.7.1] - 2026-11-14
+
+极其关键的稳定性补丁。彻底修复了低版本 Android 上的致命闪退，并为全库组件铺设了完美的原生 API 代理层。
+
+### Fixed
+- **致命闪退修复**：修复了 `UikitButton` 在 `init` 阶段由于内部 `TextView` 尚未实例化就调用 `setGravity` 导致的空指针异常（NPE）。这解决了在 API 27 及更低版本上一打开应用就闪退的问题。
+- **绘制越界防御**：为 `UikitCheckBox`、`UikitRadioButton`、`UikitProgressBar` 和 `UikitSlider` 增加了严密的 Canvas 尺寸和矩形宽高校验，防止在老旧设备上因测量尺寸为 0 或负值导致底层渲染崩溃。
+- **除零异常防御**：为进度条和滑块增加了 `maxProgress` 的零值防御。
+- **内存泄漏与空指针防御**：`UikitCircularProgressTimer` 在 `onDetachedFromWindow` 时强制取消倒计时，且每次 `onTick` 都校验 `getWindowToken() != null`，防止后台空跑导致崩溃。
+
+### Added
+- **全量原生 API 代理**：为 `UikitButton` 补全了 `setTextColor`、`setTextSize`、`setAllCaps`、`setTypeface`、`getTextColors` 等所有原生高频方法，确保旧版本升级后**零代码修改**。
+- **双轨兼容体系**：新增 `UikitCompatButton`、`UikitCompatCheckBox`、`UikitCompatRadioButton`、`UikitCompatSwitch`，作为原生控件的完美平替壳子。
+- **`UikitSlider` 代理 `SeekBar`**：全面兼容原生 `setMax(int)`、`setProgress(int)` 以及 `SeekBar.OnSeekBarChangeListener`。
+
+---
+
 ## [1.7.0] - 2026-11-13
 
 吸收社区 Feedback，针对老旧项目适配、现代 UI 扩展与极低配设备优化做出重大更新。
@@ -20,11 +37,8 @@
 - **GitHub Release 附带 AAR**：CI 现在会直接把编译好的 `.aar` 挂在 Releases，方便无外网或 JitPack 抽风时手动下载依赖。
 
 ### Fixed
-- **彻底修正文档包名**：全面清洗文档中的 `com.styisme.uikit`，统一为实际源码包名 `org.uikit`。**（绝对保证代码兼容，无需修改任何代码）**
+- **彻底修正文档包名**：全面清洗文档中的 `com.styisme.uikit`，统一为实际源码包名 `org.uikit`。
 - **补充原生继承说明**：在文档中明确 `UikitCheckBox` / `UikitRadioButton` 继承自原生类，支持无缝替换。
-
-### Docs
-- 补充了极低配置设备的性能优化建议（`setLayerType` 降级）。
 
 ---
 
@@ -121,7 +135,8 @@
 
 ## 版本对比链接
 
-[Unreleased]: https://github.com/styisme/wear-uikit/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/styisme/wear-uikit/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/styisme/wear-uikit/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/styisme/wear-uikit/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/styisme/wear-uikit/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/styisme/wear-uikit/compare/v1.4.1...v1.5.0

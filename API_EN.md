@@ -1,211 +1,216 @@
-# Uikit Master API Dictionary (v1.7.0)
+# Uikit Source-Level API Dictionary (v1.7.1)
 
-This document serves as a comprehensive dictionary for all public APIs, XML attributes, return value handling, and underlying principles of the `org.uikit` library.
-
----
-
-## 1. Initialization & Configuration
-
-### 1.1 `UikitConfig.init(String prefsName)`
-- **Since**: `v1.0.0`
-- **Usage**: Initializes SharedPreferences. All theme, scaling, and language settings are stored here.
-- **Parameters**:
-  - `prefsName` (String): e.g., `"my_app_prefs"`.
-- **When to call**: In `Application.onCreate()`.
-
-### 1.2 `UikitUi.wrapScale(Context newBase)`
-- **Since**: `v1.0.0`
-- **Usage**: Applies physical UI scaling (0.3x - 2.5x), bypassing Android 11+ restrictions.
-```java
-@Override
-protected void attachBaseContext(Context newBase) {
-    super.attachBaseContext(UikitUi.wrapScale(newBase));
-}
-```
-
-### 1.3 `UikitTheme.applyTheme(Activity activity)`
-- **Since**: `v1.0.0`
-- **Usage**: Applies dark/light theme. Call after `setContentView()`.
+This document details all public classes, method signatures, constants, XML attributes, and callbacks.
 
 ---
 
-## 2. Colors, Themes & Presets
+## 1. Initialization & Core Config
 
-### 2.1 `UikitThemePresets`
-- **Since**: `v1.7.0`
-- **Usage**: Preset themes for legacy devices without Dynamic Color.
+### 1.1 `UikitConfig`
+- **`public static void init(String prefsName)`** [Since v1.0.0]
+- **`public static void setCustomPrimaryColor(Context, int color)`** [Since v1.2.0]
+- **`public static void setThemeMode(Context, String mode)`** [Since v1.0.0] (`"auto"`, `"light"`, `"dark"`)
+
+### 1.2 `UikitUi`
+- **`public static Context wrapScale(Context newBase)`** [Since v1.0.0]
+- **`public static void setupWheelScroll(ScrollView sv, LinearLayout container)`** [Since v1.1.0, Bouncing v1.6.0]
+
+---
+
+## 2. Colors & Themes
+
+### 2.1 `UikitThemePresets` [Since v1.7.0]
+- **`public static void applyPreset(Context ctx, int color)`**
 - **Constants**: `GREEN`, `BLUE`, `RED`, `PURPLE`, `YELLOW`, `ORANGE`, `TEAL`.
-```java
-UikitThemePresets.applyPreset(this, UikitThemePresets.BLUE);
-```
-
-### 2.2 `UikitColor`
-- **Since**: `v1.0.0`
-- `getPrimaryColor(Context)`, `getOnPrimaryColor(Context)`, `getAccentColor(Context, boolean)`.
 
 ---
 
 ## 3. Basic & Form Widgets
 
 ### 3.1 `UikitButton`
-- **Since**: `v1.0.0, Refactored v1.6.0`
-- **Features**: Refactored to `LinearLayout`. Perfect for nested views and centered icons on low APIs.
-- **XML Attributes**:
-  | Attribute | Type | Default | Description |
-  |---|---|---|---|
-  | `app:uikit_radius` | Dimension | `32dp` | Corner radius |
-  | `app:uikit_backgroundColor` | Color | Dynamic | Background color |
-  | `app:uikit_textColor` | Color | Auto | Text color |
+**XML Attributes**:
+| Attribute | Type | Default |
+|---|---|---|
+| `app:uikit_radius` | Dimension | 32dp |
+| `app:uikit_backgroundColor` | Color | Dynamic |
+| `app:uikit_textColor` | Color | Dynamic |
 
+**Native Proxy APIs (Drop-in replacement)**:
+- **`public void setTextColor(int color)`**
+- **`public void setTextColor(ColorStateList colors)`**
+- **`public void setTextSize(float size)`**
+- **`public void setGravity(int gravity)`**
+- **`public void setTypeface(Typeface tf)`**
+- **`public void setAllCaps(boolean allCaps)`**
+- **`public void setEnabled(boolean enabled)`**
+
+**Native Library APIs**:
+- **`public void setText(CharSequence text)`**
+- **`public void setIcon(Drawable drawable)`**
+- **`public void setIconResource(int resId)`**
+
+### 3.2 `UikitCompatButton` [Since v1.7.1]
+Drop-in alias for native `<Button>`.
+
+### 3.3 `UikitIconButton` [Since v1.7.0]
+**XML Attributes**:
+| Attribute | Type | Default |
+|---|---|---|
+| `app:uikit_icon_radius` | Dimension | 48dp |
+| `app:uikit_icon_bg` | Color | Dynamic |
+| `app:uikit_icon_tint` | Color | Dynamic |
+
+### 3.4 `UikitStepper`
+- **`public void setMinValue(int)`**, **`setMaxValue(int)`**, **`setCurrentValue(int)`**
+- **`public void setOnValueChangeListener(...)`**
+
+### 3.5 `UikitLinearList`
+- **`public void addItem(UikitListItem item, boolean showDivider)`**
+
+---
+
+## 4. Progress & Micro-interactions
+
+### 4.1 `UikitProgressBar`
+- **Native**: `setMax(int)`, `setProgress(int)`
+- **Library**: `setProgress(float)` (0.0f ~ 1.0f)
+
+### 4.2 `UikitSlider`
+- **Native (SeekBar)**: `setMax(int)`, `setProgress(int)`, `setOnSeekBarChangeListener(...)`
+- **Library**: `setMaxProgress(float)`, `setOnProgressChangedListener(...)`
+
+### 4.3 `UikitCircularProgressTimer`
+- **`public void start(long millis)`**, **`stop()`**
+- **`public void setOnTimerFinishListener(...)`**
+
+---
+
+## 5. Fullscreen Components
+
+Launch via `startActivityForResult`.
+
+### 5.1 `UikitFullListActivity.show(Activity, String title, ArrayList<UikitListItemModel> items, int requestCode)`
+- **Result**: `EXTRA_RESULT_INDEX`, `EXTRA_RESULT_TEXT`
+
+### 5.2 `UikitFullInputActivity.show(Activity, String title, String defaultText, String hint, String positiveText, String negativeText, int requestCode)`
+- **Result**: `EXTRA_RESULT_TEXT`
+
+### 5.3 `UikitFullTextActivity.show(Activity, String title, String message, String positiveText, boolean autoSplit, int requestCode)`
+- **autoSplit**: Excludes numbers (2.3) and URLs (.com) automatically.
+
+### 5.4 `UikitFullConfirmActivity.show(Activity, String title, String message, int requestCode)`
+- **Result**: `RESULT_OK` (✓), `RESULT_CANCELED` (×)
+
+### 5.5 `UikitPickerActivity.show(Activity, String title, String[] items, int requestCode)`
+- **Result**: `EXTRA_RESULT_INDEX`, `EXTRA_RESULT_TEXT`
+
+### 5.6 `UikitDatePickerActivity.show(Activity, int requestCode)`
+- **Result**: `EXTRA_RESULT_YEAR`, `EXTRA_RESULT_MONTH`, `EXTRA_RESULT_DAY`
+
+---
+
+## 6. Deprecated APIs
+These APIs are fully functional but have inferior visual experiences on round screens. Use fullscreen alternatives.
+
+---
+
+## 7. Built-in Icons (36)
+Prefix: `ic_uikit_`.
+(Full list matches Chinese document)
+
+
+## 8. Built-in 36 MD3 Vector Icons [Since v1.5.0]
+
+36 pure MD3 vector icons are built-in with zero dependencies.
+All icons are stored in `res/drawable` with the prefix **`ic_uikit_`**.
+
+### 💡 Basic Usage
+**In XML:**
 ```xml
-<org.uikit.UikitButton
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:text="Custom"
-    android:drawableStart="@drawable/ic_uikit_wifi"
-    app:uikit_radius="16dp" />
-```
+<!-- With native ImageView -->
+<ImageView
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:src="@drawable/ic_uikit_wifi"
+    app:tint="#FFFFFF" /> 
 
-### 3.2 `UikitIconButton`
-- **Since**: `v1.7.0`
-- **Features**: Icon-only button, perfect for media controls.
-- **XML Attributes**:
-  | Attribute | Type | Default | Description |
-  |---|---|---|---|
-  | `app:uikit_icon_radius` | Dimension | `48dp` | Corner radius |
-  | `app:uikit_icon_bg` | Color | Dynamic | Background color |
-  | `app:uikit_icon_tint` | Color | Auto | Icon color |
-
-```xml
+<!-- With UikitIconButton -->
 <org.uikit.UikitIconButton
     android:layout_width="48dp"
     android:layout_height="48dp"
     android:src="@drawable/ic_uikit_play" />
 ```
 
-### 3.3 `UikitCheckBox` & `UikitRadioButton`
-- **Since**: `v1.6.0`
-- **Usage**: **Perfectly inherit from native classes**. Drop-in replacement without modifying Java listeners.
-
-### 3.4 `UikitStepper`
-- **Since**: `v1.6.0`
-- **API**: `setMinValue`, `setMaxValue`, `setCurrentValue`, `setOnValueChangeListener`.
-
-### 3.5 `UikitLinearList`
-- **Since**: `v1.7.0`
-- **API**: `addItem(UikitListItem item, boolean showDivider)`, `clear()`.
-
----
-
-## 4. Progress & Micro-interactions
-
-### 4.1 `UikitCircularProgressTimer`
-- **Since**: `v1.6.0`
-- **API**: `start(long millis)`, `stop()`, `setOnTimerFinishListener(...)` (Triggers vibration on finish).
-
-### 4.2 `UikitMarqueeTextView`
-- **Since**: `v1.6.0`
-- **Usage**: Auto-scrolling marquee text.
-
----
-
-## 5. Fullscreen Components (Recommended)
-
-All fullscreen components are launched via `startActivityForResult`. (e.g., `requestCode = 1001`).
-
-### 5.1 `UikitFullListActivity` (Full List)
-- **Since**: `v1.3.0`
-- **Launch**:
+**In Java:**
 ```java
-ArrayList<UikitListItemModel> items = new ArrayList<>();
-items.add(new UikitListItemModel("Normal", "Subtitle", 0, 0));
-UikitFullListActivity.show(this, "List", items, 1001);
-```
-- **Receive Result**:
-```java
-if (requestCode == 1001 && resultCode == RESULT_OK) {
-    int index = data.getIntExtra(UikitFullListActivity.EXTRA_RESULT_INDEX, -1);
-    String text = data.getStringExtra(UikitFullListActivity.EXTRA_RESULT_TEXT);
-}
+ImageView iv = new ImageView(this);
+iv.setImageResource(R.drawable.ic_uikit_heart);
+iv.setColorFilter(UikitColor.getPrimaryColor(this));
 ```
 
-### 5.2 `UikitFullInputActivity`
-- **Since**: `v1.3.0`
-- **Launch**: `UikitFullInputActivity.show(this, "Input", "", "Type...", "Submit", "Cancel", 1002);`
-- **Receive Result**: `data.getStringExtra(UikitFullInputActivity.EXTRA_RESULT_TEXT)`
-
-### 5.3 `UikitFullTextActivity`
-- **Since**: `v1.3.0, Smart Split v1.6.0`
-- **Launch**: `UikitFullTextActivity.show(this, "Agreement", longText, "OK", true, 1003);`
-  - The boolean `true` enables smart splitting, preserving URLs and decimals.
-
-### 5.4 `UikitPickerActivity`
-- **Since**: `v1.5.0`
-- **Launch**: `UikitPickerActivity.show(this, "Select", new String[]{"A", "B"}, 1004);`
-- **Receive Result**: `EXTRA_RESULT_INDEX`, `EXTRA_RESULT_TEXT`.
-
-### 5.5 `UikitDatePickerActivity`
-- **Since**: `v1.4.0`
-- **Launch**: `UikitDatePickerActivity.show(this, 1005);`
-- **Receive Result**: `EXTRA_RESULT_YEAR`, `EXTRA_RESULT_MONTH`, `EXTRA_RESULT_DAY`.
-
-### 5.6 `UikitFullConfirmActivity`
-- **Since**: `v1.4.0`
-- **Launch**: `UikitFullConfirmActivity.show(this, "Delete?", "Cannot be undone", 1006);`
-- **Receive Result**: `RESULT_OK` for ✓, `RESULT_CANCELED` for ×.
-
-### 5.7 `UikitImageViewerActivity`
-- **Since**: `v1.4.0`
-- **Launch**: `UikitImageViewerActivity.show(this, "demo_image.png");`
-
 ---
 
-## 6. Deprecated APIs & Migration
+### 🗂️ Icon Dictionary (36 Icons)
 
-> ⚠️ **Status Note**: Deprecated since `v1.3.0`.
-> **These APIs still function perfectly**. They are marked deprecated solely because their non-fullscreen architecture offers inferior visual experiences on round screens and when the keyboard pops up.
-
-| Deprecated | UX Difference | Alternative |
+#### 📁 Files & System
+| Resource Name | Meaning | Use Case |
 |---|---|---|
-| `showList()` | Might be clipped on round screens. | `UikitFullListActivity` |
-| `showInput()` | Obscured when the watch keyboard appears. | `UikitFullInputActivity` |
-| `showConfirm()` | Less optimal spacing for long texts. | `UikitFullConfirmActivity` |
+| `ic_uikit_home` | Home | Navigation, Home button |
+| `ic_uikit_settings` | Gear | Settings menu |
+| `ic_uikit_search` | Magnifier | Search bar, search action |
+| `ic_uikit_folder` | Folder | File management |
+| `ic_uikit_image` | Image | Gallery, photo placeholder |
+| `ic_uikit_time` | Clock | History, timeline |
+| `ic_uikit_menu` | Hamburger Menu | Drawer menu |
+| `ic_uikit_more_vert` | 3 Dots | More options, overflow |
+
+#### 🎵 Media & Playback
+| Resource Name | Meaning | Use Case |
+|---|---|---|
+| `ic_uikit_play` | Play | Media controls, continue |
+| `ic_uikit_pause` | Pause | Media controls |
+| `ic_uikit_stop` | Stop | Media controls, cancel |
+| `ic_uikit_next` | Next Track | Media controls |
+| `ic_uikit_prev` | Previous Track | Media controls |
+| `ic_uikit_music` | Music Note | Music list, audio placeholder |
+| `ic_uikit_volume_up` | Volume Up | Increase volume |
+| `ic_uikit_volume_down` | Volume Down | Decrease volume |
+
+#### 🛠️ Actions & Editing
+| Resource Name | Meaning | Use Case |
+|---|---|---|
+| `ic_uikit_add` | Plus | Create, add new |
+| `ic_uikit_edit` | Pencil | Edit profile, modify |
+| `ic_uikit_delete` | Trash Can | Delete, clear |
+| `ic_uikit_check` | Checkmark | Confirm, done |
+| `ic_uikit_close` | Cross | Cancel, close dialog |
+| `ic_uikit_arrow_back` | Left Arrow | Go back |
+| `ic_uikit_arrow_forward` | Right Arrow | Go forward |
+
+#### 📶 Network & Status
+| Resource Name | Meaning | Use Case |
+|---|---|---|
+| `ic_uikit_wifi` | Wi-Fi | Network status |
+| `ic_uikit_bluetooth` | Bluetooth | Bluetooth connection |
+| `ic_uikit_battery` | Battery | Battery level |
+| `ic_uikit_lock` | Lock | Security, locked |
+| `ic_uikit_unlock` | Unlock | Unlocked, public |
+| `ic_uikit_alarm` | Alarm | Reminders, alarms |
+
+#### 💬 Communication & Social
+| Resource Name | Meaning | Use Case |
+|---|---|---|
+| `ic_uikit_message` | Message Bubble | Chat, notifications |
+| `ic_uikit_email` | Envelope | Email, feedback |
+| `ic_uikit_notifications` | Bell | Push notifications |
+| `ic_uikit_heart` | Heart | Like, favorite |
+| `ic_uikit_star` | Star | Rating, bookmark |
+| `ic_uikit_cloud_download` | Cloud Download | Download from cloud |
+| `ic_uikit_cloud_upload` | Cloud Upload | Upload to cloud |
 
 ---
 
-## 7. Visual Effects & Performance
-
-### 7.1 Bouncing Effect & 3D Wheel
-Calling `UikitUi.setupWheelScroll(scrollView, container)` automatically activates:
-1. **3D Wheel**: Edge views scale down (Round screen only).
-2. **Edge Bouncing**: Physical damped bounce at edges (All screens).
-
-### 7.2 Low-Performance Devices
-If you experience frame drops:
-```java
-scrollView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-```
-
----
-
-## 8. Built-in 36 MD3 Icons [Since v1.5.0]
-
-Prefix: `ic_uikit_`.
-```java
-imageView.setImageResource(R.drawable.ic_uikit_wifi);
-```
-
-### Files & System
-`home`, `settings`, `search`, `folder`, `image`, `time`, `menu`, `more_vert`.
-
-### Media & Playback
-`play`, `pause`, `stop`, `next`, `prev`, `music`, `volume_up`, `volume_down`.
-
-### Actions & Editing
-`add`, `edit`, `delete`, `check`, `close`, `arrow_back`, `arrow_forward`.
-
-### Network & Status
-`wifi`, `bluetooth`, `battery`, `lock`, `unlock`, `alarm`.
-
-### Communication & Social
-`message`, `email`, `notifications`, `heart`, `star`, `cloud_download`, `cloud_upload`.
+### 🎨 Why Built-in?
+1. **Legacy Compatible**: `VectorDrawable` renders perfectly on API 10+.
+2. **Dynamic Colors**: Pure black paths, easily tinted via `app:tint` or `setColorFilter`.
+3. **Objective Size Increase**: Although the plain text SVG paths are small, after AAPT2 compilation and resource indexing, the 36 icons (with density adaptations) will objectively increase the `.aar` size by a few hundred KB. If your project is extremely sensitive to APK size and doesn't need these icons, you can manually delete the `uikit/src/main/res/drawable/ic_uikit_*` files.
