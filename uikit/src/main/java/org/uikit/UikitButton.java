@@ -101,7 +101,7 @@ public class UikitButton extends LinearLayout {
         setIcon(drawableStart);
     }
 
-    // ================= 完整兼容层：绝不阉割任何旧 API =================
+    // ================= 彻底消除阉割的兼容 API =================
 
     public void setText(CharSequence text) {
         textView.setText(text);
@@ -139,7 +139,6 @@ public class UikitButton extends LinearLayout {
     }
 
     public void setGravity(int gravity) {
-        // 兼容旧代码：原生 Button 常用 center，我们内部处理一下
         textView.setGravity(gravity);
     }
 
@@ -185,8 +184,6 @@ public class UikitButton extends LinearLayout {
         }
     }
 
-    // ================= 动画与状态 =================
-
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -197,7 +194,8 @@ public class UikitButton extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (Build.VERSION.SDK_INT >= 11 && isEnabled()) {
+        // 【核心修复】必须 >= 12 才能用 ViewPropertyAnimator
+        if (Build.VERSION.SDK_INT >= 12 && isEnabled()) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     animate().scaleX(0.92f).scaleY(0.92f).alpha(0.7f).setDuration(100).start();

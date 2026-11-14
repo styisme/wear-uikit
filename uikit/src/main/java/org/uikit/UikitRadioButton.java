@@ -10,15 +10,8 @@ public class UikitRadioButton extends RadioButton {
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint dotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    public UikitRadioButton(Context context) {
-        super(context);
-        init();
-    }
-
-    public UikitRadioButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
+    public UikitRadioButton(Context context) { super(context); init(); }
+    public UikitRadioButton(Context context, AttributeSet attrs) { super(context, attrs); init(); }
 
     private void init() {
         paint.setStyle(Paint.Style.STROKE);
@@ -29,9 +22,14 @@ public class UikitRadioButton extends RadioButton {
     @Override
     protected void onDraw(Canvas canvas) {
         int size = getHeight();
+        // 【防御】宽高为0不绘制
+        if (size == 0) return;
+
         int cx = getWidth() / 2;
         int padding = UikitScreenUtils.dp2px(getContext(), 8);
         float radius = size / 2f - padding;
+        if (radius < 0) return;
+
         float centerX = cx;
         float centerY = size / 2f;
 

@@ -31,7 +31,7 @@ public class UikitIconButton extends FrameLayout {
         setClickable(true);
         setFocusable(true);
 
-        int defaultRadius = UikitScreenUtils.dp2px(context, 48); // 默认全圆
+        int defaultRadius = UikitScreenUtils.dp2px(context, 48);
         int bgColor = UikitColor.getPrimaryColor(context);
         int tintColor = UikitColor.getOnPrimaryColor(context);
         
@@ -92,7 +92,8 @@ public class UikitIconButton extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (Build.VERSION.SDK_INT >= 11) {
+        // 【核心修复】仅 >= 12 才允许执行动画
+        if (Build.VERSION.SDK_INT >= 12 && isEnabled()) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     animate().scaleX(0.9f).scaleY(0.9f).alpha(0.8f).setDuration(100).start();

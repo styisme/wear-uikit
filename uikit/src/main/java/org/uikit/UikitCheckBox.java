@@ -13,15 +13,8 @@ public class UikitCheckBox extends CheckBox {
     private Paint checkPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF rect = new RectF();
 
-    public UikitCheckBox(Context context) {
-        super(context);
-        init();
-    }
-
-    public UikitCheckBox(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
+    public UikitCheckBox(Context context) { super(context); init(); }
+    public UikitCheckBox(Context context, AttributeSet attrs) { super(context, attrs); init(); }
 
     private void init() {
         paint.setStyle(Paint.Style.STROKE);
@@ -33,7 +26,10 @@ public class UikitCheckBox extends CheckBox {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int size = getHeight(); // 强制正方形
+        int size = getHeight();
+        // 【防御】宽高为0不绘制
+        if (size == 0) return; 
+        
         int cx = getWidth() / 2;
         int padding = UikitScreenUtils.dp2px(getContext(), 8);
         rect.set(cx - size / 2f + padding, padding, cx + size / 2f - padding, size - padding);
@@ -46,18 +42,11 @@ public class UikitCheckBox extends CheckBox {
             paint.setColor(primaryColor);
             canvas.drawRoundRect(rect, UikitScreenUtils.dp2px(getContext(), 4), UikitScreenUtils.dp2px(getContext(), 4), paint);
             
-            // 绘制对勾
             checkPaint.setColor(UikitColor.getOnPrimaryColor(getContext()));
             Path path = new Path();
-            float startX = rect.left + rect.width() * 0.25f;
-            float startY = rect.centerY();
-            float midX = rect.left + rect.width() * 0.45f;
-            float midY = rect.bottom - rect.height() * 0.25f;
-            float endX = rect.right - rect.width() * 0.2f;
-            float endY = rect.top + rect.height() * 0.3f;
-            path.moveTo(startX, startY);
-            path.lineTo(midX, midY);
-            path.lineTo(endX, endY);
+            path.moveTo(rect.left + rect.width() * 0.25f, rect.centerY());
+            path.lineTo(rect.left + rect.width() * 0.45f, rect.bottom - rect.height() * 0.25f);
+            path.lineTo(rect.right - rect.width() * 0.2f, rect.top + rect.height() * 0.3f);
             canvas.drawPath(path, checkPaint);
         } else {
             paint.setStyle(Paint.Style.STROKE);
