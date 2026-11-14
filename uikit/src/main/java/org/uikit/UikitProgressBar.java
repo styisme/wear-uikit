@@ -20,9 +20,9 @@ public class UikitProgressBar extends View {
         fgPaint.setColor(UikitColor.getPrimaryColor(context));
     }
 
-    // 兼容原生 ProgressBar
     public void setMax(int max) {
         this.maxProgress = max;
+        if (this.maxProgress <= 0) this.maxProgress = 100; // 防御
         invalidate();
     }
 
@@ -41,7 +41,6 @@ public class UikitProgressBar extends View {
         return currentProgress;
     }
 
-    // 库原生 API (0.0f ~ 1.0f)
     public void setProgress(float progress) {
         setProgress((int)(progress * maxProgress));
     }
@@ -49,11 +48,16 @@ public class UikitProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (getWidth() == 0 || getHeight() == 0) return; // 防御
+        
         float r = getHeight() / 2f;
         rect.set(0, 0, getWidth(), getHeight());
         canvas.drawRoundRect(rect, r, r, bgPaint);
         
+        // 防御除零
+        if (maxProgress == 0) return;
         float ratio = (float) currentProgress / maxProgress;
+        
         rect.set(0, 0, getWidth() * ratio, getHeight());
         canvas.drawRoundRect(rect, r, r, fgPaint);
     }

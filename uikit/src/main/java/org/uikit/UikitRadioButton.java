@@ -22,13 +22,14 @@ public class UikitRadioButton extends RadioButton {
     @Override
     protected void onDraw(Canvas canvas) {
         int size = getHeight();
-        // 【防御】宽高为0不绘制
         if (size == 0) return;
 
         int cx = getWidth() / 2;
         int padding = UikitScreenUtils.dp2px(getContext(), 8);
         float radius = size / 2f - padding;
-        if (radius < 0) return;
+        
+        // 【防御】如果半径小于等于0，直接返回
+        if (radius <= 0) return;
 
         float centerX = cx;
         float centerY = size / 2f;

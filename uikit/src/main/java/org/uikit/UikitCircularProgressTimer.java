@@ -8,9 +8,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 
 public class UikitCircularProgressTimer extends View {
-    public interface OnTimerFinishListener {
-        void onFinish();
-    }
+    public interface OnTimerFinishListener { void onFinish(); }
 
     private Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint fgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -53,13 +51,17 @@ public class UikitCircularProgressTimer extends View {
             @Override
             public void onTick(long millisUntilFinished) {
                 UikitCircularProgressTimer.this.millisUntilFinished = millisUntilFinished;
-                invalidate();
+                if (getWindowToken() != null) { // 防御：只有 View 还在屏幕上才重绘
+                    invalidate();
+                }
             }
 
             @Override
             public void onFinish() {
                 UikitCircularProgressTimer.this.millisUntilFinished = 0;
-                invalidate();
+                if (getWindowToken() != null) {
+                    invalidate();
+                }
                 if (listener != null) listener.onFinish();
                 WearHardwareUtils.vibrate(getContext(), WearHardwareUtils.HAPTIC_ERROR);
             }
@@ -67,7 +69,10 @@ public class UikitCircularProgressTimer extends View {
     }
 
     public void stop() {
-        if (countDownTimer != null) countDownTimer.cancel();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
     }
 
     public void setOnTimerFinishListener(OnTimerFinishListener listener) {
@@ -77,6 +82,8 @@ public class UikitCircularProgressTimer extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (getWidth() == 0 || getHeight() == 0) return; // 防御
+
         int padding = (int) fgPaint.getStrokeWidth() + 4;
         rect.set(padding, padding, getWidth() - padding, getHeight() - padding);
 
@@ -88,8 +95,6 @@ public class UikitCircularProgressTimer extends View {
 
             int seconds = (int) (millisUntilFinished / 1000);
             String timeText = String.valueOf(seconds);
-            
-            // 文字垂直居中
             float centerY = (rect.centerY()) - ((textPaint.descent() + textPaint.ascent()) / 2);
             canvas.drawText(timeText, rect.centerX(), centerY, textPaint);
         }
@@ -98,6 +103,6 @@ public class UikitCircularProgressTimer extends View {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        stop();
+        stop(); // 核心修复：View 销毁时强制停掉倒计时，绝不允许在后台空跑触发 invalidate
     }
 }

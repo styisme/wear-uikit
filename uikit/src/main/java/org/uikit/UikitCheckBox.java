@@ -27,12 +27,16 @@ public class UikitCheckBox extends CheckBox {
     @Override
     protected void onDraw(Canvas canvas) {
         int size = getHeight();
-        // 【防御】宽高为0不绘制
-        if (size == 0) return; 
+        if (size == 0) return;
         
         int cx = getWidth() / 2;
         int padding = UikitScreenUtils.dp2px(getContext(), 8);
-        rect.set(cx - size / 2f + padding, padding, cx + size / 2f - padding, size - padding);
+        float left = cx - size / 2f + padding;
+        float right = cx + size / 2f - padding;
+
+        // 【防御】防止矩形的宽高反转或为0导致底层崩溃
+        if (left >= right || size - padding * 2 <= 0) return;
+        rect.set(left, padding, right, size - padding);
 
         int primaryColor = UikitColor.getPrimaryColor(getContext());
         int unCheckColor = UikitTheme.isDarkMode(getContext()) ? 0xFF888888 : 0xFFCCCCCC;

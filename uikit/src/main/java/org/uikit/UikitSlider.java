@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.SeekBar;
 
 public class UikitSlider extends View {
-    // 库原生 Listener
     public interface OnProgressChangedListener {
         void onProgressChanged(float progress);
     }
@@ -26,8 +25,6 @@ public class UikitSlider extends View {
     private float thumbRadius;
     
     private OnProgressChangedListener listener;
-    
-    // 兼容原生 SeekBar 的 Listener
     private SeekBar.OnSeekBarChangeListener seekBarListener;
 
     public UikitSlider(Context context) {
@@ -45,10 +42,9 @@ public class UikitSlider extends View {
         thumbPaint.setColor(UikitColor.getPrimaryColor(context));
     }
 
-    // ================= 原生 SeekBar 兼容 API =================
-    
     public void setMax(int max) {
         this.maxProgress = max;
+        if (this.maxProgress <= 0) this.maxProgress = 100; // 防御
         invalidate();
     }
 
@@ -74,14 +70,14 @@ public class UikitSlider extends View {
         this.seekBarListener = listener;
     }
 
-    // ================= 库原生 API =================
-
     public void setMaxProgress(float max) {
         this.maxProgress = (int) max;
+        if (this.maxProgress <= 0) this.maxProgress = 100;
         invalidate();
     }
 
     public float getProgressFloat() {
+        if (maxProgress == 0) return 0f;
         return (float) currentProgress / maxProgress;
     }
 
@@ -93,11 +89,11 @@ public class UikitSlider extends View {
         this.listener = listener;
     }
 
-    // ================= 绘制与触摸 =================
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (getWidth() == 0 || getHeight() == 0) return; // 防御
+        
         float width = getWidth();
         float height = getHeight();
         float cy = height / 2f;
@@ -105,10 +101,14 @@ public class UikitSlider extends View {
         rect.set(0, cy - trackHeight / 2f, width, cy + trackHeight / 2f);
         canvas.drawRoundRect(rect, trackHeight / 2f, trackHeight / 2f, trackBgPaint);
 
+        if (maxProgress == 0) return; // 防御除零
         float ratio = (float) currentProgress / maxProgress;
         float progressX = width * ratio;
-        rect.set(0, cy - trackHeight / 2f, progressX, cy + trackHeight / 2f);
-        canvas.drawRoundRect(rect, trackHeight / 2f, trackHeight / 2f, trackFgPaint);
+        
+        if (progressX > 0) {
+            rect.set(0, cy - trackHeight / 2f, progressX, cy + trackHeight / 2f);
+            canvas.drawRoundRect(rect, trackHeight / 2f, trackHeight / 2f, trackFgPaint);
+        }
 
         float thumbX = progressX;
         if (thumbX < thumbRadius) thumbX = thumbRadius;
@@ -118,6 +118,7 @@ public class UikitSlider extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (getWidth() == 0) return false; // 防御
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (seekBarListener != null) seekBarListener.onStartTrackingTouch(null);
@@ -137,16 +138,16 @@ public class UikitSlider extends View {
     private void updateProgressFromTouch(MotionEvent event) {
         float x = event.getX();
         float width = getWidth();
+        if (width == 0) return;
+        
         float ratio = x / width;
         if (ratio < 0) ratio = 0;
         if (ratio > 1) ratio = 1;
         
-        int oldProgress = currentProgress;
         currentProgress = (int) (ratio * maxProgress);
         invalidate();
         
-        boolean fromUser = true;
-        if (seekBarListener != null) seekBarListener.onProgressChanged(null, currentProgress, fromUser);
+        if (seekBarListener != null) seekBarListener.onProgressChanged(null, currentProgress, true);
         if (listener != null) listener.onProgressChanged((float) currentProgress);
     }
 }
